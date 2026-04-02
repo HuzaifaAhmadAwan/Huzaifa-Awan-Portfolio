@@ -14,7 +14,7 @@ function setupWelcomeScreen() {
     const continueBtn = document.getElementById('continueBtn');
     const portfolioMain = document.getElementById('portfolioMain');
     
-    // Click on banner name to show introduction
+    // Click on banner name to trigger scroll gate reveal animation
     bannerName.addEventListener('click', showIntroScreen);
     
     // Back button to return to welcome screen
@@ -49,226 +49,64 @@ function setupWelcomeScreen() {
     }
     
     function showIntroScreen() {
-        // Get DOM elements
-        const scrollLeft = document.getElementById('scrollLeft');
-        const scrollRight = document.getElementById('scrollRight');
-        const scrollGate = document.querySelector('.scroll-gate');
+        const bannerName = document.getElementById('bannerName');
         const bannerIntro = document.querySelector('.banner-intro');
-        const bannerNameEl = document.querySelector('.banner-name');
-        const htmlEl = document.documentElement;
+        const bannerSubtitle = document.querySelector('.banner-subtitle');
         
-        // Display scroll gate and panels
-        scrollGate.style.display = 'block';
-        scrollLeft.style.display = 'block';
-        scrollRight.style.display = 'block';
-        
-        // Add rolling-back class to trigger banner text roll animation
+        // Trigger scroll roll animation
+        bannerName.classList.add('rolling-back');
         bannerIntro.classList.add('rolling-back');
-        bannerNameEl.classList.add('rolling-back');
+        bannerSubtitle.classList.add('rolling-back');
         
-        // Update HUD status labels
-        const leftStatusLabel = scrollLeft.querySelector('.status-label');
-        const rightStatusLabel = scrollRight.querySelector('.status-label');
-        if (leftStatusLabel) leftStatusLabel.textContent = 'SEALING';
-        if (rightStatusLabel) rightStatusLabel.textContent = 'LOCKING';
-        
-        // Start panel closing animation with proper classes
-        scrollGate.classList.add('closing');
-        scrollLeft.classList.add('closing');
-        scrollRight.classList.add('closing');
-        
-        // Apply screen shake animation to html element
-        htmlEl.classList.add('machinery-impact');
-        
-        // Animate the progress counter
-        animateProgressCounter(CLOSE_DURATION);
-        
-        // Update status to LOCKED when panels collide
+        // Wait for animation to complete, then transition
         setTimeout(() => {
-            if (leftStatusLabel) leftStatusLabel.textContent = 'LOCKED';
-            if (rightStatusLabel) rightStatusLabel.textContent = 'SEALED';
-        }, CLOSE_DURATION * 0.61);
-        
-        // Swap screens when panels are fully closed
-        setTimeout(() => {
-            // Hide welcome screen
+            // Hide welcome screen and show intro screen
             welcomeScreen.style.display = 'none';
-            
-            // Show intro screen
             introScreen.style.display = 'flex';
             introScreen.classList.add('paper-unroll');
             
             // Set intro text
             document.getElementById('introText').textContent = portfolioData.bio;
-        }, CLOSE_DURATION);
-        
-        // Trigger panel opening animation
-        setTimeout(() => {
-            scrollLeft.classList.remove('closing');
-            scrollRight.classList.remove('closing');
-            scrollLeft.classList.add('opening');
-            scrollRight.classList.add('opening');
-        }, CLOSE_DURATION);
-        
-        // Clear animation classes and hide panels
-        setTimeout(() => {
-            scrollGate.classList.remove('closing');
-            scrollLeft.classList.remove('closing', 'opening');
-            scrollRight.classList.remove('closing', 'opening');
-            scrollGate.style.display = 'none';
-            scrollLeft.style.display = 'none';
-            scrollRight.style.display = 'none';
-            htmlEl.classList.remove('machinery-impact');
-        }, CLOSE_DURATION + OPENING_DURATION);
+        }, 800); // Duration matches scrollRollBack animation (0.8s)
     }
     
     function backToWelcome() {
-        // Get DOM elements
-        const scrollLeft = document.getElementById('scrollLeft');
-        const scrollRight = document.getElementById('scrollRight');
-        const scrollGate = document.querySelector('.scroll-gate');
+        const bannerName = document.getElementById('bannerName');
         const bannerIntro = document.querySelector('.banner-intro');
-        const bannerNameEl = document.querySelector('.banner-name');
-        const htmlEl = document.documentElement;
+        const bannerSubtitle = document.querySelector('.banner-subtitle');
         
-        // Display scroll gate and panels
-        scrollGate.style.display = 'block';
-        scrollLeft.style.display = 'block';
-        scrollRight.style.display = 'block';
+        // Show welcome screen and hide intro screen
+        welcomeScreen.style.display = 'flex';
+        introScreen.style.display = 'none';
+        introScreen.classList.remove('paper-unroll');
         
-        // Update HUD status labels
-        const leftStatusLabel = scrollLeft.querySelector('.status-label');
-        const rightStatusLabel = scrollRight.querySelector('.status-label');
-        if (leftStatusLabel) leftStatusLabel.textContent = 'OPENING';
-        if (rightStatusLabel) rightStatusLabel.textContent = 'OPENING';
-        
-        // Start panel closing animation
-        scrollGate.classList.add('closing');
-        scrollLeft.classList.add('closing');
-        scrollRight.classList.add('closing');
-        
-        // Apply screen shake effect
-        htmlEl.classList.add('machinery-impact');
-        
-        // Animate the progress counter
-        animateProgressCounter(CLOSE_DURATION);
-        
-        // Update status to LOCKED when panels collide
-        setTimeout(() => {
-            if (leftStatusLabel) leftStatusLabel.textContent = 'LOCKED';
-            if (rightStatusLabel) rightStatusLabel.textContent = 'SEALED';
-        }, CLOSE_DURATION * 0.61);
-        
-        // Reset banner animations
+        // Reset animation classes and restart animations
+        bannerName.classList.remove('rolling-back');
         bannerIntro.classList.remove('rolling-back');
-        bannerNameEl.classList.remove('rolling-back');
+        bannerSubtitle.classList.remove('rolling-back');
         
-        // Swap screens when panels are fully closed
-        setTimeout(() => {
-            welcomeScreen.style.display = 'flex';
-            introScreen.style.display = 'none';
-            introScreen.classList.remove('paper-unroll');
-        }, CLOSE_DURATION);
-        
-        // Trigger panel opening animation
-        setTimeout(() => {
-            scrollLeft.classList.remove('closing');
-            scrollRight.classList.remove('closing');
-            scrollLeft.classList.add('opening');
-            scrollRight.classList.add('opening');
-        }, CLOSE_DURATION);
-        
-        // Clear animation classes and hide panels
-        setTimeout(() => {
-            scrollGate.classList.remove('closing');
-            scrollLeft.classList.remove('closing', 'opening');
-            scrollRight.classList.remove('closing', 'opening');
-            scrollGate.style.display = 'none';
-            scrollLeft.style.display = 'none';
-            scrollRight.style.display = 'none';
-            htmlEl.classList.remove('machinery-impact');
-        }, CLOSE_DURATION + OPENING_DURATION);
-        
-        // Re-trigger banner unroll animation
-        bannerIntro.style.animation = 'none';
-        bannerNameEl.style.animation = 'none';
-        setTimeout(() => {
-            bannerIntro.style.animation = '';
-            bannerNameEl.style.animation = '';
-        }, 10);
+        // Force reflow to restart animations
+        void bannerName.offsetHeight;
+        void bannerIntro.offsetHeight;
+        void bannerSubtitle.offsetHeight;
     }
     
     function enterPortfolio() {
-        // Get DOM elements
-        const scrollLeft = document.getElementById('scrollLeft');
-        const scrollRight = document.getElementById('scrollRight');
-        const scrollGate = document.querySelector('.scroll-gate');
-        const htmlEl = document.documentElement;
+        // Hide intro screen and show portfolio
+        introScreen.style.display = 'none';
+        introScreen.classList.remove('paper-unroll');
+        portfolioMain.style.display = 'block';
+        portfolioMain.style.opacity = '0';
         
-        // Display scroll gate and panels
-        scrollGate.style.display = 'block';
-        scrollLeft.style.display = 'block';
-        scrollRight.style.display = 'block';
+        // Initialize portfolio content
+        populatePortfolio();
+        setupPortfolioEventListeners();
+        generateStars();
+        document.getElementById('year').textContent = new Date().getFullYear();
         
-        // Update HUD status labels
-        const leftStatusLabel = scrollLeft.querySelector('.status-label');
-        const rightStatusLabel = scrollRight.querySelector('.status-label');
-        if (leftStatusLabel) leftStatusLabel.textContent = 'PROCESSING';
-        if (rightStatusLabel) rightStatusLabel.textContent = 'TRANSFER';
-        
-        // Start panel closing animation
-        scrollGate.classList.add('closing');
-        scrollLeft.classList.add('closing');
-        scrollRight.classList.add('closing');
-        
-        // Apply screen shake effect
-        htmlEl.classList.add('machinery-impact');
-        
-        // Animate the progress counter
-        animateProgressCounter(CLOSE_DURATION);
-        
-        // Update status to LOCKED when panels collide
-        setTimeout(() => {
-            if (leftStatusLabel) leftStatusLabel.textContent = 'SEALED';
-            if (rightStatusLabel) rightStatusLabel.textContent = 'SECURED';
-        }, CLOSE_DURATION * 0.61);
-        
-        // Swap screens when panels are fully closed
-        setTimeout(() => {
-            introScreen.style.display = 'none';
-            introScreen.classList.remove('paper-unroll');
-            portfolioMain.style.display = 'block';
-            portfolioMain.style.opacity = '0';
-            
-            // Initialize portfolio content
-            populatePortfolio();
-            setupPortfolioEventListeners();
-            generateStars();
-            document.getElementById('year').textContent = new Date().getFullYear();
-        }, CLOSE_DURATION);
-        
-        // Trigger panel opening animation
-        setTimeout(() => {
-            scrollLeft.classList.remove('closing');
-            scrollRight.classList.remove('closing');
-            scrollLeft.classList.add('opening');
-            scrollRight.classList.add('opening');
-        }, CLOSE_DURATION);
-        
-        // Clear animation classes and hide panels
-        setTimeout(() => {
-            scrollGate.classList.remove('closing');
-            scrollLeft.classList.remove('closing', 'opening');
-            scrollRight.classList.remove('closing', 'opening');
-            scrollGate.style.display = 'none';
-            scrollLeft.style.display = 'none';
-            scrollRight.style.display = 'none';
-            htmlEl.classList.remove('machinery-impact');
-            
-            // Fade in portfolio content
-            portfolioMain.style.transition = 'opacity 0.6s ease';
-            portfolioMain.style.opacity = '1';
-        }, CLOSE_DURATION + OPENING_DURATION);
+        // Fade in portfolio content
+        portfolioMain.style.transition = 'opacity 0.6s ease';
+        portfolioMain.style.opacity = '1';
     }
 }
 
