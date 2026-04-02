@@ -14,15 +14,23 @@
     <!-- Scroll Gate Panels - Bilateral Symmetrical Reveal -->
     <div class="scroll-gate">
         <div class="scroll-panel scroll-left" id="scrollLeft">
-            <div class="hud-status" style="top: 20px; left: 20px;">STATUS: SEALING</div>
+            <div class="hud-status" style="top: 20px; left: 20px;">STATUS: <span class="status-label">MOVING</span></div>
             <div class="hud-stat" style="top: 60px; left: 20px;">HYDRAULIC: 100%</div>
             <div class="hud-progress" data-percent="0">CLOSING: <span class="progress-text">0%</span></div>
+            <div class="warning-label" style="bottom: 80px; left: 20px;">⚠ CAUTION: HIGH SPEED</div>
         </div>
         <div class="scroll-panel scroll-right" id="scrollRight">
-            <div class="hud-status" style="top: 20px; right: 20px;">SECTOR_LOCKED</div>
+            <div class="hud-status" style="top: 20px; right: 20px;">SECTOR: <span class="status-label">OPEN</span></div>
             <div class="hud-stat" style="top: 60px; right: 20px;">PRESSURE: OK</div>
             <div class="hud-progress" style="right: 20px;" data-percent="0">SYNC: <span class="progress-text">0%</span></div>
+            <div class="warning-label" style="bottom: 80px; right: 20px;">⚠ ACTUATOR ARM</div>
         </div>
+        
+        <!-- Data Transfer Progress Bar at Seam -->
+        <div class="data-progress-bar" id="dataProgressBar"></div>
+        
+        <!-- Central Impact Light Beam -->
+        <div class="center-impact-beam" id="centerImpactBeam"></div>
         
         <!-- CRT Shutdown Effect Overlays -->
         <!-- Static Noise Overlay -->
