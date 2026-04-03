@@ -986,7 +986,7 @@
                 this.y = y;
                 this.vx = (Math.random() - 0.5) * 2;
                 this.vy = (Math.random() - 0.5) * 1;
-                this.size = 55;
+                this.size = 50;
                 this.image = new Image();
                 this.image.src = 'assets/images/bettafish2.png';
                 this.imageLoaded = false;
@@ -1056,7 +1056,7 @@
                 this.y = y;
                 this.vx = (Math.random() - 0.5) * 2;
                 this.vy = (Math.random() - 0.5) * 1;
-                this.size = 40;
+                this.size = 45;
                 this.image = new Image();
                 this.image.src = 'assets/images/corydoras.png';
                 this.imageLoaded = false;
@@ -1406,7 +1406,7 @@
                 this.y = y;
                 this.vx = (Math.random() - 0.5) * 2;
                 this.vy = (Math.random() - 0.5) * 1;
-                this.size = 55;
+                this.size = 60;
                 this.image = new Image();
                 this.image.src = 'assets/images/koifish.png';
                 this.imageLoaded = false;
@@ -1616,7 +1616,7 @@
                 this.y = y;
                 this.vx = (Math.random() - 0.5) * 1.5;
                 this.vy = (Math.random() - 0.5) * 0.8;
-                this.size = 10;
+                this.size = 12;
                 this.image = new Image();
                 this.image.src = 'assets/images/shrimp.png';
                 this.imageLoaded = false;
@@ -1667,7 +1667,7 @@
                 this.y = y;
                 this.vx = (Math.random() - 0.5) * 1.5;
                 this.vy = (Math.random() - 0.5) * 0.8;
-                this.size = 45;
+                this.size = 60;
                 this.image = new Image();
                 this.image.src = 'assets/images/pufferfish.png';
                 this.imageLoaded = false;
@@ -1780,7 +1780,7 @@
             }
 
             // Create crabs on the ground
-            for (let i = 0; i < 1; i++) {
+            for (let i = 0; i < 2; i++) {
                 const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
                 crabs.push(new Crab(x, aquariumBounds.bottom - 25));
             }
@@ -1897,6 +1897,47 @@
             const rect = canvas.getBoundingClientRect();
             mouseX = e.clientX - rect.left;
             mouseY = e.clientY - rect.top;
+        });
+
+        // Touch screen support - same effect as mouse movement
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent scrolling while touching
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            mouseX = touch.clientX - rect.left;
+            mouseY = touch.clientY - rect.top;
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            // Move cursor away from canvas when touch ends
+            mouseX = -1000;
+            mouseY = -1000;
+        });
+
+        // Double-tap to feed fish (touch screen support)
+        let lastTapTime = 0;
+        let tapCount = 0;
+        canvas.addEventListener('touchstart', (e) => {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTapTime;
+            
+            if (tapLength < 300 && tapLength > 0) {
+                // Double tap detected
+                tapCount++;
+                if (tapCount === 2) {
+                    // Spawn food like pressing space
+                    for (let i = 0; i < 5; i++) {
+                        const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                        const y = aquariumBounds.top + Math.random() * (aquariumBounds.bottom - aquariumBounds.top) * 0.2;
+                        foods.push(new Food(x, y));
+                        foodSpawned++;
+                    }
+                    tapCount = 0;
+                }
+            } else {
+                tapCount = 1;
+            }
+            lastTapTime = currentTime;
         });
 
         document.addEventListener('keydown', (e) => {
