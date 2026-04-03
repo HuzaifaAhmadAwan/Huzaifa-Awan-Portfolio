@@ -1786,55 +1786,107 @@
             }
 
             // Create clownfish
-            for (let i = 0; i < 2; i++) {
+            for (let i = 0; i < 1; i++) {
                 const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
                 const y = Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top;
                 clownfish.push(new Clownfish(x, y));
             }
 
             // Create bettafish
-            bettafish.push(new Bettafish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.65 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 2; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.65 - aquariumBounds.top) + aquariumBounds.top;
+                bettafish.push(new Bettafish(x, y));
+            }
 
             // Create angelfish
-            angelfish.push(new Angelfish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.6 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 3; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.6 - aquariumBounds.top) + aquariumBounds.top;
+                angelfish.push(new Angelfish(x, y));
+            }
 
             // Create angelfish2
-            angelfish2.push(new Angelfish2(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.6 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 3; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.6 - aquariumBounds.top) + aquariumBounds.top;
+                angelfish2.push(new Angelfish2(x, y));
+            }
 
             // Create bettafish2
-            bettafish2.push(new Bettafish2(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.65 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 3; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.65 - aquariumBounds.top) + aquariumBounds.top;
+                bettafish2.push(new Bettafish2(x, y));
+            }
 
             // Create corydoras
-            corydoras.push(new Corydoras(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.75 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 2; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.75 - aquariumBounds.top) + aquariumBounds.top;
+                corydoras.push(new Corydoras(x, y));
+            }
 
             // Create discus
-            discus.push(new Discus(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.65 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 2; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.65 - aquariumBounds.top) + aquariumBounds.top;
+                discus.push(new Discus(x, y));
+            }
 
             // Create fancy goldfish
-            fancyGoldfish.push(new FancyGoldfish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 4; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top;
+                fancyGoldfish.push(new FancyGoldfish(x, y));
+            }
 
             // Create goldfish
-            goldfish.push(new Goldfish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 1; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top;
+                goldfish.push(new Goldfish(x, y));
+            }
 
             // Create guppyfish
-            guppyfish.push(new Guppyfish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.5 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 3; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.5 - aquariumBounds.top) + aquariumBounds.top;
+                guppyfish.push(new Guppyfish(x, y));
+            }
 
             // Create koifish
-            koifish.push(new Koifish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 4; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.7 - aquariumBounds.top) + aquariumBounds.top;
+                koifish.push(new Koifish(x, y));
+            }
 
             // Create neon tetra
-            neontetra.push(new NeonTetra(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.5 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 2; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.5 - aquariumBounds.top) + aquariumBounds.top;
+                neontetra.push(new NeonTetra(x, y));
+            }
 
             // Create zebra danio
-            zebradanio.push(new ZebraDanio(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom * 0.6 - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 3; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom * 0.6 - aquariumBounds.top) + aquariumBounds.top;
+                zebradanio.push(new ZebraDanio(x, y));
+            }
 
             // Create shrimp
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 50; i++) {
                 shrimp.push(new Shrimp(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom - aquariumBounds.top) + aquariumBounds.top));
             }
 
             // Create pufferfish
-            pufferfish.push(new Pufferfish(Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left, Math.random() * (aquariumBounds.bottom - aquariumBounds.top) + aquariumBounds.top));
+            for (let i = 0; i < 2; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = Math.random() * (aquariumBounds.bottom - aquariumBounds.top) + aquariumBounds.top;
+                pufferfish.push(new Pufferfish(x, y));
+            }
         }
 
         // ============================================================================
