@@ -118,6 +118,151 @@
     color: var(--accent);
   }
 
+  /* Intro Screen */
+  .intro-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0b0b0d;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .intro-screen.exit {
+    animation: introExit 0.9s cubic-bezier(0.76, 0, 0.24, 1) 0.2s forwards;
+  }
+  @keyframes introExit {
+    0%   { clip-path: inset(0 0 0 0); opacity: 1; }
+    100% { clip-path: inset(0 0 100% 0); opacity: 1; }
+  }
+
+  /* Intro background grid */
+  .intro-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* Intro noise overlay */
+  .intro-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .intro-layout {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Corner labels */
+  .intro-corner {
+    position: absolute;
+    font-family: var(--display);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+    opacity: 0;
+    animation: fadeIn 0.5s 1.4s ease forwards;
+  }
+  .intro-corner.tl { top: 32px; left: 40px; }
+  .intro-corner.tr { top: 32px; right: 40px; }
+  .intro-corner.bl { bottom: 52px; left: 40px; }
+
+  .intro-name {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(64px, 10vw, 128px);
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .intro-name-letter {
+    display: inline-block;
+    transform: translateY(110%);
+    animation: charUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .intro-name-letter.space {
+    margin-right: 0.3em;
+  }
+
+  @keyframes charUp {
+    to { transform: translateY(0); }
+  }
+
+  .intro-divider {
+    width: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.15);
+    margin: 18px auto;
+    animation: expandLine 0.6s 0.9s ease forwards;
+  }
+  @keyframes expandLine { to { width: 120px; } }
+
+  .intro-subtitle {
+    font-family: var(--mono);
+    font-size: clamp(13px, 1.6vw, 17px);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+    margin-top: 22px;
+    opacity: 0;
+    animation: fadeIn 0.5s 1.1s ease forwards;
+  }
+
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  /* Loader bar */
+  .intro-loader {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    z-index: 3;
+  }
+  .intro-loader-track {
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+  }
+  .intro-loader-fill {
+    height: 100%;
+    background: #fff;
+    width: 0;
+    animation: loadFill 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  }
+  @keyframes loadFill { to { width: 100%; } }
+  .intro-loader-pct {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.3);
+    margin-top: 8px;
+    text-align: right;
+  }
+
   /* Hero */
   .hero {
     min-height: 100vh;
@@ -414,10 +559,32 @@
 </style>
 </head>
 <body>
-<body>
 
 <div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- INTRO SCREEN -->
+<div class="intro-screen" id="introScreen">
+  <div class="intro-grid"></div>
+  <div class="intro-noise"></div>
+
+  <!-- Corner labels -->
+  <div class="intro-corner tl">Portfolio 2065</div>
+  <div class="intro-corner tr">Saarbrücken · DE</div>
+  <div class="intro-corner bl">CS Student</div>
+
+  <div class="intro-layout">
+    <div class="intro-name" id="introName"></div>
+    <div class="intro-divider"></div>
+    <div class="intro-subtitle">Making Ideas Reality</div>
+  </div>
+
+  <div class="intro-loader">
+    <div class="intro-loader-track">
+      <div class="intro-loader-fill" id="loader-fill"></div>
+    </div>
+    <div class="intro-loader-pct" id="loader-pct">0%</div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -440,7 +607,7 @@
   <div class="hero-content">
     <div class="hero-badge"><div class="badge-dot"></div><span style="color: #10b981;">Open to internships & collaborations</span></div>
     <h1 class="hero-title">
-      <span class="line">AI Enthusiast</span>
+      <span class="line">COMPUTER SCIENCE STUDENT</span>
       <span class="line stroke">building</span>
       <span class="line accent">intelligent solutions.</span>
     </h1>
@@ -639,19 +806,71 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>© 2025 Huzaifa Ahmad Awan</span>
+  <span>© 2026 Huzaifa Ahmad Awan</span>
   <span>Computer Science Student — Saarbrücken, Germany</span>
   <span style="color: var(--accent);">Open for opportunities ✦</span>
 </footer>
 
 <script>
+// Intro screen animation
+function initIntroScreen() {
+  const introName = document.getElementById('introName');
+  const name = 'Huzaifa Awan';
+  
+  // Create letter elements with charUp animation (slide up from bottom)
+  name.split('').forEach((ch, i) => {
+    const span = document.createElement('span');
+    span.className = 'intro-name-letter';
+    span.textContent = ch;
+    if (ch === ' ') span.classList.add('space');
+    span.style.animationDelay = (0.05 + i * 0.06) + 's';
+    introName.appendChild(span);
+  });
+  
+  // Loader counter
+  const loaderPct = document.getElementById('loader-pct');
+  let pct = 0;
+  const loaderInterval = setInterval(() => {
+    pct = Math.min(100, pct + Math.ceil(Math.random() * 8));
+    loaderPct.textContent = pct + '%';
+    if (pct >= 100) clearInterval(loaderInterval);
+  }, 80);
+  
+  // Exit intro → show main
+  function launchPortfolio() {
+    const intro = document.getElementById('introScreen');
+    const main  = document.querySelector('body > nav') || document.querySelector('section');
+    intro.classList.add('exit');
+    setTimeout(() => {
+      intro.style.display = 'none';
+    }, 1100);
+  }
+  
+  // Auto-launch after animations complete (2.4s)
+  setTimeout(launchPortfolio, 2400);
+  
+  // Allow click to skip
+  document.getElementById('introScreen').addEventListener('click', () => {
+    clearInterval(loaderInterval);
+    launchPortfolio();
+  });
+}
+
+// Initialize intro on page load
+window.addEventListener('load', initIntroScreen);
+
 // Cursor
 const cursor = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-let mx=0,my=0,rx=0,ry=0;
+let mx=0,my=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
-function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
-animRing();
+
+// Hide cursor when leaving window
+document.addEventListener('mouseleave',()=>{
+  cursor.style.opacity='0';
+});
+document.addEventListener('mouseenter',()=>{
+  cursor.style.opacity='0.8';
+});
 
 // Scroll reveal
 const obs = new IntersectionObserver(entries=>{
