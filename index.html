@@ -61,10 +61,10 @@
     border: 1.5px solid rgba(232,255,71,0.5); border-radius: 50%;
     pointer-events: none; z-index: 9998;
     transform: translate(-50%,-50%);
-    transition: transform 0.18s ease-out, width 0.25s, height 0.25s, border-color 0.2s;
+    transition: width 0.25s, height 0.25s, border-color 0.2s;
   }
-  body:has(a:hover) .cursor { width: 16px; height: 16px; }
-  body:has(a:hover) .cursor-ring { width: 50px; height: 50px; border-color: var(--accent); }
+  .cursor.active { width: 16px; height: 16px; }
+  .cursor-ring.active { width: 50px; height: 50px; border-color: var(--accent); }
 
   /* Nav */
   nav {
@@ -561,6 +561,7 @@
 <body>
 
 <div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <!-- INTRO SCREEN -->
 <div class="intro-screen" id="introScreen">
@@ -860,16 +861,25 @@ function initIntroScreen() {
 window.addEventListener('load', initIntroScreen);
 
 // Cursor
+// Cursor
 const cursor = document.getElementById('cursor');
-let mx=0,my=0;
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
 
-// Hide cursor when leaving window
-document.addEventListener('mouseleave',()=>{
-  cursor.style.opacity='0';
-});
-document.addEventListener('mouseenter',()=>{
-  cursor.style.opacity='0.8';
+// Expand ring on hover for interactive elements
+const interactiveElements = document.querySelectorAll('a, button, [role="button"], input[type="button"], input[type="submit"]');
+interactiveElements.forEach(el => {
+  el.addEventListener('mouseenter', ()=>{
+    cursor.classList.add('active');
+    ring.classList.add('active');
+  });
+  el.addEventListener('mouseleave', ()=>{
+    cursor.classList.remove('active');
+    ring.classList.remove('active');
+  });
 });
 
 // Scroll reveal
