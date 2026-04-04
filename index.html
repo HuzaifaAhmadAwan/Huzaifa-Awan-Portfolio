@@ -16,6 +16,7 @@
     --accent2: #47c8ff;
     --text: #f0f0f5;
     --muted: #7070a0;
+    --stroke: rgba(255,255,255,0.3);
     --display: 'Bebas Neue', sans-serif;
     --body: 'DM Sans', sans-serif;
     --mono: 'DM Mono', monospace;
@@ -30,6 +31,7 @@
     --accent2: #0ea5e9;
     --text: #1a1a1e;
     --muted: #5a5a7a;
+    --stroke: rgba(0,0,0,0.15);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,13 +60,13 @@
   }
   .cursor-ring {
     position: fixed; width: 36px; height: 36px;
-    border: 1.5px solid rgba(232,255,71,0.5); border-radius: 50%;
+    border: 1.5px solid var(--accent); border-radius: 50%;
     pointer-events: none; z-index: 9998;
     transform: translate(-50%,-50%);
     transition: width 0.25s, height 0.25s, border-color 0.2s;
   }
   .cursor.active { width: 16px; height: 16px; }
-  .cursor-ring.active { width: 50px; height: 50px; border-color: var(--accent); }
+  .cursor-ring.active { width: 50px; height: 50px; border-color: var(--accent2); }
 
   /* Nav */
   nav {
@@ -320,7 +322,7 @@
   .hero-title .line { display: block; }
   .hero-title .accent { color: var(--accent); }
   .hero-title .stroke {
-    -webkit-text-stroke: 2px rgba(255,255,255,0.3);
+    -webkit-text-stroke: 2px var(--stroke);
     color: transparent;
   }
 
@@ -569,7 +571,7 @@
   <div class="intro-noise"></div>
 
   <!-- Corner labels -->
-  <div class="intro-corner tl">Portfolio 2065</div>
+  <div class="intro-corner tl">Portfolio 2026</div>
   <div class="intro-corner tr">Saarbrücken · DE</div>
   <div class="intro-corner bl">CS Student</div>
 
@@ -608,12 +610,12 @@
   <div class="hero-content">
     <div class="hero-badge"><div class="badge-dot"></div><span style="color: #10b981;">Open to internships & collaborations</span></div>
     <h1 class="hero-title">
-      <span class="line">COMPUTER SCIENCE STUDENT</span>
+      <span class="line">CS STUDENT</span>
       <span class="line stroke">building</span>
       <span class="line accent">intelligent solutions.</span>
     </h1>
     <p class="hero-sub">
-      Computer Science student at Universität des Saarlandes, specializing in <strong>AI, System Programming, and Compiler Construction</strong>.
+      Computer Science student at University of Saarland, specializing in <strong>System Programming, Theoretical Computer Science, Software Engineering and Compiler Construction</strong>.
       Driven by curiosity to solve complex problems through innovative technology.
     </p>
     <div class="hero-actions">
