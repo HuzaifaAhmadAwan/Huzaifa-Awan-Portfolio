@@ -763,6 +763,14 @@
     letter-spacing: 0.08em;
     color: var(--muted);
     margin-bottom: 14px;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.2s, text-shadow 0.2s;
+    cursor: pointer;
+  }
+  .edu-institution:hover {
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(232, 255, 71, 0.3);
   }
 
   .edu-desc {
@@ -789,10 +797,21 @@
     border: 1px solid rgba(255,255,255,0.14);
     color: var(--muted);
     transition: all 0.2s;
+    cursor: default;
+  }
+  .edu-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(232, 255, 71, 0.4), inset 0 0 8px rgba(232, 255, 71, 0.1);
   }
   .edu-entry.active .edu-tag {
     border-color: rgba(240,240,245,0.2);
     color: var(--text);
+  }
+  .edu-entry.active .edu-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(232, 255, 71, 0.4), inset 0 0 8px rgba(232, 255, 71, 0.1);
   }
 
   @media (max-width: 700px) {
@@ -996,7 +1015,7 @@
       <div class="edu-body">
         <div class="edu-period">Oct. 2023 - Present</div>
         <div class="edu-program">B.Sc. Computer Science</div>
-        <div class="edu-institution">University of Saarland</div>
+        <a href="https://www.uni-saarland.de/start.html" target="_blank" class="edu-institution">University of Saarland</a>
         <div class="edu-desc">
           Focus on Theoretical Computer Science, Software Engineering and Compiler Construction. Relevant coursework: Algorithms & Data Structures, Software Engineering, Compiler Construction, System Architecture, Algorithms and Complexity, Just beyond P.
         </div>
@@ -1020,7 +1039,7 @@
       <div class="edu-body">
         <div class="edu-period">Aug. 2017 - Jun. 2023</div>
         <div class="edu-program">Abitur</div>
-        <div class="edu-institution">Albert-Einstein-Gymnasium, Germany</div>
+        <a href="https://www.einstein-gymnasium-vk.de" target="_blank" class="edu-institution">Albert-Einstein-Gymnasium</a>
         <div class="edu-desc">
           Advanced courses in Mathematics and Physics. Strong STEM foundation with excellent grades in core technical subjects. Foundation for advanced computer science studies.
         </div>
