@@ -611,8 +611,80 @@
   .reveal-delay-3 { transition-delay: 0.3s; }
 
   @media (max-width: 768px) {
-    nav { padding: 20px 24px; }
-    .nav-links { gap: 20px; }
+    /* Mobile nav layout */
+    nav {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    nav > div:first-child {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .nav-secondary {
+      display: none;
+      margin-left: 0;
+    }
+
+    /* Show only Resume in mobile nav */
+    .nav-secondary.mobile-visible {
+      display: flex !important;
+      gap: 0;
+      margin: 0;
+    }
+
+    .nav-secondary.mobile-visible li:not(:last-child) {
+      display: none;
+    }
+
+    .nav-secondary.mobile-visible a {
+      font-size: 13px;
+      padding: 9px 20px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: transparent;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-secondary.mobile-visible a:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .nav-github {
+      display: none;
+    }
+
+    nav > div:last-child {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .theme-toggle {
+      padding: 8px 10px;
+      font-size: 16px;
+    }
+
+    .nav-cta {
+      font-size: 12px;
+      padding: 9px 16px;
+    }
+
     .hero { padding: 0 24px; padding-top: 80px; }
     section { padding: 80px 24px; }
     .about-grid { grid-template-columns: 1fr; gap: 40px; }
@@ -892,7 +964,7 @@
 <nav>
   <div style="display: flex; align-items: center;">
     <a class="nav-logo" href="#">H<span>.</span>Awan</a>
-    <ul class="nav-secondary">
+    <ul class="nav-secondary mobile-visible">
       <li><a class="nav-home" href="#hero">Home</a></li>
       <li><a href="https://linkedin.com" target="_blank">LinkedIn<span class="external-indicator">↗</span></a></li>
       <li><a href="./assets/documents/resume.pdf" target="_blank">Resume<span class="external-indicator">↗</span></a></li>
