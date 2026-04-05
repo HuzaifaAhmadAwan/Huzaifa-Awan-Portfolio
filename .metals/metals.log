@@ -11,3 +11,7 @@ INFORMATION: Unsupported notification method: $/setTrace
 2026.04.05 04:31:57 WARN  no build target for: C:\Users\awan2\Desktop\Portfolio1\assets\projects\Route-Planner\src\routing\Node.java
 2026.04.05 04:34:46 INFO  no build target found for C:\Users\awan2\Desktop\Portfolio1\assets\projects\Route-Planner\src\routing\DijkstraRoutingAlgorithm.java. Using fallback presentation compiler.
 2026.04.05 04:34:57 INFO  no build target found for C:\Users\awan2\Desktop\Portfolio1\assets\projects\Route-Planner\src\routing\Node.java. Using fallback presentation compiler.
+2026.04.05 04:42:32 WARN  no build target for: C:\Users\awan2\Desktop\Portfolio1\assets\projects\RICV-Processor\src\main\scala\RISC-V\implementation\Core.scala
+2026.04.05 04:42:32 INFO  no build target found for C:\Users\awan2\Desktop\Portfolio1\assets\projects\RICV-Processor\src\main\scala\RISC-V\implementation\Core.scala. Using presentation compiler with project's scala-library version: 3.3.7
+2026.04.05 04:42:38 WARN  no build target for: C:\Users\awan2\Desktop\Portfolio1\assets\projects\RICV-Processor\src\main\scala\RISC-V\implementation\RV32I\Decoder.scala
+2026.04.05 04:42:45 INFO  no build target found for C:\Users\awan2\Desktop\Portfolio1\assets\projects\RICV-Processor\src\main\scala\RISC-V\implementation\RV32I\Decoder.scala. Using presentation compiler with project's scala-library version: 3.3.7
