@@ -1075,7 +1075,7 @@
   <div class="section-label reveal">Portfolio</div>
   <div class="section-title reveal reveal-delay-1">Projects.</div>
   <div class="projects-list">
-    <a class="project reveal" href="#">
+    <a class="project reveal" href="javascript:void(0)" onclick="openCCompiler()">
       <div class="project-num">01</div>
       <div class="project-info">
         <div class="project-title">C Compiler Implementation</div>
@@ -1464,6 +1464,11 @@ themeToggle.addEventListener('click', () => {
   window.addEventListener('resize', updateLine, { passive: true });
   updateLine();
 })();
+
+// C Compiler launcher
+function openCCompiler() {
+  window.open('assets/projects/C-Compiler/c-compiler.html', 'CCompiler', 'width=1000,height=1200,resizable=yes,scrollbars=yes');
+}
 
 // Rock Paper Scissors Game launcher
 function openRPSGame() {
