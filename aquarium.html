@@ -136,7 +136,43 @@
                 opacity: 0;
                 transform: translate(-50%, -50%) scale(0.6);
             }
+        }
+
+        .feed-button {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .feed-button:active {
+            transform: translateX(-50%) scale(0.95);
+        }
+
+        @media (max-width: 768px) {
+            .feed-button {
+                display: block;
+            }
+
+            .popup-message {
+                display: none !important;
+            }
+        }
     </style>
+
 </head>
 <body>
     <div class="aquarium-container">
@@ -148,6 +184,7 @@
     <div class="popup-message" id="popupMessage">
         <img src="assets/images/aquarium/pressSpaceToFeed.png" alt="Press Space to Feed">
     </div>
+    <button class="feed-button" id="feedButton">Feed Fish</button>
     <div class="thank-you-message" id="thankYouMessage" style="display: none;">
         <img src="assets/images/aquarium/thanksForSwimmingBy.png" alt="Thanks for Swimming By">
     </div>
@@ -1963,6 +2000,17 @@
                     foods.push(new Food(x, y));
                     foodSpawned++;
                 }
+            }
+        });
+
+        // Feed button handler for mobile
+        document.getElementById('feedButton').addEventListener('click', () => {
+            // Rain food down within aquarium bounds
+            for (let i = 0; i < 5; i++) {
+                const x = Math.random() * (aquariumBounds.right - aquariumBounds.left) + aquariumBounds.left;
+                const y = aquariumBounds.top + Math.random() * (aquariumBounds.bottom - aquariumBounds.top) * 0.2;
+                foods.push(new Food(x, y));
+                foodSpawned++;
             }
         });
 

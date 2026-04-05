@@ -69,6 +69,12 @@
   .cursor.active { width: 16px; height: 16px; }
   .cursor-ring.active { width: 50px; height: 50px; border-color: var(--accent2); }
 
+  @media (max-width: 768px) {
+    .cursor, .cursor-ring {
+      display: none;
+    }
+  }
+
   /* Nav */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
@@ -613,7 +619,7 @@
   @media (max-width: 768px) {
     /* Mobile nav layout */
     nav {
-      padding: 20px 24px;
+      padding: 16px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -623,12 +629,13 @@
     nav > div:first-child {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 16px;
     }
 
     .nav-logo {
-      font-size: 18px;
+      font-size: 16px;
       margin: 0;
+      white-space: nowrap;
     }
 
     .nav-secondary {
@@ -636,7 +643,7 @@
       margin-left: 0;
     }
 
-    /* Show only Resume in mobile nav */
+    /* Show only Resume in mobile nav as text */
     .nav-secondary.mobile-visible {
       display: flex !important;
       gap: 0;
@@ -648,17 +655,24 @@
     }
 
     .nav-secondary.mobile-visible a {
-      font-size: 13px;
-      padding: 9px 20px;
-      border: 1px solid var(--accent);
-      color: var(--accent);
+      font-size: 12px;
+      padding: 0;
+      border: none;
+      color: var(--muted);
       background: transparent;
-      transition: background 0.2s, color 0.2s;
+      transition: color 0.2s;
+      text-transform: none;
+      font-weight: 400;
     }
 
     .nav-secondary.mobile-visible a:hover {
-      background: var(--accent);
-      color: #000;
+      background: transparent;
+      color: var(--text);
+    }
+
+    .nav-secondary.mobile-visible .external-indicator {
+      margin-left: 4px;
+      color: var(--muted);
     }
 
     .nav-links {
@@ -673,16 +687,25 @@
       display: flex;
       gap: 12px;
       align-items: center;
+      margin-left: auto;
     }
 
     .theme-toggle {
-      padding: 8px 10px;
-      font-size: 16px;
+      padding: 6px 8px;
+      font-size: 14px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .theme-toggle:active {
+      color: var(--accent);
     }
 
     .nav-cta {
-      font-size: 12px;
-      padding: 9px 16px;
+      font-size: 11px;
+      padding: 8px 12px;
+      white-space: nowrap;
     }
 
     .hero { padding: 0 24px; padding-top: 80px; }

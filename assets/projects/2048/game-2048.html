@@ -516,6 +516,47 @@
                 }
             }
         });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const minSwipeDistance = 30;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            const absDiffX = Math.abs(diffX);
+            const absDiffY = Math.abs(diffY);
+
+            if (Math.max(absDiffX, absDiffY) < minSwipeDistance) return;
+
+            let direction = null;
+
+            if (absDiffX > absDiffY) {
+                direction = diffX > 0 ? 'right' : 'left';
+            } else {
+                direction = diffY > 0 ? 'down' : 'up';
+            }
+
+            if (direction) {
+                game.move(direction);
+
+                if (game.checkGameOver()) {
+                    setTimeout(() => {
+                        document.getElementById('gameOverTitle').textContent = 'Game Over!';
+                        document.getElementById('gameOverMessage').textContent = `Final Score: ${game.score}`;
+                        document.getElementById('gameOverModal').classList.add('show');
+                    }, 300);
+                }
+            }
+        });
     </script>
 </body>
 </html>
