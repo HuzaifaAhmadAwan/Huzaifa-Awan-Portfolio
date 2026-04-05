@@ -1,0 +1,161 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 22,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "toolchainFile": "${sourceDir}/cmake/toolchains/toolchain.cmake",
+            "description": "Base build configuration",
+            "generator": "Ninja Multi-Config",
+            "cacheVariables": {}
+        },
+        {
+            "name": "default",
+            "displayName": "Default project configuration preset.",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/builds/${presetName}",
+            "cacheVariables": {
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG": "${sourceDir}/bin/${presetName}/debug",
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE": "${sourceDir}/bin/${presetName}/release",
+                "CMAKE_PDB_OUTPUT_DIRECTORY_DEBUG": "${sourceDir}/bin/${presetName}/debug",
+                "CMAKE_PDB_OUTPUT_DIRECTORY_RELEASE": "${sourceDir}/bin/${presetName}/release"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "tests_debug",
+            "displayName": "Build the tests in debug mode.",
+            "configuration": "Debug",
+            "configurePreset": "default",
+            "targets": [
+                "project_tests"
+            ]
+        },
+        {
+            "name": "tests_release",
+            "displayName": "Build the tests in release mode.",
+            "configuration": "Release",
+            "configurePreset": "default",
+            "targets": [
+                "project_tests"
+            ]
+        },
+        {
+            "name": "planner_debug",
+            "displayName": "Build the planner in debug mode.",
+            "configuration": "Debug",
+            "configurePreset": "default",
+            "targets": [
+                "downward"
+            ]
+        },
+        {
+            "name": "planner_release",
+            "displayName": "Build the planner in release mode.",
+            "configuration": "Release",
+            "configurePreset": "default",
+            "targets": [
+                "downward"
+            ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "base_tests",
+            "hidden": true,
+            "displayName": "Run all tests.",
+            "configurePreset": "default",
+            "configuration": "Release",
+            "execution": {
+                "jobs": -1,
+                "timeout": 10
+            },
+            "output": {
+                "outputOnFailure": true,
+                "maxPassedTestOutputSize": 1024,
+                "maxFailedTestOutputSize": 1024
+            }
+        },
+        {
+            "name": "all_tests",
+            "displayName": "Run all tests.",
+            "inherits": "base_tests"
+        },
+        {
+            "name": "blind_heuristic",
+            "displayName": "Run all tests for the blind heuristic.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "BlindHeuristicTestsPublic"
+                }
+            }
+        },
+        {
+            "name": "gc_heuristic",
+            "displayName": "Run all tests for the goal-counting heuristic.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "GoalCountTestsPublic"
+                }
+            }
+        },
+        {
+            "name": "hmax",
+            "displayName": "Run all tests for h^max.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "HMaxTestsPublic"
+                }
+            }
+        },
+        {
+            "name": "hff",
+            "displayName": "Run all tests for h^FF.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "HFFTestsPublic"
+                }
+            }
+        },
+        {
+            "name": "hstar",
+            "displayName": "Run all tests for h^*.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "HStarTableTestsPublic"
+                }
+            }
+        },
+        {
+            "name": "pdbs",
+            "displayName": "Run all tests for the pattern database heuristic.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "PDBTestsPublic"
+                }
+            }
+        },
+        {
+            "name": "cliques_heuristic",
+            "displayName": "Run all tests for the cliques heuristic.",
+            "inherits": "base_tests",
+            "filter": {
+                "include": {
+                    "name": "CanonicalPDBsTestsPublic"
+                }
+            }
+        }
+    ]
+}

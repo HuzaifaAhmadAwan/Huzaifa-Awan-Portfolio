@@ -1,0 +1,35 @@
+/**
+ * @defgroup tests Tests
+ * @brief This topic contains all entities related to the testing of the project.
+ *
+ * @defgroup test_domains Planning Domains for Testing
+ * @brief This topic contains all entities related to the implementation of example planning domains for the purpose of
+ * testing.
+ * @ingroup tests
+ *
+ * @defgroup test_utils Test Utility
+ * @brief This topic assembles commonly useful functionality for the implementation of tests, e.g., functions to read
+ * planning tasks from a file.
+ * @ingroup tests
+ *
+ * @defgroup classical_planning_utils Classical Planning Utility
+ * @ingroup test_utils
+ * @brief This topic contains utility functions for tests targetting classical planning.
+ *
+ * @defgroup ff_tests Delete-Relaxation Utility
+ * @ingroup classical_planning_utils
+ * @brief This topic contains utility functions for tests targetting delete-relaxed planning.
+ *
+ * @defgroup pdb_tests Pattern Databases Utility
+ * @ingroup classical_planning_utils
+ * @brief This topic contains common utility functions for tests targetting pattern databases.
+ *
+ * @defgroup rl_tests Reinforcement Learning Test Utility
+ * @ingroup test_utils
+ * @brief This topic contains common utility functions for tests targetting reinforcement
+ * learning / Q-learning.
+ */
+
+
+/// Namespace of the testing component
+namespace tests {}

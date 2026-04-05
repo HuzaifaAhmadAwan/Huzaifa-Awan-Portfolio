@@ -1,0 +1,53 @@
+/**
+ * @defgroup downward Classical Planning
+ * @brief This topic contains all entities related to classical planning concepts like
+ * planning tasks and heuristics.
+ *
+ * @defgroup planning_tasks Classical Planning Task Representation
+ * @brief This topic contains all entities related to the classical planning task representation.
+ * @ingroup downward
+ *
+ * @defgroup planning_task_impls Classical Planning Task Implementations
+ * @brief This topic contains all entities related to the classical planning task representation.
+ * @ingroup downward
+ *
+ * @defgroup heuristics Classical Planning Heuristics
+ * @brief This topic contains all entities related to classical planning heuristics.
+ * @ingroup downward
+ *
+ * @defgroup variables Variables
+ * @brief This topic contains classes modelling the variables of a planning task and their properties.
+ * @ingroup planning_tasks
+ *
+ * @defgroup operators Operators
+ * @brief This topic contains classes modelling the operators / actions of a planning task and
+ * their properties.
+ * @ingroup planning_tasks
+ *
+ * @defgroup facts Facts
+ * @brief This topic contains classes modelling the facts of a planning task and their properties.
+ * @ingroup planning_tasks
+ *
+ * @defgroup states States
+ * @brief This topic contains classes modelling the states of a planning task and their properties.
+ * @ingroup planning_tasks
+ *
+ * @defgroup utilities Utility Functions
+ * @ingroup downward
+ * @brief This topic contains basic utility functions for classical planning.
+ */
+
+/*
+ * @defgroup data_structures Data Structures
+ * @ingroup downward
+ * @brief This topic contains basic data structures useful for classical planning implementations.
+ */
+
+ /**
+  * @defgroup downward_other Miscellaneous
+  * @ingroup downward
+  * @brief This topic contains miscellaneous symbols relevant for classical planning implementations.
+  */
+
+/// Namespace of the classical planning component.
+namespace downward {}

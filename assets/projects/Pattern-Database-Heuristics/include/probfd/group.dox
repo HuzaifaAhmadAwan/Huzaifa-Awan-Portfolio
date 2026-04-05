@@ -1,0 +1,16 @@
+/**
+ * @defgroup probfd Probabilistic Planning
+ * @brief This topic contains all entities related to probabilistic planning.
+ *
+ * @defgroup prob_planning_tasks Probabilistic Planning Tasks
+ * @brief This topic contains all entities related to probabilistic planning tasks.
+ * @ingroup probfd
+ *
+ * @defgroup prob_proxy Probabilistic Planning Task Sub-Components
+ * @brief This topic contains all entities which model specific sub-components of a probabilistic planning task, like
+ * the set of probabilistic operators or the set of variables of a task.
+ * @ingroup prob_planning_tasks
+ */
+
+/// Namespace of the probabilistic planning component.
+namespace probfd {}
