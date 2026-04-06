@@ -641,7 +641,7 @@
     position: relative;
     z-index: 1;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4),
-                 0 0 20px rgba(218, 165, 32, 0.2);
+                 0 0 30px rgba(218, 165, 32, 0.2);
     font-style: italic;
     text-transform: uppercase;
     line-height: 1.1;
@@ -939,6 +939,51 @@
     transition: border-color 0.2s, color 0.2s;
   }
   .service:hover .tag { border-color: rgba(232,255,71,0.3); color: var(--text); }
+
+  /* 3D Skills Globe */
+  #skills-globe-container {
+    width: 100%;
+    max-width: 600px;
+    height: 450px;
+    margin: 80px auto;
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: transparent;
+    border: none;
+  }
+
+  #skills-globe-canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  .globe-ui {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    background: rgba(12, 12, 14, 0.8);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(139, 157, 195, 0.15);
+    backdrop-filter: blur(10px);
+    min-height: 18px;
+  }
+
+  .globe-hint {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
 
   /* Projects */
   .projects { background: var(--surface); }
@@ -1420,6 +1465,7 @@
   }
 
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -1825,33 +1871,13 @@
 <section style="padding:120px 48px; background: var(--bg);" id="skills">
   <div class="section-label reveal">Expertise</div>
   <div class="section-title reveal reveal-delay-1">Technical Skills.</div>
-  <div class="services-grid reveal reveal-delay-2">
-    <div class="service">
-      <div class="service-num">01 —</div>
-      <div class="service-title">Programming</div>
-      <div class="service-text">Multi-language expertise with strong foundation in C, C++, Java, and Python. Proficient in building everything from compilers to web applications.</div>
-      <div class="service-tags">
-        <span class="tag">C</span><span class="tag">C++</span><span class="tag">Java</span><span class="tag">Python</span>
-      </div>
-    </div>
-    <div class="service">
-      <div class="service-num">02 —</div>
-      <div class="service-title">AI & Algorithms</div>
-      <div class="service-text">Deep expertise in machine learning, AI planning, heuristics, and advanced algorithms. Data structures and optimization.</div>
-      <div class="service-tags">
-        <span class="tag">Machine Learning</span><span class="tag">AI Planning</span><span class="tag">Algorithms</span>
-      </div>
-    </div>
-    <div class="service">
-      <div class="service-num">03 —</div>
-      <div class="service-title">System Programming</div>
-      <div class="service-text">Low-level systems knowledge: RISC-V assembly, interrupt handling, memory management, process scheduling, and architecture.</div>
-      <div class="service-tags">
-        <span class="tag">RISC-V</span><span class="tag">Assembly</span><span class="tag">Systems</span><span class="tag">Architecture</span>
-      </div>
-    </div>
+  
+  <div id="skills-globe-container">
+    <canvas id="skills-globe-canvas"></canvas>
   </div>
-  </div>
+</section>
+
+<!-- CONTACT -->
 </section>
 
 <!-- CONTACT -->
@@ -2259,6 +2285,281 @@ function openSocialNetwork() {
 // Aquarium Simulation launcher
 function openAquarium() {
   window.open('aquarium.html', 'Aquarium', 'width=1400,height=900,resizable=yes,scrollbars=yes');
+}
+
+// 3D Interactive Skills Globe
+function initSkillsGlobe() {
+  const canvas = document.getElementById('skills-globe-canvas');
+  if (!canvas) return;
+
+  // Initialize Three.js scene
+  const scene = new THREE.Scene();
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(width, height);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x000000, 0);
+
+  camera.position.z = 2.5;
+
+  // Create smooth sphere geometry
+  const globeGeometry = new THREE.SphereGeometry(1, 64, 64);
+  
+  // Create transparent material with geometric pattern
+  const globeMaterial = new THREE.MeshPhongMaterial({
+    color: 0x8b9dc3,
+    transparent: true,
+    opacity: 0.1,
+    shininess: 100,
+    wireframe: false
+  });
+  const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+  scene.add(globe);
+
+  // Add wireframe overlay for geometric pattern
+  const wireframeGeometry = new THREE.SphereGeometry(1, 64, 64);
+  const wireframeMaterial = new THREE.LineBasicMaterial({
+    color: 0x8b9dc3,
+    transparent: true,
+    opacity: 0.4,
+    linewidth: 1
+  });
+  const wireframe = new THREE.LineSegments(
+    new THREE.WireframeGeometry(wireframeGeometry),
+    wireframeMaterial
+  );
+  wireframe.scale.set(1.001, 1.001, 1.001);
+  scene.add(wireframe);
+
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+  scene.add(ambientLight);
+
+  const directionalLight = new THREE.DirectionalLight(0xcdd6f4, 0.5);
+  directionalLight.position.set(3, 2, 4);
+  scene.add(directionalLight);
+
+  // Skill data with SVG logos
+  const skills = [
+    { name: 'C', icon: 'assets/images/portfolio/logos/C.png', lat: 45, lng: 0 },
+    { name: 'C++', icon: 'assets/images/portfolio/logos/C++.png', lat: 30, lng: 45 },
+    { name: 'Java', icon: 'assets/images/portfolio/logos/java.png', lat: 20, lng: 90 },
+    { name: 'Excel', icon: 'assets/images/portfolio/logos/exel.png', lat: 10, lng: 135 },
+    { name: 'GitHub', icon: 'assets/images/portfolio/logos/github.png', lat: -30, lng: -120 },
+    { name: 'Git', icon: 'assets/images/portfolio/logos/git.png', lat: -45, lng: -60 },
+    { name: 'Docker', icon: 'assets/images/portfolio/logos/docker.png', lat: -60, lng: 30 },
+    { name: 'Python', icon: 'assets/images/portfolio/logos/python.png', lat: 0, lng: 60 },
+    { name: 'Scala', icon: 'assets/images/portfolio/logos/scala.png', lat: 50, lng: 100 },
+    { name: 'Kotlin', icon: 'assets/images/portfolio/logos/kotlin.png', lat: 25, lng: -90 },
+    { name: 'HTML', icon: 'assets/images/portfolio/logos/html.png', lat: -20, lng: 120 },
+    { name: 'RISC-V', icon: 'assets/images/portfolio/logos/risc-v.png', lat: -50, lng: 60 },
+    { name: 'SQL', icon: 'assets/images/portfolio/logos/sql.png', lat: 60, lng: 30 },
+    { name: 'JavaScript', icon: 'assets/images/portfolio/logos/javascript.png', lat: 40, lng: -45 },
+    { name: 'CSS', icon: 'assets/images/portfolio/logos/css.png', lat: -10, lng: -60 }
+  ];
+
+  // Load textures using raw image loading for better compatibility
+  const logoTextures = {};
+  
+  // Create skill markers group
+  const skillGroup = new THREE.Group();
+  scene.add(skillGroup);
+  
+  console.log('Starting to load textures...');
+  
+  // Load images directly and convert to textures
+  let loadedCount = 0;
+  skills.forEach((skill, index) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = function() {
+      try {
+        // Create texture using THREE.TextureLoader approach
+        const texture = new THREE.Texture(img);
+        texture.magFilter = THREE.LinearFilter;
+        texture.minFilter = THREE.LinearFilter;
+        texture.needsUpdate = true;
+        logoTextures[skill.name] = texture;
+        loadedCount++;
+        console.log('✓ Loaded:', skill.name, `(${loadedCount}/${skills.length})`);
+        
+        // Create sprite immediately when texture loads
+        createSprite(skill, texture);
+      } catch (err) {
+        console.error('Error processing texture:', skill.name, err);
+      }
+    };
+    
+    img.onerror = function() {
+      console.error('✗ Failed to load:', skill.icon);
+      loadedCount++;
+    };
+    
+    img.src = skill.icon;
+  });
+  
+  function createSprite(skill, texture) {
+    const phi = (90 - skill.lat) * Math.PI / 180;
+    const theta = skill.lng * Math.PI / 180;
+
+    const x = Math.sin(phi) * Math.cos(theta);
+    const y = Math.cos(phi);
+    const z = Math.sin(phi) * Math.sin(theta);
+
+    const material = new THREE.SpriteMaterial({ 
+      map: texture,
+      transparent: true,
+      opacity: 1,
+      sizeAttenuation: true
+    });
+    
+    const sprite = new THREE.Sprite(material);
+    // Make sprites larger for visibility - 0.5 instead of 0.3
+    sprite.scale.set(0.5, 0.5, 1);
+    sprite.position.set(x * 1.1, y * 1.1, z * 1.1);
+    sprite.userData = { skill, originalScale: new THREE.Vector3(0.5, 0.5, 1) };
+    
+    skillGroup.add(sprite);
+    window.globeSkillMarkers = window.globeSkillMarkers || [];
+    window.globeSkillMarkers.push(sprite);
+    
+    console.log('✓ Sprite created:', skill.name, 'at', [x * 1.1, y * 1.1, z * 1.1]);
+  }
+
+  // Mouse interaction
+  let isDragging = false;
+  let previousMousePosition = { x: 0, y: 0 };
+  const rotation = { x: 0, y: 0 };
+
+  canvas.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!isDragging) {
+      // Hover detection for visual feedback
+      const rect = canvas.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / width) * 2 - 1,
+        -((e.clientY - rect.top) / height) * 2 + 1
+      );
+      
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, camera);
+      const skillMarkers = window.globeSkillMarkers || [];
+      const intersects = raycaster.intersectObjects(skillMarkers);
+
+      skillMarkers.forEach(marker => {
+        if (intersects.length > 0 && intersects[0].object === marker) {
+          marker.scale.set(0.39, 0.39, 1);
+          marker.material.opacity = 1;
+          canvas.style.cursor = 'pointer';
+        } else {
+          marker.scale.copy(marker.userData.originalScale);
+          marker.material.opacity = 1;
+        }
+      });
+
+      if (intersects.length === 0) {
+        canvas.style.cursor = 'grab';
+      }
+      return;
+    }
+
+    const deltaX = e.clientX - previousMousePosition.x;
+    const deltaY = e.clientY - previousMousePosition.y;
+
+    rotation.y += deltaX * 0.003;
+    rotation.x += deltaY * 0.003;
+
+    globe.rotation.y = rotation.y;
+    globe.rotation.x = rotation.x;
+    wireframe.rotation.y = rotation.y;
+    wireframe.rotation.x = rotation.x;
+    skillGroup.rotation.y = rotation.y;
+    skillGroup.rotation.x = rotation.x;
+
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+    canvas.style.cursor = 'grabbing';
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+    canvas.style.cursor = 'default';
+  });
+
+  // Touch support for mobile
+  canvas.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  });
+
+  canvas.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+
+    const deltaX = e.touches[0].clientX - previousMousePosition.x;
+    const deltaY = e.touches[0].clientY - previousMousePosition.y;
+
+    rotation.y += deltaX * 0.005;
+    rotation.x += deltaY * 0.005;
+
+    globe.rotation.y = rotation.y;
+    globe.rotation.x = rotation.x;
+    wireframe.rotation.y = rotation.y;
+    wireframe.rotation.x = rotation.x;
+    skillGroup.rotation.y = rotation.y;
+    skillGroup.rotation.x = rotation.x;
+
+    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  });
+
+  canvas.addEventListener('touchend', () => {
+    isDragging = false;
+  });
+
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+
+    // Gentle auto-rotation when not dragging
+    if (!isDragging) {
+      rotation.y += 0.0001;
+      globe.rotation.y = rotation.y;
+      wireframe.rotation.y = rotation.y;
+      skillGroup.rotation.y = rotation.y;
+      skillGroup.rotation.x = rotation.x;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    const newWidth = canvas.clientWidth;
+    const newHeight = canvas.clientHeight;
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newWidth, newHeight);
+  });
+}
+
+// Initialize globe
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSkillsGlobe);
+} else {
+  initSkillsGlobe();
 }
 </script>
 </body>
