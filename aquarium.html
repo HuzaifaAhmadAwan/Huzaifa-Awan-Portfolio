@@ -39,11 +39,14 @@
                 padding: 0;
                 margin: 0;
                 overflow: hidden;
+                display: block;
             }
             
             body {
                 padding: 0;
                 min-height: 100vh;
+                align-items: stretch;
+                justify-content: stretch;
             }
         }
 
@@ -55,6 +58,7 @@
             box-shadow: 0 20px 60px rgba(0, 150, 255, 0.3);
             overflow: hidden;
             border: 3px solid #00d4ff;
+            position: relative;
         }
 
         @media (max-width: 768px) {
@@ -80,19 +84,23 @@
             background: linear-gradient(180deg, 
                 rgba(26, 77, 109, 0.8) 0%,
                 rgba(13, 42, 58, 0.9) 100%);
-            width: 100%;
-            height: auto;
             cursor: url('assets/images/aquarium/indexFinger.png') 10 0, pointer;
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
         }
 
         @media (max-width: 768px) {
             canvas {
-                width: 100vw;
-                height: 100vh;
+                width: 100vw !important;
+                height: 100vh !important;
                 display: block;
+                max-width: 100vw;
+                max-height: 100vh;
             }
         }
 
@@ -277,6 +285,9 @@
         // LANDSCAPE ORIENTATION LOCK FOR MOBILE
         // ============================================================================
         
+        let gameInitialized = false;
+        let gameLoopRunning = false;
+
         // Force landscape orientation on mobile devices
         if (screen.orientation && typeof screen.orientation.lock === 'function') {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -291,41 +302,58 @@
         // Show warning for portrait mode on mobile
         function checkOrientation() {
             const isMobile = window.innerWidth < 768;
+            const existingWarning = document.getElementById('orientationWarning');
+            
             if (isMobile && window.innerHeight > window.innerWidth) {
-                // Device is in portrait - show message
-                const warningMsg = document.createElement('div');
-                warningMsg.id = 'orientationWarning';
-                warningMsg.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.9);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                    color: white;
-                    text-align: center;
-                    font-size: 24px;
-                    font-weight: bold;
-                `;
-                warningMsg.textContent = '📱 Please rotate your device to landscape mode';
-                document.body.appendChild(warningMsg);
+                // Device is in portrait - only create warning if it doesn't exist
+                if (!existingWarning) {
+                    const warningMsg = document.createElement('div');
+                    warningMsg.id = 'orientationWarning';
+                    warningMsg.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0, 0, 0, 0.95);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 1000;
+                        color: white;
+                        text-align: center;
+                        font-size: 28px;
+                        font-weight: bold;
+                        font-family: Arial, sans-serif;
+                    `;
+                    warningMsg.textContent = '📱\n\nPlease rotate your device to landscape';
+                    document.body.appendChild(warningMsg);
+                }
             } else {
-                // Remove warning if exists
-                const warning = document.getElementById('orientationWarning');
-                if (warning) {
-                    warning.remove();
+                // In landscape - remove warning and ensure game is initialized
+                if (existingWarning) {
+                    existingWarning.remove();
+                }
+                // Initialize game if not already started - with small delay for dimensions to update
+                if (!gameInitialized && !gameLoopRunning) {
+                    setTimeout(() => {
+                        resizeCanvas();
+                        startGame();
+                    }, 50);
                 }
             }
         }
 
-        // Check orientation on load and on resize
+        // Check orientation on load and on orientation change
         checkOrientation();
-        window.addEventListener('orientationchange', checkOrientation);
-        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', () => {
+            // Delay check to allow screen dimensions to update
+            setTimeout(checkOrientation, 100);
+        });
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            checkOrientation();
+        });
 
         // ============================================================================
         // AQUARIUM CANVAS SETUP
@@ -357,13 +385,18 @@
             const isMobile = window.innerWidth < 768;
             
             if (isMobile) {
-                // Mobile landscape mode - fill entire viewport
+                // Mobile landscape mode - fill entire viewport minus any borders
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
+                // Force container to fill screen
+                container.style.width = '100vw';
+                container.style.height = '100vh';
             } else {
                 // Desktop - maintain aspect ratio
-                canvas.width = container.clientWidth;
+                canvas.width = container.clientWidth || window.innerWidth;
                 canvas.height = Math.max(500, window.innerHeight * 0.7);
+                container.style.width = '100%';
+                container.style.height = 'auto';
             }
             updateAquariumBounds();
         }
@@ -2476,19 +2509,30 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Start the game with optimized initialization
+        // Start game function with initialization tracking
+        function startGame() {
+            if (!gameInitialized) {
+                gameInitialized = true;
+                resizeCanvas();
+                init();
+            }
+            if (!gameLoopRunning) {
+                gameLoopRunning = true;
+                gameLoop();
+            }
+        }
+
+        // Start the game when window loads or orientation is landscape
         window.addEventListener('load', () => {
-            init();
-            gameLoop();
+            startGame();
         });
 
         // Fallback if load event doesn't fire
         setTimeout(() => {
-            if (foods.length === 0) {
-                init();
-                gameLoop();
+            if (!gameInitialized) {
+                startGame();
             }
-        }, 1000);
+        }, 100);
     </script>
 </body>
 </html>
