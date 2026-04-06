@@ -677,10 +677,16 @@
     width: 140px;
     height: 160px;
     opacity: 1;
-    border-color: var(--accent);
-    box-shadow: 0 0 20px rgba(232, 255, 71, 0.2);
+    border-color: var(--border);
+    box-shadow: none;
     order: 1;
     z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  .carousel-container:hover .carousel-item.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(232, 255, 71, 0.2);
   }
 
   .carousel-item.next {
@@ -800,7 +806,6 @@
   .project:hover::before { transform: scaleX(1); }
   .project:hover::after { opacity: 1; }
   .project-num { font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 500; }
-  .project-info {}
   .project-title { font-family: var(--display); font-size: 20px; line-height: 1.2; margin-bottom: 6px; transition: color 0.2s; }
   .project:hover .project-title { color: var(--accent); }
   .project-desc { font-size: 13px; color: var(--muted); }
@@ -1844,8 +1849,27 @@ function initCarousel() {
   // Initialize carousel
   updateCarousel();
 
-  // Rotate carousel every 3 seconds
-  setInterval(rotateCarousel, 3000);
+  // Carousel pause control
+  let carouselPaused = false;
+
+  // Rotate carousel every 3 seconds (only if not paused)
+  setInterval(() => {
+    if (!carouselPaused) {
+      rotateCarousel();
+    }
+  }, 3000);
+
+  // Pause/Resume on hover
+  const carouselContainer = document.querySelector('.carousel-container');
+  if (carouselContainer) {
+    carouselContainer.addEventListener('mouseenter', () => {
+      carouselPaused = true;
+    });
+
+    carouselContainer.addEventListener('mouseleave', () => {
+      carouselPaused = false;
+    });
+  }
 }
 
 // Initialize when DOM is ready
