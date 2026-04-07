@@ -1585,9 +1585,229 @@
     box-shadow: 0 0 12px rgba(232, 255, 71, 0.4), inset 0 0 8px rgba(232, 255, 71, 0.1);
   }
 
+  /* =========================================
+     EXPERIENCE TIMELINE
+     ========================================= */
+  #experience {
+    width: 100%;
+    padding: 1px 48px 120px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+  }
+
+  .exp-header {
+    width: 100%;
+    max-width: 920px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .exp-header-eyebrow {
+    font-family: var(--display);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .exp-header-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  /* The timeline track container */
+  .exp-track {
+    position: relative;
+    width: 100%;
+    max-width: 920px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* The vertical guide line */
+  .exp-line-wrap {
+    position: absolute;
+    left: 29px;
+    top: 20px;
+    bottom: 20px;
+    width: 1px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* The track (full height, faint) */
+  .exp-line-track {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.14);
+  }
+
+  :root.light-mode .exp-line-track {
+    background: rgba(0,0,0,0.15);
+  }
+
+  /* The fill that draws downward as you scroll */
+  .exp-line-fill {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 0%;
+    background: var(--accent);
+    transition: height 0.06s linear;
+  }
+
+  /* Individual experience entry */
+  .exp-entry {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 0 28px;
+    padding: 0 0 56px;
+    position: relative;
+  }
+  .exp-entry:last-child { padding-bottom: 0; }
+
+  /* Dot on the line */
+  .exp-dot-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 18px;
+  }
+  .exp-dot {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--accent);
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease;
+  }
+  .exp-dot-logo {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    opacity: 0.9;
+    filter: brightness(1.1);
+  }
+  .exp-entry.active .exp-dot {
+    border-color: var(--accent);
+    background: var(--accent);
+    transform: scale(1.15);
+  }
+  .exp-entry.active .exp-dot-logo {
+    opacity: 1;
+  }
+
+  /* Entry body */
+  .exp-body {
+    padding-top: 10px;
+    opacity: 0;
+    transform: translateX(-14px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .exp-entry.active .exp-body {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .exp-period {
+    font-family: var(--display);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .exp-role {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(20px, 2.5vw, 26px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--text);
+    line-height: 1.05;
+    margin-bottom: 4px;
+  }
+
+  .exp-company {
+    font-family: var(--display);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 14px;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.2s, text-shadow 0.2s;
+    cursor: pointer;
+  }
+  .exp-company:hover {
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(232, 255, 71, 0.3);
+  }
+
+  .exp-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .exp-tag {
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.14);
+    color: var(--muted);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .exp-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(232, 255, 71, 0.4), inset 0 0 8px rgba(232, 255, 71, 0.1);
+  }
+  .exp-entry.active .exp-tag {
+    border-color: rgba(240,240,245,0.2);
+    color: var(--text);
+  }
+  .exp-entry.active .exp-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(232, 255, 71, 0.4), inset 0 0 8px rgba(232, 255, 71, 0.1);
+  }
+
   @media (max-width: 700px) {
     #education { padding: 60px 20px 80px; }
+    #experience { padding: 60px 20px 80px; }
     .edu-header { flex-direction: column; gap: 8px; }
+    .exp-header { flex-direction: column; gap: 8px; }
   }
 
 </style>
@@ -1634,7 +1854,6 @@
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#projects">Projects</a></li>
-    <li><a href="#skills">Skills</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-search">
@@ -1878,6 +2097,92 @@
         <div class="edu-tags">
           <span class="edu-tag">Mathematics</span>
           <span class="edu-tag">Physics</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE TIMELINE -->
+<section id="experience">
+  <div class="exp-header">
+    <div>
+      <div class="exp-header-eyebrow">Professional Journey</div>
+      <div class="exp-header-title">Experience</div>
+    </div>
+  </div>
+
+  <div class="exp-track" id="exp-track">
+
+    <!-- The vertical guide line -->
+    <div class="exp-line-wrap">
+      <div class="exp-line-track"></div>
+      <div class="exp-line-fill" id="exp-line-fill"></div>
+    </div>
+
+    <!-- Entry 1: Latest Experience -->
+    <div class="exp-entry" data-index="0">
+      <div class="exp-dot-wrap">
+        <div class="exp-dot">
+          <img src="assets/images/portfolio/zf-logo.png" alt="ZF Friedrichhafen AG Logo" class="exp-dot-logo">
+        </div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-period">Apr. 2025 – Jun. 2025 and Jul. 2023 – Aug. 2023</div>
+        <div class="exp-role">Working Student</div>
+        <div class="exp-company">ZF Friedrichhafen AG</div>
+        <div class="exp-desc">
+          Support in the assembly and production of gearbox units according to technical specifications, with a focus on efficient and precise work processes. Conducting functional and visual inspections to ensure correct assembly. Performing a variety of tasks requiring teamwork, flexibility and rapid familiarization.
+        </div>
+        <div class="exp-tags">
+          <span class="exp-tag">Manufacturing</span>
+          <span class="exp-tag">Quality Control</span>
+          <span class="exp-tag">Assembly</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entry 2: Netto Marken-Discount -->
+    <div class="exp-entry" data-index="1">
+      <div class="exp-dot-wrap">
+        <div class="exp-dot">
+          <img src="assets/images/portfolio/Netto-logo.png" alt="Netto Marken-Discount Logo" class="exp-dot-logo">
+        </div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-period">Jul. 2022 – Mar. 2023</div>
+        <div class="exp-role">Retail Sales Assistant</div>
+        <div class="exp-company">Netto Marken-Discount</div>
+        <div class="exp-desc">
+          Responsibility for goods receipt, presentation, placement and price labeling in the food sector. Performed all cashier activities including cash register reconciliation with high accuracy. Ensured positive shopping experience through service-oriented customer service.
+        </div>
+        <div class="exp-tags">
+          <span class="exp-tag">Retail Management</span>
+          <span class="exp-tag">Customer Service</span>
+          <span class="exp-tag">Cash Handling</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entry 3: Anson's Herrenhaus -->
+    <div class="exp-entry" data-index="2">
+      <div class="exp-dot-wrap">
+        <div class="exp-dot">
+          <img src="assets/images/portfolio/ansons-logo.png" alt="Anson's Herrenhaus Logo" class="exp-dot-logo">
+        </div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-period">Nov. 2019 – Nov. 2019</div>
+        <div class="exp-role">Sales & Decoration Intern</div>
+        <div class="exp-company">Anson's Herrenhaus KG</div>
+        <div class="exp-desc">
+          Supported sales operations through customer consultation and product presentation during a student internship. Developed initial insights into business operations and teamwork in retail environments. Gained hands-on experience in merchandising and customer-facing responsibilities.
+        </div>
+        <div class="exp-tags">
+          <span class="exp-tag">Sales Support</span>
+          <span class="exp-tag">Visual Merchandising</span>
+          <span class="exp-tag">Teamwork</span>
         </div>
       </div>
     </div>
@@ -2300,6 +2605,7 @@ const searchableContent = [
   { title: 'Projects', label: 'Section', href: '#projects' },
   { title: 'Contact', label: 'Section', href: '#contact' },
   { title: 'Education', label: 'Section', href: '#education' },
+  { title: 'Experience', label: 'Section', href: '#experience' },
   
   // Projects
   { title: 'C Compiler Implementation', label: 'Project', href: '#projects' },
@@ -2317,6 +2623,14 @@ const searchableContent = [
   { title: 'University of Saarland', label: 'Education', href: '#education' },
   { title: 'Abitur', label: 'Education', href: '#education' },
   { title: 'Albert-Einstein-Gymnasium', label: 'Education', href: '#education' },
+  
+  // Experience
+  { title: 'Working Student at ZF', label: 'Experience', href: '#experience' },
+  { title: 'ZF Friedrichhafen AG', label: 'Company', href: '#experience' },
+  { title: 'Retail Sales Assistant at Netto', label: 'Experience', href: '#experience' },
+  { title: 'Netto Marken-Discount', label: 'Company', href: '#experience' },
+  { title: 'Sales Intern at Anson\'s', label: 'Experience', href: '#experience' },
+  { title: 'Anson\'s Herrenhaus KG', label: 'Company', href: '#experience' },
   
   // Skills & Expertise
   { title: 'System Programming', label: 'Skill', href: '#about' },
@@ -2458,6 +2772,49 @@ themeToggle.addEventListener('click', () => {
 
   entries.forEach((el, i) => {
     el.querySelector('.edu-body').style.transitionDelay = (i * 0.05) + 's';
+    io.observe(el);
+  });
+
+  // ── 3. Bind scroll & resize ───────────────────────
+  window.addEventListener('scroll', updateLine, { passive: true });
+  window.addEventListener('resize', updateLine, { passive: true });
+  updateLine();
+})();
+
+// Experience Timeline
+(function initExperienceTimeline() {
+  const track    = document.getElementById('exp-track');
+  const lineFill = document.getElementById('exp-line-fill');
+  const entries  = Array.from(document.querySelectorAll('.exp-entry'));
+  if (!track || !lineFill || !entries.length) return;
+
+  // ── 1. Scroll-driven line draw ────────────────────
+  function updateLine() {
+    const trackRect = track.getBoundingClientRect();
+    const vh        = window.innerHeight;
+
+    // Progress: 0 when top of track hits bottom of viewport,
+    //           1 when bottom of track hits top of viewport
+    const total    = trackRect.height + vh * 0.5;
+    const traveled = vh - trackRect.top;
+    const progress = Math.max(0, Math.min(1, traveled / total));
+
+    lineFill.style.height = (progress * 100).toFixed(2) + '%';
+  }
+
+  // ── 2. IntersectionObserver — activate each entry ─
+  const io = new IntersectionObserver((entries_obs) => {
+    entries_obs.forEach(obs => {
+      if (obs.isIntersecting) {
+        obs.target.classList.add('active');
+      } else {
+        obs.target.classList.remove('active');
+      }
+    });
+  }, { threshold: 0.25, rootMargin: '0px 0px -60px 0px' });
+
+  entries.forEach((el, i) => {
+    el.querySelector('.exp-body').style.transitionDelay = (i * 0.05) + 's';
     io.observe(el);
   });
 
