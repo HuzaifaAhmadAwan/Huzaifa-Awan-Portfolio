@@ -543,12 +543,34 @@
   }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
 
+  .hero-badge-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero-badge-vertical span {
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  :root.light-mode .hero-badge-vertical span {
+    color: #ffd700 !important;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4), 0 0 16px rgba(255, 215, 0, 0.2);
+  }
+
   .hero-title {
     font-family: var(--display);
     font-size: clamp(64px, 10vw, 130px);
     line-height: 0.95;
     letter-spacing: -0.01em;
     margin-bottom: 32px;
+    margin-top: -20px;
     animation: fadeUp 0.8s 0.2s ease both;
   }
   .hero-title .line { display: block; }
@@ -632,7 +654,7 @@
     grid-template-columns: 45% 1fr;
     grid-template-rows: auto auto auto;
     gap: 20px;
-    padding-top: 70px;
+    padding-top: -20px;
   }
 
   .hero-right > .profile-card {
@@ -1644,12 +1666,17 @@
     <!-- Left: Title & Content -->
     <div class="hero-left">
       <div class="hero-content">
-        <div class="hero-badge"><div class="badge-dot"></div><span style="color: #10b981;">Open to internships & collaborations</span></div>
-        <h1 class="hero-title">
-          <span class="line">CS STUDENT</span>
-          <span class="line stroke">building</span>
-          <span class="line accent">intelligent solutions.</span>
-        </h1>
+        <div style="display: flex; align-items: center; gap: 24px;">
+          <div class="hero-badge-vertical">
+            <span style="color: #10b981; writing-mode: vertical-rl; transform: rotate(180deg);">Open to internships & collaborations</span>
+            <div class="badge-dot"></div>
+          </div>
+          <h1 class="hero-title">
+            <span class="line">CS STUDENT</span>
+            <span class="line stroke">building</span>
+            <span class="line accent">intelligent solutions.</span>
+          </h1>
+        </div>
         <p class="hero-sub">
           Computer Science student at University of Saarland, specializing in <strong>System Programming, Theoretical Computer Science, Software Engineering and Compiler Construction</strong>.
           Driven by curiosity to solve complex problems through innovative technology.
