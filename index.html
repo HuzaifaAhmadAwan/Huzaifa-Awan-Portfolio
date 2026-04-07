@@ -126,6 +126,86 @@
   }
   .nav-github:hover { color: var(--accent); }
 
+  /* Search Bar */
+  .nav-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--mono);
+    width: 200px;
+    transition: all 0.2s;
+    cursor: text;
+  }
+  .search-input::placeholder {
+    color: var(--muted);
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 8px rgba(232, 255, 71, 0.2);
+  }
+  :root.light-mode .search-input {
+    background: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.8);
+  }
+  :root.light-mode .search-input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+  }
+  :root.light-mode .search-input:focus {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  .search-results.active {
+    display: block;
+  }
+  .search-result-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .search-result-item:hover {
+    background: var(--surface2);
+    color: var(--accent);
+  }
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+  .search-result-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .search-result-title {
+    font-size: 14px;
+    color: var(--text);
+  }
+
   /* Theme toggle button - Vertical Pivot Design (Top-Only Display) */
   .theme-toggle {
     position: relative;
@@ -633,15 +713,14 @@
   .profile-card h2 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(30px, 6vw, 50px);
-    color: #F5F1E8;
-    opacity: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(245, 241, 232, 1);
     font-weight: 700;
     letter-spacing: 0.08em;
     margin: 0;
     position: relative;
     z-index: 1;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4),
-                 0 0 30px rgba(218, 165, 32, 0.2);
+    text-shadow: none;
     font-style: italic;
     text-transform: uppercase;
     line-height: 1.1;
@@ -657,10 +736,16 @@
 
   .profile-card:hover h2 {
     color: var(--accent);
+    -webkit-text-stroke: 0px;
+    opacity: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4),
+                 0 0 30px rgba(218, 165, 32, 0.2);
   }
 
   :root.light-mode .profile-card:hover h2 {
     color: var(--accent);
+    -webkit-text-stroke: 0px;
+    opacity: 1;
   }
 
   /* Profile Image */
@@ -691,6 +776,7 @@
     object-position: center;
   }
 
+  /* Aquarium Icon Link */
   /* Location Card with Canvas */
   .map-card {
     position: relative;
@@ -875,8 +961,18 @@
     font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em;
     text-transform: uppercase; color: var(--accent);
     display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+    cursor: default; transition: all 0.3s ease;
   }
-  .section-label::before { content:''; flex: 0 0 30px; height: 1px; background: var(--accent); }
+  .section-label::before { 
+    content:''; flex: 0 0 30px; height: 1px; background: var(--accent);
+    transition: all 0.3s ease;
+  }
+  .section-label:hover {
+    gap: 20px;
+  }
+  .section-label:hover::before {
+    flex-basis: 50px;
+  }
   .section-title {
     font-family: var(--display);
     font-size: clamp(48px, 6vw, 84px);
@@ -940,51 +1036,6 @@
   }
   .service:hover .tag { border-color: rgba(232,255,71,0.3); color: var(--text); }
 
-  /* 3D Skills Globe */
-  #skills-globe-container {
-    width: 100%;
-    max-width: 600px;
-    height: 450px;
-    margin: 80px auto;
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    background: transparent;
-    border: none;
-  }
-
-  #skills-globe-canvas {
-    width: 100% !important;
-    height: 100% !important;
-    display: block;
-  }
-
-  .globe-ui {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--muted);
-    background: rgba(12, 12, 14, 0.8);
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid rgba(139, 157, 195, 0.15);
-    backdrop-filter: blur(10px);
-    min-height: 18px;
-  }
-
-  .globe-hint {
-    position: absolute;
-    top: 24px;
-    left: 24px;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-
   /* Projects */
   .projects { background: var(--surface); }
   .projects-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); }
@@ -1018,6 +1069,41 @@
   .project:hover .project-title { color: var(--accent); }
   .project-desc { font-size: 13px; color: var(--muted); }
   .project-stack { display: flex; gap: 8px; flex-wrap: wrap; }
+  
+  /* Game Project Cards */
+  .project-game {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  
+  .project-logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+  
+  .project-game:hover .project-logo-container {
+    transform: scale(1.05);
+  }
+  
+  .aquarium-logo-container {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .project-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 12px;
+  }
+  
   .project-tag {
     font-family: var(--display); font-size: 11px; font-weight: 500;
     letter-spacing: 0.05em; text-transform: uppercase;
@@ -1097,6 +1183,7 @@
     color: transparent;
   }
   .contact-sub { font-size: 17px; color: var(--muted); max-width: 440px; margin: 0 auto 48px; }
+  :root.light-mode .contact-sub { color: rgba(0, 0, 0, 0.6); }
   .contact-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
   .contact-link {
     font-family: var(--mono); font-size: 13px;
@@ -1528,6 +1615,10 @@
     <li><a href="#skills">Skills</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
+  <div class="nav-search">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search..." />
+    <div id="searchResults" class="search-results"></div>
+  </div>
   <div style="display: flex; gap: 12px; align-items: center;">
     <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
       <div class="theme-toggle-bg"></div>
@@ -1676,7 +1767,7 @@
   <div class="section-title reveal reveal-delay-1"><span id="typing-text">Computer Science Student.</span></div>
   <div class="about-grid">
     <div class="about-text reveal reveal-delay-1">
-      <p>I'm <strong>Huzaifa Ahmad Awan</strong>, a passionate CS student at Universität des Saarlandes specializing in AI, System Programming and Compiler Construction.</p>
+      <p>I'm <strong>Huzaifa Ahmad Awan</strong>, a passionate CS student at University of Saarland specializing in System Programming, Complexity Theory, Software Engineering and Compiler Construction.</p>
       <p>I don't just learn theory — I <strong>build and implement</strong> solutions. From low-level RISC-V system programming to advanced AI heuristics, I thrive on solving <strong>complex technical problems</strong>.</p>
       <p>Driven by curiosity, I explore the frontier of what's technically possible. I excel in competitive environments and <strong>deliver high-quality solutions under pressure</strong>.</p>
       <p>Currently based in <strong>Saarbrücken, Germany</strong>. Looking for internships and collaborations on challenging projects.</p>
@@ -1684,11 +1775,11 @@
     <div class="about-pillars reveal reveal-delay-2">
       <div class="pillar">
         <div class="pillar-title">System Programming</div>
-        <div class="pillar-text">Low-level systems expertise: RISC-V assembly, interrupt handling, process scheduling and memory management.</div>
+        <div class="pillar-text">Low-level systems expertise: RISC-V assembly, interrupt handling, process scheduling, memory management and more.</div>
       </div>
       <div class="pillar">
         <div class="pillar-title">Compiler Construction</div>
-        <div class="pillar-text">Full compiler pipeline: Lexing, parsing, semantic analysis and code generation. Deep understanding of language design.</div>
+        <div class="pillar-text">Full compiler pipeline: Lexing, parsing, semantic analysis, code generation and optimization. Deep understanding of language design.</div>
       </div>
       <div class="pillar">
         <div class="pillar-title">Automatic testing</div>
@@ -1709,7 +1800,6 @@
       <div class="edu-header-eyebrow">Learning Path</div>
       <div class="edu-header-title">Education</div>
     </div>
-    <div class="edu-header-count">02 entries</div>
   </div>
 
   <div class="edu-track" id="edu-track">
@@ -1773,7 +1863,44 @@
   <div class="section-label reveal">Portfolio</div>
   <div class="section-title reveal reveal-delay-1">Projects.</div>
   <div class="projects-list">
-    <a class="project reveal" href="javascript:void(0)" onclick="openCCompiler()">
+    <!-- Interactive Games Section -->
+    <a class="project project-game reveal" href="aquarium.html">
+      <div class="project-logo-container aquarium-logo-container">
+        <img src="assets/images/aquarium/fishIcon.png" alt="Aquarium Icon" class="project-logo-img">
+      </div>
+      <div class="project-info">
+        <div class="project-title">Visit My Aquarium!</div>
+        <div class="project-desc">Interactive web-based aquarium simulation featuring fish with realistic behavior including flocking, obstacle avoidance and predator-prey dynamics. Implements physics-based movement, collision detection and environmental interactions with multiple species.</div>
+        <div class="project-stack" style="margin-top:10px;">
+          <span class="project-tag">Html</span><span class="project-tag">JavaScript</span><span class="project-tag">Interactive</span>
+        </div>
+      </div>
+    </a>
+    <a class="project project-game reveal reveal-delay-1" href="assets/projects/2048/game-2048.html">
+      <div class="project-logo-container">
+        <img src="assets/images/2048/logo.png" alt="2048 Logo" class="project-logo-img">
+      </div>
+      <div class="project-info">
+        <div class="project-title">2048 Game</div>
+        <div class="project-desc">Implementation of the popular sliding tile game 2048 in Java. The simulator handles tile movement, merging logic and random tile spawning on a configurable grid. Developed comprehensive automated tests to ensure correctness. Enhanced proficiency in object- oriented programming, algorithmic logic and testing strategies through this project.</div>
+        <div class="project-stack" style="margin-top:10px;">
+          <span class="project-tag">Java</span><span class="project-tag">Game Dev</span><span class="project-tag">Algorithms</span>
+        </div>
+      </div>
+    </a>
+    <a class="project project-game reveal reveal-delay-2" href="rps-game.html">
+      <div class="project-logo-container">
+        <img src="assets/images/2048/rps_logo.png" alt="RPS Logo" class="project-logo-img">
+      </div>
+      <div class="project-info">
+        <div class="project-title">Rock Paper Scissors</div>
+        <div class="project-desc">MIPS assembly implementation featuring computer vs computer gameplay with pseudorandom number generation, uniform move sampling and programmatic winner determination. Enhanced understanding of low-level programming and algorithmic problem-solving.</div>
+        <div class="project-stack" style="margin-top:10px;">
+          <span class="project-tag">MIPS</span><span class="project-tag">Assembly</span><span class="project-tag">Algorithms</span>
+        </div>
+      </div>
+    </a>
+    <a class="project reveal reveal-delay-3" href="javascript:void(0)" onclick="openCCompiler()">
       <div class="project-num">01</div>
       <div class="project-info">
         <div class="project-title">C Compiler Implementation</div>
@@ -1793,18 +1920,8 @@
         </div>
       </div>
     </a>
-    <a class="project reveal reveal-delay-2" href="javascript:void(0)" onclick="openRPSGame()">
-      <div class="project-num">03</div>
-      <div class="project-info">
-        <div class="project-title">Rock Paper Scissors Game</div>
-        <div class="project-desc">MIPS assembly implementation featuring computer vs computer gameplay with pseudorandom number generation, uniform move sampling and programmatic winner determination. Enhanced understanding of low-level programming and algorithmic problem-solving.</div>
-        <div class="project-stack" style="margin-top:10px;">
-          <span class="project-tag">MIPS</span><span class="project-tag">Assembly</span><span class="project-tag">Algorithms</span>
-        </div>
-      </div>
-    </a>
     <a class="project reveal reveal-delay-3" href="javascript:void(0)" onclick="openEdgeDetector()">
-      <div class="project-num">04</div>
+      <div class="project-num">03</div>
       <div class="project-info">
         <div class="project-title">Edge Detection Tool</div>
         <div class="project-desc">Implementation of edge detection algorithm in C to identify boundaries in images. The program reads an image, applies Gaussian blurring, calculates discrete derivatives with Sobel kernels, computes gradient magnitudes and outputs edges as a black-and-white image. Strengthened skills in image processing, convolution operations and algorithmic implementation.</div>
@@ -1814,7 +1931,7 @@
       </div>
     </a>
     <a class="project reveal reveal-delay-1" href="javascript:void(0)" onclick="openPageRank()">
-      <div class="project-num">05</div>
+      <div class="project-num">04</div>
       <div class="project-info">
         <div class="project-title">PageRank Algorithm</div>
         <div class="project-desc">Implementation of the PageRank algorithm to evaluate the importance of vertices in directed graphs, representing websites and hyperlinks. The program simulates a random surfer model and uses Markov chain computations to assign scores, reflecting the likelihood of a user visiting each website. Strengthened skills in graph theory, probabilistic modeling and numerical algorithms in C.</div>
@@ -1823,38 +1940,29 @@
         </div>
       </div>
     </a>
-    <a class="project reveal reveal-delay-2" href="javascript:void(0)" onclick="open2048()">
-      <div class="project-num">06</div>
-      <div class="project-info">
-        <div class="project-title">2048 Game</div>
-        <div class="project-desc">Implementation of the popular sliding tile game 2048 in Java. The simulator handles tile movement, merging logic and random tile spawning on a configurable grid. Developed comprehensive automated tests to ensure correctness. Enhanced proficiency in object-oriented programming, algorithmic logic and testing strategies through this project.</div>
-        <div class="project-stack" style="margin-top:10px;">
-          <span class="project-tag">Java</span><span class="project-tag">Game Development</span><span class="project-tag">Algorithms</span>
-        </div>
-      </div>
-    </a>
+
     <a class="project reveal reveal-delay-3" href="javascript:void(0)" onclick="openRoutePlanner()">
-      <div class="project-num">07</div>
+      <div class="project-num">05</div>
       <div class="project-info">
         <div class="project-title">Route Planner</div>
-        <div class="project-desc">Route planning application implemented in Java that reads map data and constructs a navigation graph to compute shortest paths between coordinates including optional intermediate stops. Key components include graph construction and simplification algorithms, coordinate-to-node mapping using acceleration structures for efficient lookup and Dijkstra's pathfinding for optimal route computation. Enhanced proficiency in graph theory, algorithm optimization and geospatial computation with real-world navigation applications.</div>
+        <div class="project-desc">Route planning application implemented in Java that reads map data and computes shortest paths between coordinates. Key components include graph construction and simplification algorithms, coordinate-to-node mapping using acceleration structures for efficient lookup and Dijkstra's pathfinding for optimal route computation. Enhanced proficiency in graph theory, algorithm optimization and geospatial computation with real-world navigation applications.</div>
         <div class="project-stack" style="margin-top:10px;">
           <span class="project-tag">Java</span><span class="project-tag">Graph Theory</span><span class="project-tag">Algorithms</span>
         </div>
       </div>
     </a>
     <a class="project reveal reveal-delay-4" href="javascript:void(0)" onclick="openRiscVSimulator()">
-      <div class="project-num">08</div>
+      <div class="project-num">06</div>
       <div class="project-info">
         <div class="project-title">RISC-V Processor</div>
-        <div class="project-desc">Bit-manipulation circuits and RISC-V processor extension project implemented in Scala using the Chisel hardware description language. Involved designing and testing custom hardware modules with a focus on expanding the processor's instruction set and extending core functionality. Developed reusable hardware components for specific operations while maintaining compatibility with the RV32I instruction set. This project strengthened skills in hardware description, digital logic design, processor architecture, RISC-V simulation, and practical Chisel/Scala for hardware development.</div>
+        <div class="project-desc">Bit-manipulation circuits and RISC-V processor extension project implemented in Scala using the Chisel hardware description language. Involved designing and testing custom hardware modules with a focus on expanding the processor's instruction set and extending core functionality. Developed reusable hardware components for specific operations while maintaining compatibility with the RV32I instruction set. This project strengthened skills in hardware description, digital logic design, processor architecture, RISC-V simulation and practical Chisel/Scala for hardware development.</div>
         <div class="project-stack" style="margin-top:10px;">
           <span class="project-tag">Scala</span><span class="project-tag">Chisel</span><span class="project-tag">RISC-V</span>
         </div>
       </div>
     </a>
     <a class="project reveal reveal-delay-5" href="javascript:void(0)" onclick="openMiniOS()">
-      <div class="project-num">09</div>
+      <div class="project-num">07</div>
       <div class="project-info">
         <div class="project-title">Mini-OS</div>
         <div class="project-desc">Mini Operating System implementation in RISC-V assembly for system architecture and design. Features process scheduling with round-robin and time-slice preemption, comprehensive exception handling with mcause-based dispatch, system call support (print_char, print_string, exit) and efficient context switching with register save/restore. Implemented process state management and memory layout for multi-process execution. Enhanced skills in low-level OS design, assembly programming, interrupt handling and process management on RISC-V architecture.</div>
@@ -1863,27 +1971,7 @@
         </div>
       </div>
     </a>
-    <a class="project reveal reveal-delay-6" href="javascript:void(0)" onclick="openSocialNetwork()">
-      <div class="project-num">10</div>
-      <div class="project-info">
-        <div class="project-title">Fame Profiles Social Network</div>
-        <div class="project-desc">Django-based social network platform with comprehensive user-generated content management and community features. Implements user follow relationships, post creation with citations and replies, expertise area classification and automatic content validation. Features truth rating system for content reliability assessment by community members and admin controls for content moderation. Core models include SocialNetworkUsers with follow/community relationships, Posts with expertise tagging, and TruthRatings for community-driven fact-checking. Enhanced skills in web application architecture, database design, Django ORM, content classification systems, and full-stack web development with Python/Django.</div>
-        <div class="project-stack" style="margin-top:10px;">
-          <span class="project-tag">Django</span><span class="project-tag">Python</span><span class="project-tag">Web Development</span>
-        </div>
-      </div>
-    </a>
-    <a class="project reveal reveal-delay-1" href="javascript:void(0)" onclick="openAquarium()">
-      <div class="project-num">11</div>
-      <div class="project-info">
-        <div class="project-title">Aquarium Simulation</div>
-        <div class="project-desc">Interactive web-based aquarium simulation featuring fish with realistic behavior including flocking, obstacle avoidance, and predator-prey dynamics. Implements physics-based movement, collision detection, and environmental interactions with multiple species and customizable parameters.</div>
-        <div class="project-stack" style="margin-top:10px;">
-          <span class="project-tag">JavaScript</span><span class="project-tag">HTML5 Canvas</span><span class="project-tag">Simulation</span>
-        </div>
-      </div>
-    </a>
-    <a class="project reveal reveal-delay-2" href="https://github.com/HuzAwan21" target="_blank" style="align-items: center; justify-content: center; min-height: 300px;">
+    <a class="project reveal reveal-delay-2" href="https://github.com/HuzAwan21" target="_blank" style="align-items: center; justify-content: center; grid-column: span 2;">
       <div style="text-align: center;">
         <div class="project-num" style="font-size: 48px; color: var(--accent); margin-bottom: 16px;">→</div>
         <div class="project-title" style="font-size: 24px; margin-bottom: 12px;">Visit My GitHub</div>
@@ -1891,19 +1979,6 @@
       </div>
     </a>
   </div>
-</section>
-
-<!-- SKILLS SECTION -->
-<section style="padding:120px 48px; background: var(--bg);" id="skills">
-  <div class="section-label reveal">Expertise</div>
-  <div class="section-title reveal reveal-delay-1">Technical Skills.</div>
-  
-  <div id="skills-globe-container">
-    <canvas id="skills-globe-canvas"></canvas>
-  </div>
-</section>
-
-<!-- CONTACT -->
 </section>
 
 <!-- CONTACT -->
@@ -2188,6 +2263,113 @@ window.addEventListener('scroll',()=>{
   nav.style.background=window.scrollY>60?(isDark?'rgba(12,12,14,0.95)':'rgba(248,249,250,0.95)'):(isDark?'rgba(12,12,14,0.7)':'rgba(248,249,250,0.7)');
 });
 
+// Search Bar Functionality
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+const searchableContent = [
+  // Sections
+  { title: 'About Me', label: 'Section', href: '#about' },
+  { title: 'Projects', label: 'Section', href: '#projects' },
+  { title: 'Contact', label: 'Section', href: '#contact' },
+  { title: 'Education', label: 'Section', href: '#education' },
+  
+  // Projects
+  { title: 'C Compiler Implementation', label: 'Project', href: '#projects' },
+  { title: 'AI Planning with Heuristics', label: 'Project', href: '#projects' },
+  { title: 'Rock Paper Scissors Game', label: 'Project', href: '#projects' },
+  { title: 'Edge Detection Tool', label: 'Project', href: '#projects' },
+  { title: 'PageRank Algorithm', label: 'Project', href: '#projects' },
+  { title: '2048 Game', label: 'Project', href: '#projects' },
+  { title: 'Route Planner', label: 'Project', href: '#projects' },
+  { title: 'RISC-V Processor', label: 'Project', href: '#projects' },
+  { title: 'Mini-OS', label: 'Project', href: '#projects' },
+  
+  // Education
+  { title: 'B.Sc. Computer Science', label: 'Education', href: '#education' },
+  { title: 'University of Saarland', label: 'Education', href: '#education' },
+  { title: 'Abitur', label: 'Education', href: '#education' },
+  { title: 'Albert-Einstein-Gymnasium', label: 'Education', href: '#education' },
+  
+  // Skills & Expertise
+  { title: 'System Programming', label: 'Skill', href: '#about' },
+  { title: 'Compiler Construction', label: 'Skill', href: '#about' },
+  { title: 'Automatic Testing', label: 'Skill', href: '#about' },
+  { title: 'Problem Solving', label: 'Skill', href: '#about' },
+  { title: 'Software Engineering', label: 'Skill', href: '#education' },
+  { title: 'Algorithms & Data Structures', label: 'Skill', href: '#about' },
+  { title: 'Artificial Intelligence', label: 'Skill', href: '#about' },
+  
+  // Technologies & Languages
+  { title: 'C', label: 'Language', href: '#projects' },
+  { title: 'C++', label: 'Language', href: '#projects' },
+  { title: 'Java', label: 'Language', href: '#projects' },
+  { title: 'Python', label: 'Language', href: '#projects' },
+  { title: 'Kotlin', label: 'Language', href: '#projects' },
+  { title: 'Scala', label: 'Language', href: '#projects' },
+  { title: 'OCaml', label: 'Language', href: '#projects' },
+  { title: 'JavaScript', label: 'Language', href: '#projects' },
+  { title: 'HTML', label: 'Language', href: '#projects' },
+  { title: 'CSS', label: 'Language', href: '#projects' },
+  { title: 'RISC-V Assembly', label: 'Language', href: '#projects' },
+  { title: 'MIPS Assembly', label: 'Language', href: '#projects' },
+  
+  // Tools & Frameworks
+  { title: 'Docker', label: 'Tool', href: '#projects' },
+  { title: 'Git', label: 'Tool', href: '#projects' },
+  { title: 'GitHub', label: 'Tool', href: '#projects' },
+  { title: 'Django', label: 'Framework', href: '#projects' },
+  { title: 'LLVM', label: 'Tool', href: '#projects' },
+  { title: 'SQL', label: 'Database', href: '#projects' },
+  { title: 'Chisel', label: 'Tool', href: '#projects' },
+  { title: 'Overleaf', label: 'Tool', href: '#projects' },
+  
+  // Contact Information
+  { title: 'Email: awan2104.huzaifaahmad@gmail.com', label: 'Contact', href: '#contact' },
+  { title: '+49 1522 9947701', label: 'Phone', href: '#contact' },
+  { title: 'GitHub: HuzAwan21', label: 'Social', href: '#contact' },
+  { title: 'LinkedIn', label: 'Social', href: '#contact' },
+  { title: 'Get In Touch', label: 'Action', href: '#contact' },
+  { title: 'Resume', label: 'Document', href: './assets/documents/resume.pdf' },
+];
+
+searchInput.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase().trim();
+  
+  if (query.length === 0) {
+    searchResults.classList.remove('active');
+    searchResults.innerHTML = '';
+    return;
+  }
+  
+  const filtered = searchableContent.filter(item =>
+    item.title.toLowerCase().includes(query) ||
+    item.label.toLowerCase().includes(query)
+  );
+  
+  if (filtered.length === 0) {
+    searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+    searchResults.classList.add('active');
+    return;
+  }
+  
+  searchResults.innerHTML = filtered.map(item => `
+    <a href="${item.href}" class="search-result-item" onclick="document.getElementById('searchInput').value = ''; document.getElementById('searchResults').classList.remove('active');">
+      <div class="search-result-label">${item.label}</div>
+      <div class="search-result-title">${item.title}</div>
+    </a>
+  `).join('');
+  
+  searchResults.classList.add('active');
+});
+
+// Close search results when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.nav-search')) {
+    searchResults.classList.remove('active');
+  }
+});
+
 // Theme toggle
 const themeToggle = document.getElementById('themeToggle');
 const htmlElement = document.documentElement;
@@ -2313,280 +2495,6 @@ function openAquarium() {
   window.open('aquarium.html', 'Aquarium', 'width=1400,height=900,resizable=yes,scrollbars=yes');
 }
 
-// 3D Interactive Skills Globe
-function initSkillsGlobe() {
-  const canvas = document.getElementById('skills-globe-canvas');
-  if (!canvas) return;
-
-  // Initialize Three.js scene
-  const scene = new THREE.Scene();
-  const width = canvas.clientWidth;
-  const height = canvas.clientHeight;
-  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setClearColor(0x000000, 0);
-
-  camera.position.z = 2.5;
-
-  // Create smooth sphere geometry
-  const globeGeometry = new THREE.SphereGeometry(1, 64, 64);
-  
-  // Create transparent material with geometric pattern
-  const globeMaterial = new THREE.MeshPhongMaterial({
-    color: 0x8b9dc3,
-    transparent: true,
-    opacity: 0.1,
-    shininess: 100,
-    wireframe: false
-  });
-  const globe = new THREE.Mesh(globeGeometry, globeMaterial);
-  scene.add(globe);
-
-  // Add wireframe overlay for geometric pattern
-  const wireframeGeometry = new THREE.SphereGeometry(1, 64, 64);
-  const wireframeMaterial = new THREE.LineBasicMaterial({
-    color: 0x8b9dc3,
-    transparent: true,
-    opacity: 0.4,
-    linewidth: 1
-  });
-  const wireframe = new THREE.LineSegments(
-    new THREE.WireframeGeometry(wireframeGeometry),
-    wireframeMaterial
-  );
-  wireframe.scale.set(1.001, 1.001, 1.001);
-  scene.add(wireframe);
-
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-  scene.add(ambientLight);
-
-  const directionalLight = new THREE.DirectionalLight(0xcdd6f4, 0.5);
-  directionalLight.position.set(3, 2, 4);
-  scene.add(directionalLight);
-
-  // Skill data with SVG logos
-  const skills = [
-    { name: 'C', icon: 'assets/images/portfolio/logos/C.png', lat: 45, lng: 0 },
-    { name: 'C++', icon: 'assets/images/portfolio/logos/C++.png', lat: 30, lng: 45 },
-    { name: 'Java', icon: 'assets/images/portfolio/logos/java.png', lat: 20, lng: 90 },
-    { name: 'Excel', icon: 'assets/images/portfolio/logos/exel.png', lat: 10, lng: 135 },
-    { name: 'GitHub', icon: 'assets/images/portfolio/logos/github.png', lat: -30, lng: -120 },
-    { name: 'Git', icon: 'assets/images/portfolio/logos/git.png', lat: -45, lng: -60 },
-    { name: 'Docker', icon: 'assets/images/portfolio/logos/docker.png', lat: -60, lng: 30 },
-    { name: 'Python', icon: 'assets/images/portfolio/logos/python.png', lat: 0, lng: 60 },
-    { name: 'Scala', icon: 'assets/images/portfolio/logos/scala.png', lat: 50, lng: 100 },
-    { name: 'Kotlin', icon: 'assets/images/portfolio/logos/kotlin.png', lat: 25, lng: -90 },
-    { name: 'HTML', icon: 'assets/images/portfolio/logos/html.png', lat: -20, lng: 120 },
-    { name: 'RISC-V', icon: 'assets/images/portfolio/logos/risc-v.png', lat: -50, lng: 60 },
-    { name: 'SQL', icon: 'assets/images/portfolio/logos/sql.png', lat: 60, lng: 30 },
-    { name: 'JavaScript', icon: 'assets/images/portfolio/logos/javascript.png', lat: 40, lng: -45 },
-    { name: 'CSS', icon: 'assets/images/portfolio/logos/css.png', lat: -10, lng: -60 }
-  ];
-
-  // Load textures using raw image loading for better compatibility
-  const logoTextures = {};
-  
-  // Create skill markers group
-  const skillGroup = new THREE.Group();
-  scene.add(skillGroup);
-  
-  console.log('Starting to load textures...');
-  
-  // Load images directly and convert to textures
-  let loadedCount = 0;
-  skills.forEach((skill, index) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    
-    img.onload = function() {
-      try {
-        // Create texture using THREE.TextureLoader approach
-        const texture = new THREE.Texture(img);
-        texture.magFilter = THREE.LinearFilter;
-        texture.minFilter = THREE.LinearFilter;
-        texture.needsUpdate = true;
-        logoTextures[skill.name] = texture;
-        loadedCount++;
-        console.log('✓ Loaded:', skill.name, `(${loadedCount}/${skills.length})`);
-        
-        // Create sprite immediately when texture loads
-        createSprite(skill, texture);
-      } catch (err) {
-        console.error('Error processing texture:', skill.name, err);
-      }
-    };
-    
-    img.onerror = function() {
-      console.error('✗ Failed to load:', skill.icon);
-      loadedCount++;
-    };
-    
-    img.src = skill.icon;
-  });
-  
-  function createSprite(skill, texture) {
-    const phi = (90 - skill.lat) * Math.PI / 180;
-    const theta = skill.lng * Math.PI / 180;
-
-    const x = Math.sin(phi) * Math.cos(theta);
-    const y = Math.cos(phi);
-    const z = Math.sin(phi) * Math.sin(theta);
-
-    const material = new THREE.SpriteMaterial({ 
-      map: texture,
-      transparent: true,
-      opacity: 1,
-      sizeAttenuation: true
-    });
-    
-    const sprite = new THREE.Sprite(material);
-    // Make sprites larger for visibility - 0.5 instead of 0.3
-    sprite.scale.set(0.5, 0.5, 1);
-    sprite.position.set(x * 1.1, y * 1.1, z * 1.1);
-    sprite.userData = { skill, originalScale: new THREE.Vector3(0.5, 0.5, 1) };
-    
-    skillGroup.add(sprite);
-    window.globeSkillMarkers = window.globeSkillMarkers || [];
-    window.globeSkillMarkers.push(sprite);
-    
-    console.log('✓ Sprite created:', skill.name, 'at', [x * 1.1, y * 1.1, z * 1.1]);
-  }
-
-  // Mouse interaction
-  let isDragging = false;
-  let previousMousePosition = { x: 0, y: 0 };
-  const rotation = { x: 0, y: 0 };
-
-  canvas.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    previousMousePosition = { x: e.clientX, y: e.clientY };
-  });
-
-  canvas.addEventListener('mousemove', (e) => {
-    if (!isDragging) {
-      // Hover detection for visual feedback
-      const rect = canvas.getBoundingClientRect();
-      const mouse = new THREE.Vector2(
-        ((e.clientX - rect.left) / width) * 2 - 1,
-        -((e.clientY - rect.top) / height) * 2 + 1
-      );
-      
-      const raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, camera);
-      const skillMarkers = window.globeSkillMarkers || [];
-      const intersects = raycaster.intersectObjects(skillMarkers);
-
-      skillMarkers.forEach(marker => {
-        if (intersects.length > 0 && intersects[0].object === marker) {
-          marker.scale.set(0.39, 0.39, 1);
-          marker.material.opacity = 1;
-          canvas.style.cursor = 'pointer';
-        } else {
-          marker.scale.copy(marker.userData.originalScale);
-          marker.material.opacity = 1;
-        }
-      });
-
-      if (intersects.length === 0) {
-        canvas.style.cursor = 'grab';
-      }
-      return;
-    }
-
-    const deltaX = e.clientX - previousMousePosition.x;
-    const deltaY = e.clientY - previousMousePosition.y;
-
-    rotation.y += deltaX * 0.003;
-    rotation.x += deltaY * 0.003;
-
-    globe.rotation.y = rotation.y;
-    globe.rotation.x = rotation.x;
-    wireframe.rotation.y = rotation.y;
-    wireframe.rotation.x = rotation.x;
-    skillGroup.rotation.y = rotation.y;
-    skillGroup.rotation.x = rotation.x;
-
-    previousMousePosition = { x: e.clientX, y: e.clientY };
-    canvas.style.cursor = 'grabbing';
-  });
-
-  canvas.addEventListener('mouseup', () => {
-    isDragging = false;
-    canvas.style.cursor = 'grab';
-  });
-
-  canvas.addEventListener('mouseleave', () => {
-    isDragging = false;
-    canvas.style.cursor = 'default';
-  });
-
-  // Touch support for mobile
-  canvas.addEventListener('touchstart', (e) => {
-    isDragging = true;
-    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  });
-
-  canvas.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-
-    const deltaX = e.touches[0].clientX - previousMousePosition.x;
-    const deltaY = e.touches[0].clientY - previousMousePosition.y;
-
-    rotation.y += deltaX * 0.005;
-    rotation.x += deltaY * 0.005;
-
-    globe.rotation.y = rotation.y;
-    globe.rotation.x = rotation.x;
-    wireframe.rotation.y = rotation.y;
-    wireframe.rotation.x = rotation.x;
-    skillGroup.rotation.y = rotation.y;
-    skillGroup.rotation.x = rotation.x;
-
-    previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  });
-
-  canvas.addEventListener('touchend', () => {
-    isDragging = false;
-  });
-
-  // Animation loop
-  function animate() {
-    requestAnimationFrame(animate);
-
-    // Gentle auto-rotation when not dragging
-    if (!isDragging) {
-      rotation.y += 0.0001;
-      globe.rotation.y = rotation.y;
-      wireframe.rotation.y = rotation.y;
-      skillGroup.rotation.y = rotation.y;
-      skillGroup.rotation.x = rotation.x;
-    }
-
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  // Handle window resize
-  window.addEventListener('resize', () => {
-    const newWidth = canvas.clientWidth;
-    const newHeight = canvas.clientHeight;
-    camera.aspect = newWidth / newHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(newWidth, newHeight);
-  });
-}
-
-// Initialize globe
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initSkillsGlobe);
-} else {
-  initSkillsGlobe();
-}
 </script>
 </body>
 </html>
