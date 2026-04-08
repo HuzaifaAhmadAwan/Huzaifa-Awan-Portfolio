@@ -6,23 +6,35 @@
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/5.jpeg"
-    },
-    {
-      "type": "image",
       "src": "Pictures/carousel/6.jpeg"
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/10.jpeg"
-    },
-    {
-      "type": "video",
-      "src": "Pictures/carousel/billard.mp4"
+      "src": "Pictures/carousel/14.jpeg"
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/Pic1.jpeg"
+      "src": "Pictures/carousel/15.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/16.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/17.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/18.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/19.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/20.jpeg"
     },
     {
       "type": "image",
@@ -37,6 +49,6 @@
       "src": "Pictures/carousel/Pic13.jpeg"
     }
   ],
-  "generated": "2026-04-08T19:43:20.584Z",
-  "totalItems": 9
+  "generated": "2026-04-08T22:16:48.373Z",
+  "totalItems": 12
 }
