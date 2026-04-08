@@ -1967,6 +1967,106 @@
     box-shadow: 0 0 12px rgba(232, 255, 71, 0.4), inset 0 0 8px rgba(232, 255, 71, 0.1);
   }
 
+  /* RADAR CHART SECTION */
+@keyframes sweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@keyframes trail-fade {
+  0%   { opacity: 0.18; }
+  100% { opacity: 0; }
+}
+#radar-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  margin: 1.2rem auto 0;
+  aspect-ratio: 1;
+}
+#radar-canvas { display: block; width: 100%; height: 100%; }
+#sweep-layer {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+#sweep-arm {
+  position: absolute;
+  width: 50%; height: 50%;
+  top: 0; left: 50%;
+  transform-origin: 0% 100%;
+  animation: sweep 5s linear infinite;
+}
+#sweep-arm::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 2px; height: 100%;
+  background: linear-gradient(to top, #1D9E75, transparent);
+  transform-origin: bottom center;
+  border-radius: 1px;
+}
+.trail {
+  position: absolute;
+  width: 50%; height: 50%;
+  top: 0; left: 50%;
+  transform-origin: 0% 100%;
+  pointer-events: none;
+}
+.trail::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 2px; height: 100%;
+  background: linear-gradient(to top, #1D9E75aa, transparent);
+  transform-origin: bottom center;
+  border-radius: 1px;
+  animation: trail-fade 0.6s linear forwards;
+}
+#skill-pill {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface2);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 20;
+}
+#skill-pill.visible { opacity: 1; }
+#legend-wrap {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 8px 16px; margin-top: 1rem;
+  font-family: var(--display);
+  font-size: 12px; color: var(--muted);
+}
+.leg-item { display: flex; align-items: center; gap: 5px; }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .radar-section {
+    padding: 100px 40px;
+    background: transparent;
+  }
+
+  @media (max-width: 700px) {
+    #radar-wrap {
+      max-width: 400px;
+    }
+
+    .radar-section { padding: 60px 20px 80px; }
+  }
+
   @media (max-width: 700px) {
     #education { padding: 60px 20px 80px; }
     #experience { padding: 60px 20px 80px; }
@@ -2018,6 +2118,7 @@
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
   <div class="nav-search">
@@ -2364,6 +2465,21 @@
     <div class="stack-indicators" id="stackIndicators"></div>
     <p class="stack-hint">Drag • Scroll • Click Cards</p>
   </div>
+</section>
+
+<!-- SKILLS RADAR -->
+<section class="radar-section" id="skills">
+  <div class="section-label reveal">Expertise</div>
+  <div class="section-title reveal reveal-delay-1">Technical Skills.</div>
+  
+  <div id="radar-wrap">
+    <canvas id="radar-canvas"></canvas>
+    <div id="sweep-layer">
+      <div id="sweep-arm"></div>
+    </div>
+    <div id="skill-pill"></div>
+  </div>
+  <div id="legend-wrap"></div>
 </section>
 
 <!-- CONTACT -->
@@ -3333,8 +3449,232 @@ function updateStackDisplay() {
   });
 }
 
+// =========================================
+// ANIMATED RADAR CHART
+// =========================================
+
+const CATS = {
+  frontend: "#378ADD",
+  backend:  "#1D9E75",
+  language: "#7F77DD",
+  data:     "#BA7517",
+  devops:   "#D85A30",
+  design:   "#D4537E",
+};
+
+const SKILLS_RADAR = [
+  { label:"C",           level:0.90, cat:"language", icon:"⬡" },
+  { label:"C++",         level:0.88, cat:"language", icon:"⬡" },
+  { label:"Java",        level:0.85, cat:"language", icon:"⬡" },
+  { label:"Python",      level:0.82, cat:"language", icon:"⬡" },
+  { label:"OCaml",       level:0.78, cat:"language", icon:"⬡" },
+  { label:"Kotlin",      level:0.72, cat:"language", icon:"⬡" },
+  { label:"MIPS",        level:0.80, cat:"language", icon:"⬡" },
+  { label:"RISC-V",      level:0.82, cat:"language", icon:"⬡" },
+  { label:"Html",        level:0.85, cat:"frontend", icon:"⬡" },
+  { label:"Docker",      level:0.80, cat:"devops",   icon:"⬡" },
+  { label:"Git",         level:0.90, cat:"devops",   icon:"⬡" },
+  { label:"LLVM",        level:0.75, cat:"devops",   icon:"⬡" },
+  { label:"Node.js",     level:0.80, cat:"backend",  icon:"⬡" },
+  { label:"SQL",         level:0.85, cat:"data",     icon:"⬡" },
+];
+
+const RINGS = [0.25, 0.5, 0.75, 1.0];
+const RING_LABELS = ["beginner","intermediate","proficient","expert"];
+
+function initRadarChart() {
+  const canvas = document.getElementById('radar-canvas');
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('radar-wrap');
+  const sweepArm = document.getElementById('sweep-arm');
+  const pill = document.getElementById('skill-pill');
+
+  let W, CX, CY, R;
+  let glows = {};
+
+  function resize() {
+    const size = wrap.clientWidth;
+    canvas.width = size * devicePixelRatio;
+    canvas.height = size * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    W = size; CX = size / 2; CY = size / 2;
+    R = size * 0.38;
+    draw();
+  }
+
+  const N = SKILLS_RADAR.length;
+  function angle(i) { return (Math.PI * 2 * i / N) - Math.PI / 2; }
+
+  function skillPos(i) {
+    const a = angle(i);
+    const r = SKILLS_RADAR[i].level * R;
+    return { x: CX + Math.cos(a) * r, y: CY + Math.sin(a) * r };
+  }
+
+  function draw() {
+    const size = W;
+    ctx.clearRect(0, 0, size, size);
+    const dark = !document.documentElement.classList.contains('light-mode');
+    const gridColor  = dark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.25)';
+    const axisColor  = dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.35)';
+    const textColor  = dark ? '#888780' : '#888780';
+
+    RINGS.forEach((pct, ri) => {
+      ctx.beginPath();
+      ctx.arc(CX, CY, R * pct, 0, Math.PI * 2);
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = ri === 3 ? 0.8 : 0.5;
+      ctx.stroke();
+    });
+
+    for (let i = 0; i < N; i++) {
+      const a = angle(i);
+      ctx.beginPath();
+      ctx.moveTo(CX, CY);
+      ctx.lineTo(CX + Math.cos(a) * R, CY + Math.sin(a) * R);
+      ctx.strokeStyle = axisColor;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const p = skillPos(i);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = dark ? 'rgba(55,138,221,0.08)' : 'rgba(29,158,117,0.09)';
+    ctx.fill();
+    ctx.strokeStyle = dark ? 'rgba(55,138,221,0.55)' : 'rgba(29,158,117,0.28)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    for (let i = 0; i < N; i++) {
+      const p = skillPos(i);
+      const s = SKILLS_RADAR[i];
+      const color = CATS[s.cat];
+      const g = glows[i] || 0;
+
+      if (g > 0) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 14 * g + 5, 0, Math.PI * 2);
+        ctx.fillStyle = color + Math.round(g * 40).toString(16).padStart(2,'0');
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 5 + g * 3, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 5 + g * 3, 0, Math.PI * 2);
+      ctx.strokeStyle = dark ? '#1e1e1c' : '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      const a = angle(i);
+      const labelR = R + 24 + g * 4;
+      const lx = CX + Math.cos(a) * labelR;
+      const ly = CY + Math.sin(a) * labelR;
+
+      const anchor = Math.abs(Math.cos(a)) < 0.15 ? 'center' : (Math.cos(a) > 0 ? 'left' : 'right');
+      ctx.font = `${g > 0.3 ? 500 : 400} ${g > 0.3 ? 12 : 11}px var(--display, sans-serif)`;
+      ctx.fillStyle = g > 0.3
+        ? (dark ? '#e8e6df' : '#1a1a18')
+        : textColor;
+      ctx.textAlign = anchor;
+      ctx.textBaseline = 'middle';
+      ctx.fillText(s.label, lx, ly);
+    }
+  }
+
+  const glowTargets = {};
+  let animFrame;
+
+  function animateGlows() {
+    let dirty = false;
+    for (let i = 0; i < N; i++) {
+      const target = glowTargets[i] ?? 0;
+      const cur = glows[i] ?? 0;
+      const next = cur + (target - cur) * 0.12;
+      if (Math.abs(next - cur) > 0.001) {
+        glows[i] = next;
+        dirty = true;
+      } else {
+        glows[i] = target;
+      }
+    }
+    if (dirty) draw();
+    animFrame = requestAnimationFrame(animateGlows);
+  }
+  animateGlows();
+
+  let pillTimeout;
+  function triggerSkill(i) {
+    for (let j = 0; j < N; j++) glowTargets[j] = 0;
+    glowTargets[i] = 1;
+    const s = SKILLS_RADAR[i];
+    pill.textContent = `${s.label}  ${Math.round(s.level * 100)}%`;
+    pill.className = 'visible';
+    clearTimeout(pillTimeout);
+    pillTimeout = setTimeout(() => { pill.className = ''; }, 1200);
+  }
+
+  function getSweepAngle() {
+    const style = getComputedStyle(sweepArm);
+    const matrix = new DOMMatrix(style.transform);
+    const a = Math.atan2(matrix.b, matrix.a);
+    return ((a * 180 / Math.PI) % 360 + 360) % 360;
+  }
+
+  let lastHitIdx = -1;
+
+  function checkSweepHit() {
+    if (!R) return requestAnimationFrame(checkSweepHit);
+    const sweepDeg = getSweepAngle();
+    const sweepRad = (sweepDeg - 90 + 360) % 360;
+
+    let closestIdx = -1, closestDist = Infinity;
+    for (let i = 0; i < N; i++) {
+      const skillDeg = ((angle(i) * 180 / Math.PI) + 90 + 360) % 360;
+      let dist = Math.abs(sweepRad - skillDeg);
+      if (dist > 180) dist = 360 - dist;
+      if (dist < closestDist) { closestDist = dist; closestIdx = i; }
+    }
+
+    if (closestIdx !== -1 && closestDist < 7 && closestIdx !== lastHitIdx) {
+      lastHitIdx = closestIdx;
+      triggerSkill(closestIdx);
+    }
+    if (closestDist > 15) lastHitIdx = -1;
+
+    requestAnimationFrame(checkSweepHit);
+  }
+  checkSweepHit();
+
+  const legWrap = document.getElementById('legend-wrap');
+  Object.entries(CATS).forEach(([k, color]) => {
+    const el = document.createElement('div');
+    el.className = 'leg-item';
+    el.innerHTML = `<span class="leg-dot" style="background:${color}"></span><span>${k}</span>`;
+    legWrap.appendChild(el);
+  });
+
+  window.addEventListener('resize', () => {
+    ctx.setTransform(1,0,0,1,0,0);
+    resize();
+  });
+  resize();
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw);
+}
+
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', initCardStack);
+document.addEventListener('DOMContentLoaded', () => {
+  initCardStack();
+  initRadarChart();
+});
 
 </script>
 </body>

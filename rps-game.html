@@ -253,14 +253,12 @@
     <div class="result" id="result"></div>
 
     <div class="button-group">
-      <button class="play-btn" id="playBtn" disabled>PLAY</button>
       <button class="reset-btn" id="resetBtn">RESET</button>
     </div>
   </div>
 
   <script>
     const choices = document.querySelectorAll('.choice-btn');
-    const playBtn = document.getElementById('playBtn');
     const resetBtn = document.getElementById('resetBtn');
     const resultDiv = document.getElementById('result');
     const playerScoreEl = document.getElementById('playerScore');
@@ -277,11 +275,10 @@
         // Add active class to clicked button
         btn.classList.add('active');
         playerChoice = btn.dataset.choice;
-        playBtn.disabled = false;
+        // Automatically play when a choice is made
+        setTimeout(play, 300);
       });
     });
-
-    playBtn.addEventListener('click', play);
     resetBtn.addEventListener('click', reset);
 
     function getComputerChoice() {
@@ -339,7 +336,6 @@
       playerScoreEl.textContent = playerScore;
       computerScoreEl.textContent = computerScore;
 
-      playBtn.disabled = true;
       choices.forEach(b => b.classList.remove('active'));
       playerChoice = null;
     }
