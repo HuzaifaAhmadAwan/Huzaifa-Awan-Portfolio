@@ -2111,8 +2111,8 @@
   <div style="display: flex; align-items: center;">
     <a class="nav-logo" href="#">H<span>.</span>Awan</a>
     <ul class="nav-secondary mobile-visible">
-      <li><a href="https://linkedin.com" target="_blank">LinkedIn<span class="external-indicator">↗</span></a></li>
-      <li><a href="./assets/documents/resume.pdf" target="_blank">Resume<span class="external-indicator">↗</span></a></li>
+      <li><a href="https://linkedin.com" target="_blank">LinkedIn<span class="external-indicator">⤢</span></a></li>
+      <li><a href="./assets/documents/resume.pdf" target="_blank">Resume<span class="external-indicator">⤢</span></a></li>
     </ul>
   </div>
   <ul class="nav-links">
@@ -3217,7 +3217,7 @@ function initCardStack() {
   // Global document listeners for smooth dragging anywhere
   document.addEventListener('mousemove', moveDrag);
   document.addEventListener('mouseup', endDrag);
-  document.addEventListener('touchmove', moveDrag, { passive: true });
+  document.addEventListener('touchmove', moveDrag, { passive: false });
   document.addEventListener('touchend', endDrag);
   
   updateStackDisplay();
@@ -3328,6 +3328,11 @@ function startDrag(e) {
 
 function moveDrag(e) {
   if (!isDragging) return;
+  
+  // Prevent scrolling when dragging on touch devices
+  if (e.type.includes('touch')) {
+    e.preventDefault();
+  }
   
   let currentX, currentY;
   if (e.type.includes('touch')) {
