@@ -1916,7 +1916,7 @@
 
       <!-- Portrait Image -->
       <div class="profile-image">
-        <img src="Pictures/Pic4.jpeg" alt="Huzaifa Ahmad Awan">
+        <img src="Pictures/profile_dark.png" alt="Huzaifa Ahmad Awan">
       </div>
 
       <!-- Photo Carousel -->
@@ -2741,6 +2741,15 @@ document.addEventListener('click', (e) => {
 const themeToggle = document.getElementById('themeToggle');
 const htmlElement = document.documentElement;
 
+// Function to update profile image based on theme
+function updateProfileImage() {
+  const profileImg = document.querySelector('.profile-image img');
+  if (profileImg) {
+    const isLight = htmlElement.classList.contains('light-mode');
+    profileImg.src = isLight ? 'Pictures/profile_light.png' : 'Pictures/profile_dark.png';
+  }
+}
+
 // Initialize theme from localStorage
 const savedTheme = localStorage.getItem('theme') || 'dark';
 if (savedTheme === 'light') {
@@ -2748,12 +2757,16 @@ if (savedTheme === 'light') {
 } else {
   htmlElement.classList.remove('light-mode');
 }
+updateProfileImage();
 
 // Handle theme toggle
 themeToggle.addEventListener('click', () => {
   htmlElement.classList.toggle('light-mode');
   const isLight = htmlElement.classList.contains('light-mode');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  
+  // Update profile image
+  updateProfileImage();
   
   // Update nav background immediately
   const nav = document.querySelector('nav');
