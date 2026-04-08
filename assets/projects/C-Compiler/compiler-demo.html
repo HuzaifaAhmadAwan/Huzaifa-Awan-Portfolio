@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C4 Compiler Demo</title>
+    <title>C Compiler Interactive Demo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <style>
@@ -14,200 +14,243 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0a0e14 0%, #1a1f2e 100%);
-            color: #f0f0f5;
+            background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+            color: #e8f0f7;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             min-height: 100vh;
-            padding: 30px 20px;
+            padding: 40px 20px;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1900px;
             margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #e8ff47 0%, #47c8ff 50%, #20c997 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            color: #e8ff47;
+            margin: 30px 0 20px 0;
+            font-size: 1.6em;
         }
 
         .header {
             text-align: center;
             margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
         }
 
-        h1 {
-            font-size: 3em;
-            background: linear-gradient(135deg, #e8ff47 0%, #47c8ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .subtitle {
-            color: #9595b8;
+            color: #a0a8b8;
             font-size: 1.1em;
-            margin-bottom: 5px;
+            margin-top: 10px;
+            font-weight: 300;
         }
 
-        .course-info {
-            color: #7070a0;
-            font-size: 0.9em;
-            margin-bottom: 20px;
+        .pipeline-container {
+            margin: 50px 0;
         }
 
-        /* Main layout */
-        .compiler-workspace {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 20px;
+            flex-wrap: wrap;
+            padding: 30px;
+            background: rgba(20, 25, 40, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(71, 200, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .pipeline-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.5;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.95);
+        }
+
+        .pipeline-stage.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .stage-icon {
+            font-size: 2.5em;
+        }
+
+        .stage-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #a0a8b8;
+            text-align: center;
+            min-width: 70px;
+            letter-spacing: 0.3px;
+        }
+
+        .pipeline-stage.active .stage-label {
+            color: #20c997;
+        }
+
+        .pipeline-arrow {
+            font-size: 1.8em;
+            color: rgba(71, 200, 255, 0.3);
+            animation: arrowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.3; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(4px); }
+        }
+
+        .example-selector-wrapper {
+            text-align: center;
             margin-bottom: 30px;
         }
 
-        .panel {
-            background: rgba(20, 25, 40, 0.6);
-            border: 1px solid rgba(71, 200, 255, 0.2);
+        .example-selector-wrapper label {
+            color: #a0a8b8;
+            font-weight: 600;
+            margin-right: 15px;
+            font-size: 0.95em;
+        }
+
+        select {
+            background: rgba(15, 20, 35, 0.9);
+            color: #47c8ff;
+            border: 2px solid rgba(71, 200, 255, 0.4);
+            padding: 12px 16px;
             border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-family: 'Monaco', 'Menlo', monospace;
+            transition: all 0.2s ease;
+            min-width: 300px;
+        }
+
+        select:hover {
+            border-color: rgba(71, 200, 255, 0.7);
+            background: rgba(15, 20, 35, 1);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #47c8ff;
+            box-shadow: 0 0 20px rgba(71, 200, 255, 0.3);
+        }
+
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+            min-height: 650px;
+        }
+
+        @media (max-width: 1200px) {
+            .demo-layout {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+        }
+
+        .panel {
+            background: rgba(15, 20, 35, 0.7);
+            border: 1px solid rgba(71, 200, 255, 0.2);
+            border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .panel:hover {
-            border-color: rgba(71, 200, 255, 0.4);
-            background: rgba(20, 25, 40, 0.8);
+            border-color: rgba(71, 200, 255, 0.35);
+            background: rgba(15, 20, 35, 0.85);
+            box-shadow: 0 8px 40px rgba(71, 200, 255, 0.1);
         }
 
         .panel-header {
-            background: rgba(40, 45, 70, 0.8);
-            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(40, 45, 70, 0.9) 0%, rgba(30, 35, 60, 0.9) 100%);
+            padding: 18px 24px;
             border-bottom: 1px solid rgba(71, 200, 255, 0.2);
-            font-weight: 600;
+            font-weight: 700;
             color: #47c8ff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .panel-title {
+            font-size: 1em;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .panel-icon {
-            font-size: 1.2em;
+            font-size: 1.3em;
         }
 
         .panel-content {
             flex: 1;
             overflow: auto;
-            padding: 15px 20px;
+            padding: 20px 24px;
         }
 
-        .code-editor {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            background: rgba(15, 20, 35, 0.9);
-            color: #47c8ff;
-            border: none;
-            resize: none;
-            width: 100%;
-            height: 100%;
-            padding: 15px;
-            font-size: 13px;
-            line-height: 1.6;
-            tab-size: 4;
-        }
-
-        .code-editor::placeholder {
-            color: #5a5a7a;
-        }
-
-        .code-block {
-            background: rgba(15, 20, 35, 0.9);
+        .code-display {
+            background: rgba(10, 15, 30, 0.95);
             border: 1px solid rgba(71, 200, 255, 0.15);
-            border-radius: 6px;
-            padding: 12px;
-            margin: 10px 0;
-            overflow-x: auto;
-        }
-
-        pre {
-            margin: 0;
+            border-radius: 8px;
+            padding: 16px;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        code {
+            font-size: 13px;
+            line-height: 1.7;
             color: #47c8ff;
+            max-height: 100%;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
-        .hljs {
-            background: transparent;
-            color: #47c8ff;
-            padding: 0;
-            border-radius: 0;
-        }
-
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, rgba(232, 255, 71, 0.1) 0%, rgba(71, 200, 255, 0.1) 100%);
-            border: 1px solid rgba(71, 200, 255, 0.3);
-            color: #47c8ff;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9em;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .btn:hover {
-            background: linear-gradient(135deg, rgba(232, 255, 71, 0.2) 0%, rgba(71, 200, 255, 0.2) 100%);
-            border-color: rgba(71, 200, 255, 0.6);
-            transform: translateY(-1px);
-        }
-
-        .btn.primary {
-            background: linear-gradient(135deg, #e8ff47 0%, #47c8ff 100%);
-            color: #0a0e14;
-            border: none;
-        }
-
-        .btn.primary:hover {
-            box-shadow: 0 8px 24px rgba(232, 255, 71, 0.3);
-        }
-
-        .btn.active {
-            background: linear-gradient(135deg, #e8ff47 0%, #47c8ff 100%);
-            color: #0a0e14;
-            border: none;
-        }
-
-        /* Tabs */
         .output-tabs {
             display: flex;
-            gap: 4px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(71, 200, 255, 0.15);
+            gap: 2px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid rgba(71, 200, 255, 0.1);
+            padding: 0;
         }
 
         .tab {
-            padding: 10px 15px;
+            padding: 12px 18px;
             border: none;
             background: transparent;
-            color: #9595b8;
+            color: #7a8299;
             cursor: pointer;
             font-size: 0.9em;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+            transition: all 0.25s ease;
             font-family: inherit;
+            font-weight: 600;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .tab:hover {
@@ -215,342 +258,448 @@
         }
 
         .tab.active {
-            color: #47c8ff;
-            border-bottom-color: #47c8ff;
+            color: #e8ff47;
+            border-bottom-color: #e8ff47;
         }
 
         .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease;
+            max-height: 100%;
+            overflow-y: auto;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* Token list */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-block {
+            background: rgba(10, 15, 30, 0.95);
+            border: 1px solid rgba(71, 200, 255, 0.15);
+            border-radius: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #47c8ff;
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        .hljs {
+            background: transparent;
+            color: #47c8ff;
+            padding: 0;
+        }
+
         .token-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
+            padding: 8px 0;
         }
 
         .token {
-            background: rgba(71, 200, 255, 0.15);
+            background: rgba(71, 200, 255, 0.12);
             border: 1px solid rgba(71, 200, 255, 0.3);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
             color: #47c8ff;
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .token:hover {
+            background: rgba(71, 200, 255, 0.25);
+            border-color: rgba(71, 200, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(71, 200, 255, 0.2);
         }
 
         .token.keyword {
-            background: rgba(232, 255, 71, 0.15);
+            background: rgba(232, 255, 71, 0.12);
             border-color: rgba(232, 255, 71, 0.3);
             color: #e8ff47;
         }
 
         .token.identifier {
-            background: rgba(200, 100, 255, 0.15);
-            border-color: rgba(200, 100, 255, 0.3);
-            color: #d8a0ff;
+            background: rgba(32, 201, 151, 0.12);
+            border-color: rgba(32, 201, 151, 0.3);
+            color: #20c997;
         }
 
-        .token.literal {
-            background: rgba(100, 200, 100, 0.15);
-            border-color: rgba(100, 200, 100, 0.3);
-            color: #64c864;
+        .token.number {
+            background: rgba(255, 120, 100, 0.12);
+            border-color: rgba(255, 120, 100, 0.3);
+            color: #ff7864;
         }
 
-        /* Examples */
-        .examples-section {
-            margin-bottom: 30px;
+        .token.operator {
+            background: rgba(255, 160, 80, 0.12);
+            border-color: rgba(255, 160, 80, 0.3);
+            color: #ffa050;
         }
 
-        .example-selector {
-            padding: 10px 16px;
-            background: rgba(40, 45, 70, 0.8);
-            border: 1px solid rgba(71, 200, 255, 0.3);
+        .analysis-item {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            background: rgba(71, 200, 255, 0.08);
+            border-left: 4px solid rgba(71, 200, 255, 0.4);
             border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .analysis-item:hover {
+            background: rgba(71, 200, 255, 0.12);
+            border-left-color: rgba(71, 200, 255, 0.7);
+        }
+
+        .analysis-label {
             color: #47c8ff;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.95em;
-            margin-bottom: 15px;
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 4px;
+            letter-spacing: 0.2px;
         }
 
-        .example-selector:hover {
-            border-color: rgba(71, 200, 255, 0.6);
-        }
-
-        /* Analysis output */
-        .analysis-output {
-            background: rgba(15, 20, 35, 0.6);
-            border: 1px solid rgba(232, 255, 71, 0.15);
-            border-radius: 6px;
-            padding: 12px;
-            margin: 10px 0;
+        .analysis-value {
+            color: #a0a8b8;
             font-size: 0.85em;
             line-height: 1.6;
         }
 
-        .analysis-output .constant {
-            color: #64c864;
-            font-weight: 600;
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: slideUp 0.6s ease-out 0.2s both;
         }
 
-        .analysis-output .variable {
-            color: #d8a0ff;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .analysis-output .operator {
-            color: #e8ff47;
+        .btn {
+            background: rgba(71, 200, 255, 0.1);
+            border: 1.5px solid rgba(71, 200, 255, 0.4);
+            color: #47c8ff;
+            padding: 13px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9em;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+        .btn:hover {
+            background: rgba(71, 200, 255, 0.2);
+            border-color: rgba(71, 200, 255, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(71, 200, 255, 0.25);
         }
 
-        .stat-box {
-            background: rgba(40, 45, 70, 0.5);
-            border: 1px solid rgba(71, 200, 255, 0.2);
-            border-radius: 6px;
-            padding: 12px;
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #20c997 0%, #47c8ff 100%);
+            color: #0a0e14;
+            border: none;
+            font-weight: 800;
+            box-shadow: 0 4px 15px rgba(32, 201, 151, 0.3);
+        }
+
+        .btn.primary:hover {
+            box-shadow: 0 8px 30px rgba(32, 201, 151, 0.5);
+        }
+
+        .btn.danger {
+            background: rgba(255, 100, 100, 0.1);
+            border-color: rgba(255, 100, 100, 0.4);
+            color: #ff6464;
+        }
+
+        .btn.danger:hover {
+            background: rgba(255, 100, 100, 0.2);
+            border-color: rgba(255, 100, 100, 0.7);
+            box-shadow: 0 6px 20px rgba(255, 100, 100, 0.2);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(71, 200, 255, 0.08) 0%, rgba(32, 201, 151, 0.08) 100%);
+            border-left: 4px solid rgba(71, 200, 255, 0.4);
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin-top: 40px;
             text-align: center;
         }
 
-        .stat-value {
-            font-size: 1.8em;
-            color: #e8ff47;
+        .info-box p {
+            color: #a0a8b8;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        .info-box strong {
+            color: #47c8ff;
             font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            color: #9595b8;
-            font-size: 0.8em;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .compiler-workspace {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(232, 255, 71, 0.2), transparent);
-            margin: 30px 0;
         }
 
         .feature-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
             margin-top: 30px;
         }
 
         .feature {
             background: rgba(20, 25, 40, 0.6);
-            border: 1px solid rgba(232, 255, 71, 0.15);
-            border-radius: 8px;
-            padding: 15px;
+            border: 1px solid rgba(71, 200, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
             transition: all 0.3s ease;
         }
 
         .feature:hover {
-            border-color: rgba(232, 255, 71, 0.4);
+            border-color: rgba(71, 200, 255, 0.4);
             background: rgba(20, 25, 40, 0.8);
+            transform: translateY(-4px);
         }
 
         .feature-title {
             color: #e8ff47;
-            font-weight: 600;
-            margin-bottom: 8px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.05em;
         }
 
         .feature-desc {
             color: #9595b8;
             font-size: 0.9em;
-            line-height: 1.5;
+            line-height: 1.6;
+        }
+
+        .footer-info {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(20, 25, 40, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(71, 200, 255, 0.2);
+        }
+
+        .footer-info p {
+            color: #9595b8;
+            margin: 5px 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(71, 200, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(71, 200, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 200, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .subtitle { font-size: 0.95em; }
+            .pipeline { padding: 20px; gap: 12px; }
+            .stage-icon { font-size: 1.8em; }
+            .btn { padding: 10px 16px; font-size: 0.8em; }
+            select { min-width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>C4 Compiler</h1>
-            <p class="subtitle">Interactive Compiler Demonstration</p>
-            <p class="course-info">Compiler Construction Lab | Saarland University | WS 2025/26</p>
+            <h1>⚡ C Compiler Demo</h1>
+            <p class="subtitle">Interactive Pipeline: Tokenize → IR Generation → Alias Analysis → SCCP Optimization</p>
         </div>
 
-        <!-- Examples Selection -->
-        <div class="examples-section">
-            <label style="color: #9595b8; font-size: 0.9em; margin-right: 10px;">Load Example:</label>
-            <select class="example-selector" id="exampleSelect" onchange="loadExample()">
-                <option value="">-- Select an example --</option>
-                <option value="simple">Simple Variable Declaration</option>
-                <option value="loop">Loop with Constants</option>
-                <option value="function">Function with Conditionals</option>
-                <option value="optimization">Constant Propagation</option>
+        <!-- Pipeline Visualization -->
+        <div class="pipeline-container">
+            <div class="pipeline">
+                <div class="pipeline-stage active" id="stage-code">
+                    <div class="stage-icon">📝</div>
+                    <div class="stage-label">Code</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" id="stage-tokens">
+                    <div class="stage-icon">🔤</div>
+                    <div class="stage-label">Tokens</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" id="stage-ir">
+                    <div class="stage-icon">⚙️</div>
+                    <div class="stage-label">IR Gen</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" id="stage-alias">
+                    <div class="stage-icon">🔗</div>
+                    <div class="stage-label">Alias</div>
+                </div>
+                <div class="pipeline-arrow">→</div>
+                <div class="pipeline-stage" id="stage-sccp">
+                    <div class="stage-icon">⚡</div>
+                    <div class="stage-label">SCCP</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Selector -->
+        <div class="example-selector-wrapper">
+            <label for="exampleSelect">Select Example:</label>
+            <select id="exampleSelect" onchange="loadExample()">
+                <option value="simple">Simple Addition (add two numbers)</option>
+                <option value="loop">Loop (sum 0-10)</option>
+                <option value="pointers">Pointers (alias analysis)</option>
+                <option value="fibonacci">Fibonacci (recursion)</option>
+                <option value="array">Array (memory and loops)</option>
             </select>
         </div>
 
-        <!-- Main compiler workspace -->
-        <div class="compiler-workspace">
-            <!-- Code Editor Panel -->
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn primary" onclick="tokenize()">🔤 Tokenize</button>
+            <button class="btn primary" onclick="compileCode()">⚡ Generate IR</button>
+            <button class="btn" onclick="analyzeAliases()">🔗 Alias Analysis</button>
+            <button class="btn" onclick="optimizeSCCP()">⚡ SCCP Optimize</button>
+            <button class="btn danger" onclick="reset()">🔄 Reset</button>
+        </div>
+
+        <!-- Main Compiler Layout -->
+        <div class="demo-layout">
+            <!-- Left Panel: Code Display -->
             <div class="panel">
                 <div class="panel-header">
-                    <div class="panel-title">
-                        <span class="panel-icon">📝</span>
-                        <span>C Source Code</span>
-                    </div>
+                    <span class="panel-icon">📝</span>
+                    <span>C Code Example</span>
                 </div>
                 <div class="panel-content">
-                    <textarea class="code-editor" id="codeInput" placeholder="Write C code here...
-int main() {
-    int x = 5;
-    int y = x + 3;
-    return 0;
-}"></textarea>
+                    <div class="code-display" id="codeDisplay"></div>
                 </div>
             </div>
 
-            <!-- LLVM IR Output Panel -->
+            <!-- Right Panel: Output Tabs -->
             <div class="panel">
                 <div class="panel-header">
-                    <div class="panel-title">
-                        <span class="panel-icon">⚙️</span>
-                        <span>LLVM IR Output</span>
-                    </div>
+                    <span class="panel-icon">📊</span>
+                    <span>Compiler Output</span>
                 </div>
                 <div class="panel-content">
                     <div class="output-tabs">
-                        <button class="tab active" onclick="switchTab('ir-unopt')">Unoptimized</button>
-                        <button class="tab" onclick="switchTab('ir-opt')">Optimized (SCCP)</button>
+                        <button class="tab active" onclick="switchTab('tokens-view')">🔤 Tokens</button>
+                        <button class="tab" onclick="switchTab('ir-view')">⚙️ IR Code</button>
+                        <button class="tab" onclick="switchTab('analysis-view')">🔗 Analysis</button>
+                        <button class="tab" onclick="switchTab('sccp-view')">⚡ SCCP</button>
                     </div>
-                    <div id="ir-unopt" class="tab-content active">
-                        <div id="irOutput" class="code-block">
-                            <pre><code class="language-llvm" id="irCode">; Run a compilation to see LLVM IR output here...</code></pre>
+
+                    <!-- Tokens Tab -->
+                    <div id="tokens-view" class="tab-content active">
+                        <div id="tokenOutput" class="token-list">
+                            <p style="color: #a0a8b8;">Click "🔤 Tokenize" to break the code into tokens...</p>
                         </div>
                     </div>
-                    <div id="ir-opt" class="tab-content">
-                        <div id="irOptOutput" class="code-block">
-                            <pre><code class="language-llvm" id="irOptCode">; Optimized IR will appear here...</code></pre>
+
+                    <!-- IR Tab -->
+                    <div id="ir-view" class="tab-content">
+                        <div class="code-block">
+                            <pre><code class="language-llvm" id="irCode">; Click "⚡ Generate IR" to see compiled LLVM IR...</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Tab -->
+                    <div id="analysis-view" class="tab-content">
+                        <div id="analysisOutput">
+                            <p style="color: #a0a8b8;">Click "🔗 Alias Analysis" to analyze pointer relationships...</p>
+                        </div>
+                    </div>
+
+                    <!-- SCCP Tab -->
+                    <div id="sccp-view" class="tab-content">
+                        <div id="sccpOutput">
+                            <p style="color: #a0a8b8;">Click "⚡ SCCP Optimize" to apply Sparse Conditional Constant Propagation...</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Control buttons -->
-        <div class="controls">
-            <button class="btn primary" onclick="compileCode()">⚡ Compile to IR</button>
-            <button class="btn" onclick="optimizeCode()">🚀 Run SCCP Optimization</button>
-            <button class="btn" onclick="analyzeAliases()">🔗 Alias Analysis</button>
-            <button class="btn" onclick="tokenize()">🔤 Tokenize</button>
-            <button class="btn" onclick="reset()" style="background: rgba(255, 100, 100, 0.1); border-color: rgba(255, 100, 100, 0.3); color: #ff6464;">Reset</button>
+        <!-- Info Box -->
+        <div class="info-box">
+            <p><strong>💡 How the Compiler Works:</strong> Your C code is tokenized into meaningful units → parsed into an Abstract Syntax Tree (AST) → converted to LLVM Intermediate Representation (IR) → analyzed for pointer aliases and optimizations</p>
         </div>
 
-        <!-- Analysis Panels -->
-        <div class="compiler-workspace">
-            <!-- Lexer Output -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <span class="panel-icon">🔤</span>
-                        <span>Lexer Output (Tokens)</span>
-                    </div>
-                </div>
-                <div class="panel-content">
-                    <div id="tokensOutput" class="token-list">
-                        <div style="color: #9595b8; width: 100%;">Click "Tokenize" to see tokens...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Analysis Output -->
-            <div class="panel">
-                <div class="panel-header">
-                    <div class="panel-title">
-                        <span class="panel-icon">📊</span>
-                        <span>Analysis Results</span>
-                    </div>
-                </div>
-                <div class="panel-content">
-                    <div id="analysisOutput" style="color: #9595b8;">
-                        Run analysis tools to see results here...
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Statistics -->
-        <div class="stats-grid" style="margin-top: 30px;">
-            <div class="stat-box">
-                <div class="stat-value" id="statTokens">0</div>
-                <div class="stat-label">Tokens</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="statFunctions">0</div>
-                <div class="stat-label">Functions</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="statInstructions">0</div>
-                <div class="stat-label">Instructions</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="statOptimized">0%</div>
-                <div class="stat-label">Optimized</div>
-            </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Features -->
-        <h2 style="color: #e8ff47; margin-bottom: 20px; font-size: 1.6em;">Compiler Pipeline</h2>
+        <!-- Features Section -->
+        <h2>Compiler Pipeline</h2>
         <div class="feature-list">
             <div class="feature">
-                <div class="feature-title">Lexical Analysis</div>
-                <div class="feature-desc">Tokenizes C source code into a stream of tokens. Handles keywords, identifiers, operators, and literals with precise position tracking.</div>
+                <div class="feature-title">📝 Lexical Analysis</div>
+                <div class="feature-desc">Tokenizes C source code into a stream of tokens. Handles keywords, identifiers, operators and literals with precise position tracking.</div>
             </div>
             <div class="feature">
-                <div class="feature-title">Syntax Analysis</div>
+                <div class="feature-title">🌳 Syntax Analysis</div>
                 <div class="feature-desc">Parses tokens using recursive descent parser to build an Abstract Syntax Tree (AST) representing the program structure.</div>
             </div>
             <div class="feature">
-                <div class="feature-title">Semantic Analysis</div>
-                <div class="feature-desc">Type checking, variable scoping, and symbol resolution to ensure semantic correctness of the program.</div>
+                <div class="feature-title">✔️ Semantic Analysis</div>
+                <div class="feature-desc">Type checking, variable scoping and symbol resolution to ensure semantic correctness of the program.</div>
             </div>
             <div class="feature">
-                <div class="feature-title">LLVM Code Generation</div>
+                <div class="feature-title">⚙️ LLVM Code Generation</div>
                 <div class="feature-desc">Translates the validated AST into LLVM Intermediate Representation (IR) for platform-independent code.</div>
             </div>
             <div class="feature">
-                <div class="feature-title">Alias Analysis</div>
+                <div class="feature-title">🔗 Alias Analysis</div>
                 <div class="feature-desc">Performs flow-sensitive, points-to based analysis to determine memory access relationships and pointer targets.</div>
             </div>
             <div class="feature">
-                <div class="feature-title">SCCP Optimization</div>
+                <div class="feature-title">⚡ SCCP Optimization</div>
                 <div class="feature-desc">Sparse Conditional Constant Propagation eliminates dead code and substitutes constants for improved execution efficiency.</div>
             </div>
         </div>
 
-        <div style="text-align: center; margin-top: 40px; padding: 20px; background: rgba(20, 25, 40, 0.6); border-radius: 8px; border: 1px solid rgba(71, 200, 255, 0.2);">
-            <p style="color: #9595b8;">This is an interactive demonstration of the C4 compiler pipeline.</p>
-            <p style="color: #7070a0; font-size: 0.9em; margin-top: 10px;">The simulation shows how C code flows through the complete compilation process from source to optimized LLVM IR.</p>
+        <!-- Footer -->
+        <div class="footer-info">
+            <p><strong>Interactive C Compiler Pipeline Demonstration</strong></p>
+            <p>This simulation shows how C code flows through the complete compilation process from source to optimized LLVM IR.</p>
         </div>
     </div>
 
     <script>
-        // Example codes
         const examples = {
             simple: `int main() {
     int x = 5;
@@ -558,35 +707,117 @@ int main() {
     int z = x + y;
     return z;
 }`,
-            loop: `int sum(int n) {
+            loop: `int sum() {
     int total = 0;
-    int i = 0;
-    while (i < n) {
-        total = total + i;
-        i = i + 1;
+    for (int i = 0; i < 10; i++) {
+        total += i;
     }
     return total;
 }`,
-            function: `int abs(int x) {
-    if (x < 0) {
-        return -x;
-    } else {
-        return x;
-    }
+            pointers: `int main() {
+    int x = 5;
+    int* p = &x;
+    int* q = p;
+    return *p;
 }`,
-            optimization: `int calculate() {
-    int a = 5;
-    int b = 10;
-    int c = a + b;
-    int d = c * 2;
-    int e = d - 15;
-    return e;
+            fibonacci: `int fib(int n) {
+    if (n <= 1)
+        return n;
+    return fib(n-1) + fib(n-2);
+}`,
+            array: `int main() {
+    int arr[5] = {1,2,3,4,5};
+    int sum = 0;
+    for (int i = 0; i < 5; i++) {
+        sum += arr[i];
+    }
+    return sum;
 }`
         };
 
-        // Simulated LLVM IR outputs
-        const irOutputs = {
-            simple: `define i32 @main() {
+        function loadExample() {
+            const selected = document.getElementById('exampleSelect').value;
+            document.getElementById('codeDisplay').textContent = examples[selected];
+            reset();
+        }
+
+        function updatePipelineStage(stage) {
+            document.querySelectorAll('.pipeline-stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('stage-' + stage)?.classList.add('active');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId)?.classList.add('active');
+            if (event?.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        function tokenize() {
+            updatePipelineStage('tokens');
+            const code = document.getElementById('codeDisplay').textContent;
+            const keywords = ['int', 'if', 'else', 'while', 'return', 'main', 'for'];
+            const tokens = code.match(/\b\w+\b|[(){};=+\-*/<>!,\[\]]+/g) || [];
+            
+            const output = document.getElementById('tokenOutput');
+            output.innerHTML = '';
+            tokens.forEach(token => {
+                const span = document.createElement('span');
+                let type = 'identifier';
+                if (keywords.includes(token)) type = 'keyword';
+                else if (/^\d+$/.test(token)) type = 'number';
+                else if (/^[(){};=+\-*/<>!,\[\]]+$/.test(token)) type = 'operator';
+                span.className = `token ${type}`;
+                span.textContent = token;
+                output.appendChild(span);
+            });
+            switchTab('tokens-view');
+        }
+
+        function compileCode() {
+            updatePipelineStage('ir');
+            const code = document.getElementById('codeDisplay').textContent;
+            let ir = '';
+            if (code.includes('fib')) {
+                ir = `define i32 @fib(i32 %n) {
+entry:
+  %cmp = icmp sle i32 %n, 1
+  br i1 %cmp, label %return, label %recurse
+recurse:
+  %sub1 = sub i32 %n, 1
+  %call1 = call i32 @fib(i32 %sub1)
+  %sub2 = sub i32 %n, 2
+  %call2 = call i32 @fib(i32 %sub2)
+  %add = add i32 %call1, %call2
+  br label %return
+return:
+  %retval = phi i32 [ %n, %entry ], [ %add, %recurse ]
+  ret i32 %retval
+}`;
+            } else if (code.includes('arr')) {
+                ir = `define i32 @main() {
+entry:
+  %arr = alloca [5 x i32], align 16
+  %sum = alloca i32, align 4
+  store i32 0, i32* %sum, align 4
+  br label %loop.cond
+loop.cond:
+  %i = load i32, i32* undef, align 4
+  %cmp = icmp slt i32 %i, 5
+  br i1 %cmp, label %loop.body, label %loop.end
+loop.body:
+  %0 = load i32, i32* %sum, align 4
+  %add = add i32 %0, %i
+  store i32 %add, i32* %sum, align 4
+  br label %loop.cond
+loop.end:
+  %1 = load i32, i32* %sum, align 4
+  ret i32 %1
+}`;
+            } else {
+                ir = `define i32 @main() {
 entry:
   %x = alloca i32, align 4
   %y = alloca i32, align 4
@@ -599,208 +830,126 @@ entry:
   store i32 %add, i32* %z, align 4
   %2 = load i32, i32* %z, align 4
   ret i32 %2
-}`,
-            simpleOpt: `define i32 @main() {
-entry:
-  ret i32 15
-}`,
-            loop: `define i32 @sum(i32 %n) {
-entry:
-  %total = alloca i32, align 4
-  %i = alloca i32, align 4
-  store i32 0, i32* %total, align 4
-  store i32 0, i32* %i, align 4
-  br label %while.cond
-
-while.cond:
-  %0 = load i32, i32* %i, align 4
-  %cmp = icmp slt i32 %0, %n
-  br i1 %cmp, label %while.body, label %while.end
-
-while.body:
-  %1 = load i32, i32* %total, align 4
-  %2 = load i32, i32* %i, align 4
-  %add = add i32 %1, %2
-  store i32 %add, i32* %total, align 4
-  %3 = load i32, i32* %i, align 4
-  %inc = add i32 %3, 1
-  store i32 %inc, i32* %i, align 4
-  br label %while.cond
-
-while.end:
-  %4 = load i32, i32* %total, align 4
-  ret i32 %4
-}`,
-            optimization: `define i32 @calculate() {
-entry:
-  %a = alloca i32, align 4
-  %b = alloca i32, align 4
-  %c = alloca i32, align 4
-  %d = alloca i32, align 4
-  %e = alloca i32, align 4
-  store i32 5, i32* %a, align 4
-  store i32 10, i32* %b, align 4
-  store i32 15, i32* %c, align 4
-  store i32 30, i32* %d, align 4
-  store i32 15, i32* %e, align 4
-  ret i32 15
-}`
-        };
-
-        function loadExample() {
-            const select = document.getElementById('exampleSelect');
-            const code = examples[select.value];
-            if (code) {
-                document.getElementById('codeInput').value = code;
-            }
-        }
-
-        function switchTab(tabId) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            
-            // Show selected tab
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function compileCode() {
-            const code = document.getElementById('codeInput').value;
-            const lines = code.split('\n').filter(l => l.trim());
-            
-            // Determine which example to use
-            let irCode = '';
-            if (code.includes('sum')) {
-                irCode = irOutputs.loop;
-            } else if (code.includes('calculate')) {
-                irCode = irOutputs.optimization;
-            } else if (code.includes('abs')) {
-                irCode = `define i32 @abs(i32 %x) {
-entry:
-  %cmp = icmp slt i32 %x, 0
-  br i1 %cmp, label %if.then, label %if.else
-
-if.then:
-  %sub = sub i32 0, %x
-  ret i32 %sub
-
-if.else:
-  ret i32 %x
 }`;
-            } else {
-                irCode = irOutputs.simple;
             }
-
-            document.getElementById('irCode').textContent = irCode;
+            document.getElementById('irCode').textContent = ir;
             hljs.highlightElement(document.getElementById('irCode'));
-            
-            updateStats(code, irCode, document.getElementById('irCode').textContent.split('\n').length - 2);
-            
-            document.getElementById('analysisOutput').innerHTML = `
-                <strong style="color: #47c8ff;">✓ Compilation successful!</strong><br>
-                File size: ${irCode.length} bytes<br>
-                Functions: ${(irCode.match(/define /g) || []).length}<br>
-                Basic blocks: ${(irCode.match(/label %/g) || []).length}
-            `;
-        }
-
-        function optimizeCode() {
-            const select = document.getElementById('exampleSelect');
-            let irOptCode = '';
-            
-            if (select.value === 'simple' || document.getElementById('codeInput').value.includes('x + y')) {
-                irOptCode = irOutputs.simpleOpt;
-            } else if (select.value === 'optimization') {
-                irOptCode = `define i32 @calculate() {
-entry:
-  ret i32 15
-}`;
-            } else {
-                irOptCode = document.getElementById('irCode').textContent;
-            }
-
-            document.getElementById('irOptCode').textContent = irOptCode;
-            hljs.highlightElement(document.getElementById('irOptCode'));
-            
-            const original = document.getElementById('irCode').textContent.split('\n').length;
-            const optimized = irOptCode.split('\n').length;
-            const reduction = Math.round((1 - optimized / original) * 100);
-            
-            document.getElementById('analysisOutput').innerHTML = `
-                <strong style="color: #e8ff47;">🚀 SCCP Optimization Results</strong><br><br>
-                <span class="variable">Constant Folding:</span> 3 instances<br>
-                <span class="constant">Dead Code Eliminated:</span> ${Math.max(0, original - optimized)} lines<br>
-                <span class="operator">Code Reduction:</span> ${Math.max(0, reduction)}%<br><br>
-                <strong style="color: #64c864;">Optimizations Applied:</strong><br>
-                • Sparse Conditional Constant Propagation<br>
-                • Dead Instruction Elimination<br>
-                • Unreachable Block Removal
-            `;
-            
-            document.getElementById('statOptimized').textContent = Math.max(0, reduction) + '%';
+            switchTab('ir-view');
         }
 
         function analyzeAliases() {
-            const code = document.getElementById('codeInput').value;
+            updatePipelineStage('alias');
+            const code = document.getElementById('codeDisplay').textContent;
             const pointers = (code.match(/\*/g) || []).length;
+            const functions = (code.match(/\w+\s*\(/g) || []).length;
+            const variables = (code.match(/int\s+\w+/g) || []).length;
             
-            let analysis = `<strong style="color: #47c8ff;">🔗 Alias Analysis Results</strong><br><br>`;
-            analysis += `<span class="variable">Pointer Variables:</span> ${pointers}<br>`;
-            analysis += `<span class="operator">Points-to Sets:</span><br>`;
+            let html = '<div class="analysis-item"><div class="analysis-label">📊 Code Statistics</div><div class="analysis-value">• Pointers: ' + pointers + '<br>• Functions: ' + functions + '<br>• Variables: ' + variables + '</div></div>';
+            if (pointers > 0) {
+                html += '<div class="analysis-item"><div class="analysis-label">🔗 Aliasing Analysis</div><div class="analysis-value">• Pointer relationships detected<br>• May-alias sets computed<br>• ' + pointers + ' pointer(s) in scope</div></div>';
+            }
+            html += '<div class="analysis-item"><div class="analysis-label">✅ Analysis Complete</div><div class="analysis-value">• No undefined behavior detected<br>• Type checking passed<br>• Memory safety verified</div></div>';
+            document.getElementById('analysisOutput').innerHTML = html;
+            switchTab('analysis-view');
+        }
+
+        function optimizeSCCP() {
+            updatePipelineStage('sccp');
+            const code = document.getElementById('codeDisplay').textContent;
             
-            if (code.includes('*')) {
-                analysis += `• Pointer 1 → {memory location 1}<br>`;
-                analysis += `• Pointer 2 → {memory location 2}<br>`;
+            // Analyze code for optimizations
+            const hasConstants = /\d+/.test(code);
+            const hasDeadCode = code.split('\n').length > 5;
+            const hasConditionals = /if|else|while/.test(code);
+            
+            let optimized = `; ===== SCCP Optimization Results =====\n`;
+            let optimizations = [];
+            
+            // Constant folding
+            if (code.includes('5') && code.includes('10')) {
+                optimized += `; [SCCP] Constant Folding: 5 + 10 → 15\n`;
+                optimizations.push('✓ Constant folding applied: constant expressions pre-computed');
             }
             
-            analysis += `<br><span class="constant">Flow-Sensitive Analysis:</span><br>`;
-            analysis += `• Entry: All pointers undefined<br>`;
-            analysis += `• Analysis: Points-to relationships established<br>`;
-            analysis += `• Exit: Final alias sets determined`;
+            // Dead code elimination
+            if (hasDeadCode) {
+                optimized += `; [SCCP] Dead Code Elimination: removed 2 unreachable blocks\n`;
+                optimizations.push('✓ Dead code elimination: removed unreachable code paths');
+            }
             
-            document.getElementById('analysisOutput').innerHTML = analysis;
-        }
-
-        function tokenize() {
-            const code = document.getElementById('codeInput').value;
-            const keywords = ['int', 'if', 'else', 'while', 'return', 'main'];
-            const tokens = code.match(/\b\w+\b|[(){};=+\-*/<>!]+/g) || [];
+            // Conditional branch simplification
+            if (hasConditionals) {
+                optimized += `; [SCCP] Branch Simplification: resolved 1 conditional\n`;
+                optimizations.push('✓ Conditional branch simplification: reduced branches');
+            }
             
-            const tokenElements = tokens.map(token => {
-                let className = 'token';
-                if (keywords.includes(token)) className += ' keyword';
-                else if (/^\d+$/.test(token)) className += ' literal';
-                else if (/^[a-zA-Z_]\w*$/.test(token)) className += ' identifier';
-                return `<span class="${className}">${token}</span>`;
+            optimized += `; [SCCP] Pessimistic assumptions removed for better optimization\n`;
+            optimized += `\ndefine i32 @main() {\nentry:\n`;
+            
+            // Generate optimized IR based on example
+            if (code.includes('fib')) {
+                optimized += `  ; After SCCP: memoization candidates identified\n`;
+                optimized += `  ; Recursion depth: bounded [0..n]\n`;
+                optimized += `  br label %fib.optimization\n`;
+                optimizations.push('✓ Recursive function analyzed for memoization');
+            } else if (code.includes('arr')) {
+                optimized += `  %arr = alloca [5 x i32], align 16 ; Loop bounds: [0..5)\n`;
+                optimized += `  store i32 0, i32* %arr, align 4\n`;
+                optimized += `  %1 = load i32, i32* %arr, align 4\n`;
+                optimized += `  ret i32 15 ; SCCP: sum = 1+2+3+4+5 = 15\n`;
+                optimizations.push('✓ Loop bound analysis: iteration count = 5');
+            } else {
+                optimized += `  %x = i32 5   ; constant narrowed from alloca\n`;
+                optimized += `  %y = i32 10  ; constant narrowed from alloca\n`;
+                optimized += `  ret i32 15   ; SCCP: 5 + 10 = 15 (constant propagated)\n`;
+                optimizations.push('✓ All variables narrowed to constants');
+            }
+            
+            optimized += `}\n`;
+            
+            // Display results
+            let html = '<div style="margin-bottom: 16px;">';
+            html += `<div class="analysis-item">
+                <div class="analysis-label">⚡ SCCP Optimizations Applied</div>
+                <div class="analysis-value">`;
+            
+            optimizations.forEach(opt => {
+                html += opt + '<br>';
             });
-
-            document.getElementById('tokensOutput').innerHTML = tokenElements.join('');
-            document.getElementById('statTokens').textContent = tokens.length;
-        }
-
-        function updateStats(code, ir, instructions) {
-            const functions = (code.match(/\w+\s*\(/g) || []).length;
-            document.getElementById('statFunctions').textContent = functions;
-            document.getElementById('statInstructions').textContent = instructions;
+            
+            html += `</div></div>`;
+            html += `<div class="analysis-item">
+                <div class="analysis-label">📊 Optimization Stats</div>
+                <div class="analysis-value">
+                • Lines before: ${code.split('\n').length}<br>
+                • Lines after: ${optimized.split('\n').length - 2}<br>
+                • Reduction: ${Math.round((1 - (optimized.split('\n').length - 2) / code.split('\n').length) * 100)}%<br>
+                • Opportunities found: ${optimizations.length}
+                </div></div>`;
+            
+            html += `<div class="analysis-item">
+                <div class="analysis-label">✅ Optimization Complete</div>
+                <div class="analysis-value">
+                • SCCP fixed-point reached<br>
+                • Constant propagation finished<br>
+                • Code is optimized and ready for backend
+                </div></div>`;
+            
+            document.getElementById('sccpOutput').innerHTML = html;
+            switchTab('sccp-view');
         }
 
         function reset() {
-            document.getElementById('codeInput').value = '';
-            document.getElementById('irCode').textContent = '; Run a compilation to see LLVM IR output here...';
-            document.getElementById('irOptCode').textContent = '; Optimized IR will appear here...';
-            document.getElementById('analysisOutput').innerHTML = 'Run analysis tools to see results here...';
-            document.getElementById('tokensOutput').innerHTML = '<div style="color: #9595b8; width: 100%;">Click "Tokenize" to see tokens...</div>';
-            document.getElementById('exampleSelect').value = '';
-            document.getElementById('statTokens').textContent = '0';
-            document.getElementById('statFunctions').textContent = '0';
-            document.getElementById('statInstructions').textContent = '0';
-            document.getElementById('statOptimized').textContent = '0%';
+            updatePipelineStage('code');
+            document.getElementById('tokenOutput').innerHTML = '<p style="color: #a0a8b8;">Click "🔤 Tokenize" to break the code into tokens...</p>';
+            document.getElementById('irCode').textContent = '; Click "⚡ Generate IR" to see compiled LLVM IR...';
+            document.getElementById('analysisOutput').innerHTML = '<p style="color: #a0a8b8;">Click "🔗 Alias Analysis" to analyze pointer relationships...</p>';
+            document.getElementById('sccpOutput').innerHTML = '<p style="color: #a0a8b8;">Click "⚡ SCCP Optimize" to apply Sparse Conditional Constant Propagation...</p>';
         }
 
-        // Load default example
-        window.addEventListener('load', () => {
-            document.getElementById('codeInput').value = examples.simple;
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('exampleSelect').value = 'simple';
+            loadExample();
         });
     </script>
 </body>
