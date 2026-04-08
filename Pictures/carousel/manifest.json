@@ -9,10 +9,6 @@
       "src": "Pictures/carousel/3.jpeg"
     },
     {
-      "type": "video",
-      "src": "Pictures/carousel/4.mp4"
-    },
-    {
       "type": "image",
       "src": "Pictures/carousel/5.jpeg"
     },
@@ -22,13 +18,13 @@
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/7.jpeg"
+      "src": "Pictures/carousel/10.jpeg"
     },
     {
-      "type": "image",
-      "src": "Pictures/carousel/10.jpeg"
+      "type": "video",
+      "src": "Pictures/carousel/billard.mp4"
     }
   ],
-  "generated": "2026-04-08T13:55:28.759Z",
-  "totalItems": 7
+  "generated": "2026-04-08T14:44:18.276Z",
+  "totalItems": 6
 }
