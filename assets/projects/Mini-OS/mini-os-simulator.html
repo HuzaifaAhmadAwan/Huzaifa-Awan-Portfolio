@@ -3,514 +3,1094 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini-OS Simulator</title>
+    <title>Mini-OS Simulator | RISC-V Process Scheduling & Execution</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        :root {
+            --bg-primary: #1e1e2e;
+            --bg-secondary: #2d2d44;
+            --text-primary: #e8ff47;
+            --text-secondary: #a0a0b0;
+            --accent-blue: #47c8ff;
+            --accent-teal: #20c997;
+            --accent-red: #ff6b6b;
+            --accent-yellow: #ffd93d;
+            --border-color: #3d3d5c;
+            --green: #4ade80;
+        }
+
         body {
-            background: linear-gradient(135deg, #0a0e14 0%, #1a1f2e 100%);
-            color: #f0f0f5;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            min-height: 100vh;
-            padding: 20px;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            height: 100vh;
         }
-        
+
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            gap: 0;
         }
-        
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ HEADER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .header {
-            text-align: center;
-            margin-bottom: 30px;
+            background: linear-gradient(90deg, rgba(71, 200, 255, 0.1) 0%, rgba(232, 255, 71, 0.1) 100%);
+            border-bottom: 2px solid var(--accent-blue);
+            padding: 20px 30px;
+            box-shadow: 0 0 20px rgba(71, 200, 255, 0.2);
+            animation: slideDown 0.6s ease-out;
         }
-        
-        h1 {
-            font-size: 2.5em;
-            background: linear-gradient(135deg, #e8ff47 0%, #47c8ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        .subtitle {
-            color: #999;
-            font-size: 0.95em;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        
-        .controls {
+
+        .header-left h1 {
+            font-size: 28px;
+            color: var(--text-primary);
+            text-shadow: 0 0 10px var(--text-primary);
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .header-left .subtitle {
+            font-size: 12px;
+            color: var(--accent-teal);
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-red);
+            animation: pulse 1s infinite;
+        }
+
+        .status-dot.running {
+            background: var(--green);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MAIN CONTENT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .main-content {
+            display: flex;
+            flex: 1;
+            gap: 15px;
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ LEFT PANEL - CODE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: linear-gradient(90deg, rgba(71, 200, 255, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            border-bottom: 2px solid var(--accent-blue);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header h2 {
+            font-size: 14px;
+            color: var(--text-primary);
+            text-shadow: 0 0 5px var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        .panel-header-info {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .left-panel {
+            flex: 1;
+        }
+
+        .code-display {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            background: rgba(10, 10, 15, 0.6);
+        }
+
+        .code-line {
             display: flex;
             gap: 10px;
-            justify-content: center;
-            margin-bottom: 30px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .code-line:hover {
+            background: rgba(71, 200, 255, 0.1);
+        }
+
+        .code-line.active {
+            background: rgba(232, 255, 71, 0.15);
+            border-left: 3px solid var(--text-primary);
+            padding-left: 5px;
+            box-shadow: 0 0 10px rgba(232, 255, 71, 0.3);
+        }
+
+        .line-num {
+            color: var(--accent-blue);
+            min-width: 30px;
+            text-align: right;
+            user-select: none;
+        }
+
+        .code-content {
+            flex: 1;
+            white-space: pre;
+            font-size: 11px;
+        }
+
+        .keyword {
+            color: var(--accent-yellow);
+        }
+
+        .register {
+            color: var(--accent-teal);
+        }
+
+        .number {
+            color: var(--green);
+        }
+
+        .comment {
+            color: var(--text-secondary);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ RIGHT PANEL - MONITOR ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .monitor-section {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* Process Scheduler */
+        .process-scheduler {
+            flex: 1;
+            min-height: 200px;
+        }
+
+        .process-queue {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: rgba(10, 10, 15, 0.6);
+        }
+
+        .process-item {
+            background: rgba(71, 200, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .process-item:hover {
+            background: rgba(71, 200, 255, 0.2);
+            box-shadow: 0 0 10px rgba(71, 200, 255, 0.3);
+        }
+
+        .process-item.active {
+            background: rgba(232, 255, 71, 0.2);
+            border-color: var(--text-primary);
+            box-shadow: 0 0 15px rgba(232, 255, 71, 0.4);
+            animation: pulse 1s infinite;
+        }
+
+        .process-name {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .process-pid {
+            color: var(--accent-teal);
+            margin-left: 5px;
+        }
+
+        .process-state {
+            display: inline-block;
+            margin-left: auto;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+
+        .process-state.ready {
+            background: rgba(32, 201, 151, 0.3);
+            color: var(--accent-teal);
+        }
+
+        .process-state.running {
+            background: rgba(74, 222, 128, 0.3);
+            color: var(--green);
+        }
+
+        .process-state.waiting {
+            background: rgba(255, 107, 107, 0.3);
+            color: var(--accent-red);
+        }
+
+        /* Time Quantum Bar */
+        .time-quantum {
+            flex: 0.15;
+            padding: 12px;
+            background: rgba(10, 10, 15, 0.6);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .quantum-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .quantum-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(71, 200, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .quantum-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-blue));
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--accent-teal);
+        }
+
+        /* Exception Display */
+        .exception-display {
+            flex: 0.6;
+            padding: 12px;
+            background: rgba(10, 10, 15, 0.6);
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .exception-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid;
+        }
+
+        .exception-none {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .exception-interrupt {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .exception-syscall {
+            background: rgba(32, 201, 151, 0.1);
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+        }
+
+        /* Memory Layout */
+        .memory-layout {
+            flex: 0.6;
+            padding: 12px;
+            background: rgba(10, 10, 15, 0.6);
+            overflow-y: auto;
+            font-size: 10px;
+        }
+
+        .memory-section {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            border-radius: 3px;
+            border-left: 2px solid;
+            background: rgba(71, 200, 255, 0.05);
+        }
+
+        .memory-section.text {
+            border-color: var(--accent-blue);
+        }
+
+        .memory-section.data {
+            border-color: var(--accent-teal);
+        }
+
+        .memory-section.heap {
+            border-color: var(--accent-yellow);
+        }
+
+        .memory-section.stack {
+            border-color: var(--green);
+        }
+
+        .memory-label {
+            color: var(--text-secondary);
+            font-size: 9px;
+        }
+
+        .memory-value {
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ CONTROLS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .controls {
+            background: linear-gradient(90deg, rgba(71, 200, 255, 0.05) 0%, rgba(32, 201, 151, 0.05) 100%);
+            border-top: 2px solid var(--accent-blue);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         button {
-            background: linear-gradient(135deg, #e8ff47 0%, #47c8ff 100%);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.95em;
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(71, 200, 255, 0.2) 0%, rgba(32, 201, 151, 0.2) 100%);
+            border: 2px solid var(--accent-blue);
+            color: var(--text-primary);
+            padding: 10px 16px;
+            border-radius: 4px;
             cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            font-weight: bold;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
+
         button:hover {
+            background: linear-gradient(135deg, rgba(71, 200, 255, 0.4) 0%, rgba(32, 201, 151, 0.4) 100%);
+            box-shadow: 0 0 15px rgba(71, 200, 255, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(232, 255, 71, 0.3);
         }
-        
+
         button:active {
             transform: translateY(0);
         }
-        
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+
+        button.danger {
+            border-color: var(--accent-red);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 107, 107, 0.15) 100%);
         }
-        
-        .panel {
-            background: rgba(30, 35, 45, 0.8);
-            border: 2px solid rgba(232, 255, 71, 0.2);
-            padding: 20px;
-            border-radius: 10px;
+
+        button.danger:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.4) 0%, rgba(255, 107, 107, 0.3) 100%);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
         }
-        
-        .panel-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #e8ff47;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(232, 255, 71, 0.2);
+
+        button.success {
+            border-color: var(--green);
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.2) 0%, rgba(74, 222, 128, 0.15) 100%);
         }
-        
-        .process-item {
-            background: rgba(232, 255, 71, 0.05);
-            border: 1px solid rgba(232, 255, 71, 0.15);
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 10px;
+
+        button.success:hover {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.4) 0%, rgba(74, 222, 128, 0.3) 100%);
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
         }
-        
-        .process-item.active {
-            background: rgba(232, 255, 71, 0.1);
-            border-color: #e8ff47;
-            box-shadow: 0 0 10px rgba(232, 255, 71, 0.2);
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-        
-        .process-name {
-            color: #e8ff47;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .process-info {
-            font-size: 0.85em;
-            color: #bbb;
+
+        .slider-group {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex: 0 1 200px;
         }
-        
-        .syscall-item {
-            background: rgba(71, 200, 255, 0.05);
-            border-left: 3px solid #47c8ff;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 4px;
+
+        .slider-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
         }
-        
-        .syscall-code {
-            color: #e8ff47;
-            font-family: monospace;
-            font-weight: 600;
-            margin-bottom: 5px;
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            background: rgba(71, 200, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
         }
-        
-        .syscall-desc {
-            font-size: 0.9em;
-            color: #bbb;
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--accent-blue);
+            border: 1px solid var(--text-primary);
         }
-        
-        .memory-layout {
-            background: rgba(12, 12, 14, 0.5);
-            border: 1px solid rgba(232, 255, 71, 0.1);
-            border-radius: 6px;
-            padding: 0;
-            font-family: monospace;
-            font-size: 0.85em;
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--accent-blue);
+            border: 1px solid var(--text-primary);
+        }
+
+        .speed-value {
+            font-size: 10px;
+            color: var(--accent-blue);
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ BOTTOM CONTENT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .bottom-content {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            overflow: hidden;
+            border-top: 2px solid var(--border-color);
+            height: 200px;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ EXECUTION LOG ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .log-panel {
+            flex: 0 0 35%;
+            min-width: 250px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
-        
-        .memory-block {
-            padding: 8px 12px;
-            border-bottom: 1px solid rgba(232, 255, 71, 0.1);
-            display: flex;
-            justify-content: space-between;
+
+        .log-header {
+            background: linear-gradient(90deg, rgba(71, 200, 255, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            border-bottom: 2px solid var(--accent-blue);
+            padding: 10px 12px;
+            font-size: 12px;
+            color: var(--text-primary);
+            text-shadow: 0 0 5px var(--text-primary);
+            letter-spacing: 1px;
         }
-        
-        .memory-block:last-child {
-            border-bottom: none;
-        }
-        
-        .memory-addr {
-            color: #47c8ff;
-        }
-        
-        .memory-desc {
-            color: #bbb;
+
+        .execute-log {
             flex: 1;
-            margin: 0 15px;
-        }
-        
-        .memory-size {
-            color: #e8ff47;
-        }
-        
-        .exception-flow {
-            background: rgba(255, 150, 100, 0.05);
-            border-left: 3px solid #ff9664;
-            padding: 15px;
-            border-radius: 6px;
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-        
-        .exception-step {
-            margin-bottom: 10px;
+            overflow-y: auto;
             padding: 8px;
-            background: rgba(255, 150, 100, 0.1);
+            font-size: 10px;
+            line-height: 1.4;
+            background: rgba(10, 10, 15, 0.6);
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ MEMORY PANEL ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .memory-panel {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .memory-panel .panel-header {
+            background: linear-gradient(90deg, rgba(71, 200, 255, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            border-bottom: 2px solid var(--accent-blue);
+            padding: 10px 12px;
+        }
+            padding: 4px 6px;
+            margin-bottom: 3px;
+            border-radius: 3px;
+            border-left: 2px solid;
+            transition: all 0.3s ease;
+        }
+
+        .log-entry.info {
+            background: rgba(71, 200, 255, 0.1);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .log-entry.syscall {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .log-entry.exception {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .log-entry.context-switch {
+            background: rgba(255, 217, 61, 0.1);
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(71, 200, 255, 0.4);
             border-radius: 4px;
         }
-        
-        .exception-step-num {
-            color: #ff9664;
-            font-weight: 600;
-            margin-right: 8px;
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 200, 255, 0.6);
         }
-        
-        .feature-box {
-            background: rgba(71, 255, 150, 0.05);
-            border: 1px solid rgba(71, 255, 150, 0.2);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-        
-        .feature-title {
-            color: #47ff96;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .feature-desc {
-            font-size: 0.9em;
-            color: #bbb;
-        }
-        
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        
+
+        /* Responsive */
         @media (max-width: 1200px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
+            .main-content {
+                flex-direction: column;
+            }
+
+            .right-panel {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .header-left h1 {
+                font-size: 20px;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+
+            .button-group {
+                width: 100%;
+            }
+
+            button {
+                flex: 1;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- HEADER -->
         <div class="header">
-            <h1>Mini-OS Simulator</h1>
-            <p class="subtitle">RISC-V Operating System with Process Scheduling and Exception Handling</p>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>⚙️ MINI-OS SIMULATOR</h1>
+                    <div class="subtitle">RISC-V Process Scheduling & Exception Handling</div>
+                    <div class="tagline">Step through OS concepts: scheduling, context switching, exceptions, syscalls</div>
+                </div>
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusLabel">READY</span>
+                </div>
+            </div>
         </div>
-        
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- LEFT PANEL: CODE -->
+            <div class="left-panel panel">
+                <div class="panel-header">
+                    <h2>📝 RISC-V Assembly Code</h2>
+                    <div class="panel-header-info">Line <span id="currentLine">1</span></div>
+                </div>
+                <div class="code-display" id="codeDisplay"></div>
+            </div>
+
+            <!-- RIGHT PANEL: MONITORING -->
+            <div class="right-panel">
+                <!-- Process Scheduler -->
+                <div class="monitor-section process-scheduler">
+                    <div class="panel-header">
+                        <h2>🔄 Process Scheduler</h2>
+                        <div class="panel-header-info">Processes: <span id="processCount">0</span></div>
+                    </div>
+                    <div class="process-queue" id="processQueue"></div>
+                    <div class="time-quantum">
+                        <div class="quantum-label">Time Quantum Remaining</div>
+                        <div class="quantum-bar">
+                            <div class="quantum-fill" id="quantumFill"></div>
+                        </div>
+                    </div>
+                </div>
+
+<!-- Exception Display -->
+                    <div class="monitor-section" style="flex: 1;">
+                        <div class="panel-header">
+                            <h2>⚡ Exception Handler</h2>
+                            <div class="panel-header-info">mcause: <span id="mcauseValue">0x0</span></div>
+                        </div>
+                        <div class="exception-display" id="exceptionDisplay">
+                            <div class="exception-none">No active exceptions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
         <div class="controls">
-            <button onclick="runSchedulingDemo()">Run Scheduling Demo</button>
-            <button onclick="runSyscallDemo()">Run System Call Demo</button>
-            <button onclick="runExceptionDemo()">Show Exception Handling</button>
-            <button onclick="resetSimulation()">Reset</button>
-        </div>
-        
-        <div class="grid-2">
-            <div class="panel">
-                <div class="panel-title">Process Scheduler</div>
-                <div id="processStatus">
-                    <p style="color: #999;">Click "Run Scheduling Demo" to see processes in action</p>
-                </div>
+            <div class="button-group">
+                <button id="stepBtn">⏭️  Step</button>
+                <button id="runBtn" class="success">▶️  Run</button>
+                <button id="pauseBtn" class="success" style="display: none;">⏸️  Pause</button>
+                <button id="resetBtn">🔄 Reset</button>
+                <button id="exceptionBtn" class="danger">⚡ Trigger Exception</button>
+                <button id="syscallBtn" class="danger">📞 Trigger Syscall</button>
             </div>
-            
-            <div class="panel">
-                <div class="panel-title">System Calls</div>
-                <div id="syscallList"></div>
+
+            <div class="slider-group">
+                <span class="slider-label">Execution Speed:</span>
+                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                <span class="speed-value" id="speedValue">5x</span>
             </div>
         </div>
-        
-        <div class="panel full-width">
-            <div class="panel-title">Memory Layout</div>
-            <div class="memory-layout">
-                <div class="memory-block">
-                    <span class="memory-addr">0x00000</span>
-                    <span class="memory-desc">Temporary Registers & Data</span>
-                    <span class="memory-size">(256 bytes)</span>
-                </div>
-                <div class="memory-block">
-                    <span class="memory-addr">0x000FF</span>
-                    <span class="memory-desc">Process Meta Information</span>
-                    <span class="memory-size">(64 bytes)</span>
-                </div>
-                <div class="memory-block">
-                    <span class="memory-addr">0x00C8</span>
-                    <span class="memory-desc">Status Flags & Process States</span>
-                    <span class="memory-size">(8 bytes)</span>
-                </div>
-                <div class="memory-block">
-                    <span class="memory-addr">0x03E8</span>
-                    <span class="memory-desc">mtime Cache</span>
-                    <span class="memory-size">(4 bytes)</span>
-                </div>
-                <div class="memory-block">
-                    <span class="memory-addr">0x03E9</span>
-                    <span class="memory-desc">Process 0 (Startup) Registers</span>
-                    <span class="memory-size">(120 bytes)</span>
-                </div>
-                <div class="memory-block">
-                    <span class="memory-addr">0x07D0</span>
-                    <span class="memory-desc">Process 1 Registers</span>
-                    <span class="memory-size">(120 bytes)</span>
-                </div>
-                <div class="memory-block">
-                    <span class="memory-addr">0x0BB8</span>
-                    <span class="memory-desc">Process 2+ Registers</span>
-                    <span class="memory-size">(120 bytes each)</span>
-                </div>
+
+        <!-- BOTTOM CONTENT: LOG & MEMORY -->
+        <div class="bottom-content">
+            <!-- EXECUTION LOG -->
+            <div class="log-panel">
+                <div class="log-header">📋 Execution Log</div>
+                <div class="execute-log" id="executeLog"></div>
             </div>
-        </div>
-        
-        <div class="grid-2" style="margin-top: 20px;">
-            <div class="panel">
-                <div class="panel-title">Exception Handling Flow</div>
-                <div class="exception-flow">
-                    <div class="exception-step">
-                        <span class="exception-step-num">1.</span>
-                        <span>Exception/Interrupt occurs in user mode</span>
+
+            <!-- MEMORY LAYOUT -->
+            <div class="memory-panel">
+                <div class="panel-header">
+                    <h2>💾 Memory Layout</h2>
+                </div>
+                <div class="memory-layout">
+                    <div class="memory-section text">
+                        <div class="memory-label">.text</div>
+                        <div class="memory-value">0x00001000 - 0x00002000</div>
                     </div>
-                    <div class="exception-step">
-                        <span class="exception-step-num">2.</span>
-                        <span>Jump to exception_handler (mtvec)</span>
+                    <div class="memory-section data">
+                        <div class="memory-label">.data</div>
+                        <div class="memory-value">0x10000000 - 0x10001000</div>
                     </div>
-                    <div class="exception-step">
-                        <span class="exception-step-num">3.</span>
-                        <span>Save critical registers to memory</span>
+                    <div class="memory-section heap">
+                        <div class="memory-label">heap</div>
+                        <div class="memory-value">0x20000000 - 0x30000000</div>
                     </div>
-                    <div class="exception-step">
-                        <span class="exception-step-num">4.</span>
-                        <span>Read mcause to determine exception type</span>
-                    </div>
-                    <div class="exception-step">
-                        <span class="exception-step-num">5.</span>
-                        <span>Dispatch to appropriate handler</span>
-                    </div>
-                    <div class="exception-step">
-                        <span class="exception-step-num">6.</span>
-                        <span>Execute OS code or system call</span>
-                    </div>
-                    <div class="exception-step">
-                        <span class="exception-step-num">7.</span>
-                        <span>Restore registers and return to user</span>
+                    <div class="memory-section stack">
+                        <div class="memory-label">stack</div>
+                        <div class="memory-value">0x7ffff000 - 0x80000000</div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="panel">
-                <div class="panel-title">Key Features</div>
-                <div class="feature-box">
-                    <div class="feature-title">Process Scheduling</div>
-                    <div class="feature-desc">Round-robin scheduling with preemption based on interruptsand time estimation</div>
-                </div>
-                <div class="feature-box">
-                    <div class="feature-title">System Calls</div>
-                    <div class="feature-desc">Support for print_char (11) and print_string (4) syscalls via ecall instruction</div>
-                </div>
-                <div class="feature-box">
-                    <div class="feature-title">Context Switching</div>
-                    <div class="feature-desc">Efficient register save/restore for multi-process execution</div>
-                </div>
-                <div class="feature-box">
-                    <div class="feature-title">Exception Handling</div>
-                    <div class="feature-desc">Comprehensive exception dispatch with mcause-based routing</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="panel full-width" style="margin-top: 20px;">
-            <div class="panel-title">Simulation Status</div>
-            <div id="simulationOutput" style="background: rgba(12, 12, 14, 0.5); padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.85em; min-height: 100px;">
-                <p style="color: #999;">Simulation log will appear here...</p>
             </div>
         </div>
     </div>
 
     <script>
-        class MiniOSSimulator {
-            constructor() {
-                this.processes = [
-                    { id: 0, name: 'Startup', state: 'active', pc: 0x1000 },
-                    { id: 1, name: 'Process 1', state: 'ready', pc: 0x2000 },
-                    { id: 2, name: 'Process 2', state: 'ready', pc: 0x3000 }
-                ];
-                this.currentProcess = 0;
-                this.syscalls = [
-                    { code: 11, name: 'print_char', desc: 'Print single character from a0' },
-                    { code: 4, name: 'print_string', desc: 'Print null-terminated string from a0' },
-                    { code: 1, name: 'exit', desc: 'Terminate current process' }
-                ];
-                this.log = [];
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ STATE MANAGEMENT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        const state = {
+            processes: [
+                { id: 1, name: 'Process_A', state: 'RUNNING', pc: 0, sp: 0x7ffff000, timeQuantum: 10 },
+                { id: 2, name: 'Process_B', state: 'READY', pc: 0, sp: 0x7ffee000, timeQuantum: 10 },
+                { id: 3, name: 'Process_C', state: 'READY', pc: 0, sp: 0x7ffed000, timeQuantum: 10 }
+            ],
+            currentProcess: 0,
+            currentLine: 0,
+            isRunning: false,
+            speed: 5,
+            quantumRemaining: 10,
+            exception: null,
+            syscall: null,
+            executionCount: 0
+        };
+
+        const riscvCode = [
+            { line: '1', code: 'addi  sp, sp, -8      # allocate stack space', type: 'instruction' },
+            { line: '2', code: 'sw    a0, 0(sp)       # save argument', type: 'instruction' },
+            { line: '3', code: 'li    a7, 4           # syscall: print_string', type: 'instruction' },
+            { line: '4', code: 'ecall                 # invoke syscall', type: 'instruction' },
+            { line: '5', code: 'lw    a0, 0(sp)       # restore a0', type: 'instruction' },
+            { line: '6', code: 'addi  sp, sp, 8       # deallocate stack', type: 'instruction' },
+            { line: '7', code: 'jr    ra              # return from function', type: 'instruction' },
+            { line: '8', code: '', type: 'blank' },
+            { line: '9', code: '# Context Switch Handler', type: 'comment' },
+            { line: '10', code: 'csrw  mepc, a0        # set exception pc', type: 'instruction' },
+            { line: '11', code: 'mret                  # return from exception', type: 'instruction' }
+        ];
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ UI INITIALIZATION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function initializeUI() {
+            displayCode();
+            updateProcessQueue();
+            updateExceptionDisplay();
+            setupEventListeners();
+        }
+
+        function displayCode() {
+            const codeDisplay = document.getElementById('codeDisplay');
+            codeDisplay.innerHTML = riscvCode.map((item, idx) => {
+                const isActive = idx === state.currentLine;
+                return `<div class="code-line ${isActive ? 'active' : ''}">
+                    <span class="line-num">${item.line}</span>
+                    <span class="code-content">${highlightCode(item.code)}</span>
+                </div>`;
+            }).join('');
+            
+            document.getElementById('currentLine').textContent = state.currentLine + 1;
+            
+            // Auto-scroll to active line
+            const activeLine = codeDisplay.querySelector('.code-line.active');
+            if (activeLine) {
+                activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function highlightCode(code) {
+            if (!code) return '';
+            
+            let highlighted = code;
+            
+            // Highlight keywords
+            const keywords = ['addi', 'sw', 'li', 'ecall', 'lw', 'jr', 'csrw', 'mret', 'add', 'sub', 'mul', 'div'];
+            keywords.forEach(kw => {
+                highlighted = highlighted.replace(new RegExp(`\\b${kw}\\b`, 'g'), `<span class="keyword">${kw}</span>`);
+            });
+            
+            // Highlight registers
+            const registers = ['sp', 'a0', 'a7', 'ra', 'mepc'];
+            registers.forEach(reg => {
+                highlighted = highlighted.replace(new RegExp(`\\b${reg}\\b`, 'g'), `<span class="register">${reg}</span>`);
+            });
+            
+            // Highlight numbers
+            highlighted = highlighted.replace(/-?\b\d+\b|\b0x[0-9a-fA-F]+\b/g, '<span class="number">$&</span>');
+            
+            // Highlight comments
+            highlighted = highlighted.replace(/#.*/g, '<span class="comment">$&</span>');
+            
+            return highlighted;
+        }
+
+        function updateProcessQueue() {
+            const queue = document.getElementById('processQueue');
+            queue.innerHTML = state.processes.map((proc, idx) => {
+                const isActive = idx === state.currentProcess;
+                return `<div class="process-item ${isActive ? 'active' : ''}" onclick="switchToProcess(${idx})" style="cursor: pointer;">
+                    <span class="process-name">${proc.name}</span>
+                    <span class="process-pid">[PID: ${proc.id}]</span>
+                    <span class="process-state ${proc.state.toLowerCase()}">${proc.state}</span>
+                </div>`;
+            }).join('');
+            
+            document.getElementById('processCount').textContent = state.processes.length;
+            
+            // Update quantum bar
+            const percent = (state.quantumRemaining / 10) * 100;
+            document.getElementById('quantumFill').style.width = percent + '%';
+            
+            // Auto-scroll to active process
+            const activeProcess = queue.querySelector('.process-item.active');
+            if (activeProcess) {
+                activeProcess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function updateExceptionDisplay() {
+            const display = document.getElementById('exceptionDisplay');
+            
+            if (state.exception) {
+                display.innerHTML = `<div class="exception-item exception-interrupt">
+                    <strong>⚡ Interrupt Exception</strong><br>
+                    mcause: 0x${state.exception.code.toString(16).padStart(2, '0').toUpperCase()}<br>
+                    mepc: 0x${state.exception.pc.toString(16).padStart(8, '0').toUpperCase()}<br>
+                    Status: ${state.exception.status}
+                </div>`;
+                document.getElementById('mcauseValue').textContent = `0x${state.exception.code.toString(16).padStart(2, '0').toUpperCase()}`;
+            } else if (state.syscall) {
+                display.innerHTML = `<div class="exception-item exception-syscall">
+                    <strong>📞 Syscall Trap</strong><br>
+                    a7 (syscall #): ${state.syscall.number}<br>
+                    Operation: ${state.syscall.name}
+                </div>`;
+                document.getElementById('mcauseValue').textContent = `0x8`;
+            } else {
+                display.innerHTML = '<div class="exception-none">No active exceptions</div>';
+                document.getElementById('mcauseValue').textContent = '0x0';
+            }
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ EXECUTION ENGINE ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function runStep() {
+            if (state.currentLine < riscvCode.length - 1) {
+                state.currentLine++;
+            } else {
+                state.currentLine = 0;
+                switchProcess();
             }
             
-            addLog(message) {
-                this.log.push(`[${new Date().toLocaleTimeString()}] ${message}`);
-                if (this.log.length > 20) {
-                    this.log.shift();
+            state.quantumRemaining--;
+            state.executionCount++;
+            
+            if (state.quantumRemaining <= 0) {
+                addLog('context-switch', `Process ${state.processes[state.currentProcess].name} time quantum expired`);
+                switchProcess();
+            }
+            
+            displayCode();
+            updateProcessQueue();
+            addLog('info', `Executed line ${state.currentLine + 1}: ${riscvCode[state.currentLine].code.substring(0, 30)}`);
+        }
+
+        function switchProcess() {
+            state.currentProcess = (state.currentProcess + 1) % state.processes.length;
+            state.quantumRemaining = 10;
+            state.currentLine = 0;
+            
+            // Update process states
+            state.processes.forEach((proc, idx) => {
+                if (idx === state.currentProcess) {
+                    proc.state = 'RUNNING';
+                } else {
+                    proc.state = 'READY';
                 }
-            }
+            });
             
-            runSchedulingDemo() {
-                this.log = [];
-                this.addLog('>>> Scheduling Demo Started');
-                this.addLog('Initializing 3 processes with memory regions');
-                
-                for (let i = 0; i < 3; i++) {
-                    this.processes[i].state = i === 0 ? 'active' : 'ready';
-                    this.addLog(`Process ${i} initialized at 0x${(0x1000 + i * 0x1000).toString(16)}`);
+            addLog('context-switch', `Context switched to ${state.processes[state.currentProcess].name}`);
+            updateProcessQueue();
+        }
+
+        function switchToProcess(processIdx) {
+            if (state.isRunning) pauseExecution();
+            
+            if (processIdx < 0 || processIdx >= state.processes.length) return;
+            
+            state.currentProcess = processIdx;
+            state.quantumRemaining = 10;
+            state.currentLine = 0;
+            
+            // Update process states
+            state.processes.forEach((proc, idx) => {
+                if (idx === state.currentProcess) {
+                    proc.state = 'RUNNING';
+                } else {
+                    proc.state = 'READY';
                 }
-                
-                // Simulate scheduling
-                for (let cycle = 0; cycle < 6; cycle++) {
-                    this.addLog(`--- Cycle ${cycle + 1} ---`);
-                    this.addLog(`Currently running: Process ${this.currentProcess}`);
-                    
-                    // Simulate time quantum expiration
-                    if (cycle % 2 === 0 && cycle > 0) {
-                        this.processes[this.currentProcess].state = 'ready';
-                        this.currentProcess = (this.currentProcess + 1) % 3;
-                        this.processes[this.currentProcess].state = 'active';
-                        this.addLog(`Context switch to Process ${this.currentProcess}`);
-                    }
-                    
-                    this.addLog(`Process ${this.currentProcess} executing...`);
-                }
-                
-                this.addLog('>>> Scheduling Demo Completed');
+            });
+            
+            addLog('context-switch', `Switched to ${state.processes[state.currentProcess].name} (manual)`);
+            displayCode();
+            updateProcessQueue();
+        }
+
+        function runContinuous() {
+            if (state.isRunning) return;
+            state.isRunning = true;
+            document.getElementById('runBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+            document.getElementById('statusDot').classList.add('running');
+            document.getElementById('statusLabel').textContent = 'RUNNING';
+            executeLoop();
+        }
+
+        function pauseExecution() {
+            state.isRunning = false;
+            document.getElementById('runBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('statusDot').classList.remove('running');
+            document.getElementById('statusLabel').textContent = 'PAUSED';
+        }
+
+        function executeLoop() {
+            if (!state.isRunning) return;
+            
+            runStep();
+            
+            // Speed calculation: 1000ms / speed
+            const delay = 1000 / state.speed;
+            setTimeout(executeLoop, delay);
+        }
+
+        function reset() {
+            state.processes.forEach(proc => proc.state = 'READY');
+            state.processes[0].state = 'RUNNING';
+            state.currentProcess = 0;
+            state.currentLine = 0;
+            state.quantumRemaining = 10;
+            state.exception = null;
+            state.syscall = null;
+            state.isRunning = false;
+            state.executionCount = 0;
+            
+            document.getElementById('runBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('statusDot').classList.remove('running');
+            document.getElementById('statusLabel').textContent = 'READY';
+            document.getElementById('executeLog').innerHTML = '';
+            
+            displayCode();
+            updateProcessQueue();
+            updateExceptionDisplay();
+            addLog('info', 'System reset to initial state');
+        }
+
+        function triggerException() {
+            if (state.isRunning) pauseExecution();
+            
+            state.exception = {
+                code: 11,
+                pc: 0x00001000 + (state.currentLine * 4),
+                status: 'Machine Mode Exception'
+            };
+            
+            addLog('exception', 'External interrupt triggered (mcause: 0xB)');
+            updateExceptionDisplay();
+            setTimeout(() => {
+                state.exception = null;
+                updateExceptionDisplay();
+            }, 3000);
+        }
+
+        function triggerSyscall() {
+            if (state.isRunning) pauseExecution();
+            
+            state.syscall = {
+                number: 4,
+                name: 'print_string'
+            };
+            
+            addLog('syscall', 'System call invoked: print_string (a7=4)');
+            updateExceptionDisplay();
+            setTimeout(() => {
+                state.syscall = null;
+                updateExceptionDisplay();
+            }, 2000);
+        }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ LOGGING ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function addLog(type, message) {
+            const log = document.getElementById('executeLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            // Keep last 100 entries
+            while (log.children.length > 100) {
+                log.removeChild(log.firstChild);
             }
-            
-            runSyscallDemo() {
-                this.log = [];
-                this.addLog('>>> System Call Demo Started');
-                this.addLog('Process 1 makes syscall: print_string');
-                this.addLog('a7 = 4 (syscall code)');
-                this.addLog('a0 = 0x4000 (string address)');
-                this.addLog('');
-                this.addLog('Exception handler triggered (ecall)');
-                this.addLog('Saving registers to Process 1 context (0x2000)');
-                this.addLog('Executing print_string syscall...');
-                this.addLog('String output: "Hello from Process 1"');
-                this.addLog('');
-                this.addLog('Restoring registers from Process 1 context');
-                this.addLog('Returning to user mode (mret)');
-                this.addLog('>>> System Call Demo Completed');
-            }
-            
-            runExceptionDemo() {
-                this.log = [];
-                this.addLog('>>> Exception Handling Demo');
-                this.addLog('1. User mode exception occurs');
-                this.addLog('2. Jump to exception_handler via mtvec');
-                this.addLog('3. Read mcause = 0x0000000B (ecall from U-mode)');
-                this.addLog('4. Read a7 = 11 (syscall type)');
-                this.addLog('5. Match syscall code: print_char');
-                this.addLog('6. Load terminal_ready address = 0xFFFF0005');
-                this.addLog('7. Poll terminal_ready until ready');
-                this.addLog('8. Write a0 to terminal_data = 0xFFFF0000');
-                this.addLog('9. Return to user mode at next instruction');
-                this.addLog('>>> Exception Demo Completed');
-            }
-            
-            getProcessStatus() {
-                return this.processes.map((p, i) => ({
-                    ...p,
-                    isCurrent: i === this.currentProcess
-                }));
-            }
-            
-            getLog() {
-                return this.log.join('\n');
-            }
         }
-        
-        let sim = new MiniOSSimulator();
-        
-        // Initialize syscall list
-        document.getElementById('syscallList').innerHTML = sim.syscalls
-            .map(s => `
-                <div class="syscall-item">
-                    <div class="syscall-code">a7 = ${s.code} → ${s.name}</div>
-                    <div class="syscall-desc">${s.desc}</div>
-                </div>
-            `).join('');
-        
-        // Initialize process status display
-        document.getElementById('processStatus').innerHTML = '<p style="color: #999;">Click a demo button to see processes in action</p>';
-        
-        function runSchedulingDemo() {
-            sim.runSchedulingDemo();
-            updateDisplay();
-        }
-        
-        function runSyscallDemo() {
-            sim.runSyscallDemo();
-            updateDisplay();
-        }
-        
-        function runExceptionDemo() {
-            sim.runExceptionDemo();
-            updateDisplay();
-        }
-        
-        function resetSimulation() {
-            sim = new MiniOSSimulator();
-            document.getElementById('processStatus').innerHTML = '<p style="color: #999;">Simulation reset. Click a demo button to start.</p>';
-            document.getElementById('simulationOutput').innerHTML = '<p style="color: #999;">Simulation log will appear here...</p>';
-        }
-        
-        function updateDisplay() {
-            const processes = sim.getProcessStatus();
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ EVENT LISTENERS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        function setupEventListeners() {
+            document.getElementById('stepBtn').addEventListener('click', runStep);
+            document.getElementById('runBtn').addEventListener('click', runContinuous);
+            document.getElementById('pauseBtn').addEventListener('click', pauseExecution);
+            document.getElementById('resetBtn').addEventListener('click', reset);
+            document.getElementById('exceptionBtn').addEventListener('click', triggerException);
+            document.getElementById('syscallBtn').addEventListener('click', triggerSyscall);
             
-            document.getElementById('processStatus').innerHTML = processes
-                .map(p => `
-                    <div class="process-item ${p.isCurrent ? 'active' : ''}">
-                        <div class="process-name">${p.name}</div>
-                        <div class="process-info">
-                            <span>State: <strong>${p.state.toUpperCase()}</strong></span>
-                            <span>PC: 0x${p.pc.toString(16)}</span>
-                        </div>
-                    </div>
-                `).join('');
-            
-            document.getElementById('simulationOutput').innerHTML = 
-                `<pre>${sim.getLog()}</pre>`;
+            document.getElementById('speedSlider').addEventListener('input', (e) => {
+                state.speed = parseInt(e.target.value);
+                document.getElementById('speedValue').textContent = state.speed + 'x';
+            });
         }
+
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ STARTUP ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        document.addEventListener('DOMContentLoaded', initializeUI);
+        addLog('info', 'Mini-OS Simulator initialized');
     </script>
 </body>
 </html>
