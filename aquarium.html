@@ -2714,13 +2714,6 @@
         function startGame() {
             if (!gameInitialized) {
                 gameInitialized = true;
-                
-                // Hide loading screen
-                const loadingScreen = document.getElementById('loadingScreen');
-                if (loadingScreen) {
-                    loadingScreen.classList.add('hidden');
-                }
-                
                 resizeCanvas();
                 init();
             }
@@ -2730,14 +2723,72 @@
             }
         }
 
+        // Preload aquarium assets before showing the game
+        function preloadAquariumAssets() {
+            return new Promise((resolve) => {
+                const assets = [
+                    'assets/images/aquarium/indexFinger.png',
+                    'assets/images/aquarium/exitButton.png',
+                    'assets/images/aquarium/pressSpaceToFeed.png',
+                    'assets/images/aquarium/thanksForSwimmingBy.png'
+                ];
+
+                let loadedCount = 0;
+                const totalAssets = assets.length;
+
+                assets.forEach(src => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedCount++;
+                        if (loadedCount === totalAssets) {
+                            resolve();
+                        }
+                    };
+                    img.onerror = () => {
+                        loadedCount++;
+                        if (loadedCount === totalAssets) {
+                            resolve();
+                        }
+                    };
+                    img.src = src;
+                });
+
+                // Fallback: if no assets, resolve after 500ms
+                setTimeout(() => {
+                    if (loadedCount < totalAssets) {
+                        resolve();
+                    }
+                }, 500);
+            });
+        }
+
         // Start the game when window loads or orientation is landscape
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
+            // Preload assets first
+            await preloadAquariumAssets();
+            
+            // Hide loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.classList.add('hidden');
+            }
+            
+            // Then start the game
             startGame();
         });
 
         // Fallback if load event doesn't fire
-        setTimeout(() => {
+        setTimeout(async () => {
             if (!gameInitialized) {
+                // Preload assets
+                await preloadAquariumAssets();
+                
+                // Hide loading screen
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                }
+                
                 startGame();
             }
         }, 100);
