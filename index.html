@@ -3454,33 +3454,38 @@ function updateStackDisplay() {
 // =========================================
 
 const CATS = {
-  frontend: "#378ADD",
-  backend:  "#1D9E75",
-  language: "#7F77DD",
-  data:     "#BA7517",
-  devops:   "#D85A30",
-  design:   "#D4537E",
+  frontend: "#FFD700",
+  backend:  "#00BB00",
+  language: "#FF3333",
+  data:     "#001F3F",
+  devops:   "#FFA500",
+  "Low-Level":   "#FF1493",
 };
 
 const SKILLS_RADAR = [
   { label:"C",           level:0.90, cat:"language", icon:"⬡" },
-  { label:"C++",         level:0.88, cat:"language", icon:"⬡" },
-  { label:"Java",        level:0.85, cat:"language", icon:"⬡" },
-  { label:"Python",      level:0.82, cat:"language", icon:"⬡" },
-  { label:"OCaml",       level:0.78, cat:"language", icon:"⬡" },
-  { label:"Kotlin",      level:0.72, cat:"language", icon:"⬡" },
-  { label:"MIPS",        level:0.80, cat:"language", icon:"⬡" },
-  { label:"RISC-V",      level:0.82, cat:"language", icon:"⬡" },
-  { label:"Html",        level:0.85, cat:"frontend", icon:"⬡" },
-  { label:"Docker",      level:0.80, cat:"devops",   icon:"⬡" },
-  { label:"Git",         level:0.90, cat:"devops",   icon:"⬡" },
+  { label:"MIPS",        level:0.8, cat:"Low-Level", icon:"⬡" },
+  { label:"C++",         level:0.87, cat:"language", icon:"⬡" },
+  { label:"Html",        level:0.75, cat:"frontend", icon:"⬡" },
+  { label:"Java",        level:0.94, cat:"language", icon:"⬡" },
+  { label:"Docker",      level:0.75, cat:"devops",   icon:"⬡" },
+  { label:"Python",      level:0.85, cat:"language", icon:"⬡" },
+  { label:"VS Code",     level:0.95, cat:"devops",   icon:"⬡" },
+  { label:"Scala",       level:0.70, cat:"language", icon:"⬡" },
+  { label:"Node.js",     level:0.50, cat:"backend",  icon:"⬡" },
+  { label:"OCaml",       level:0.80, cat:"language", icon:"⬡" },
+  { label:"Django",      level:0.65, cat:"backend",  icon:"⬡" },
   { label:"LLVM",        level:0.75, cat:"devops",   icon:"⬡" },
-  { label:"Node.js",     level:0.80, cat:"backend",  icon:"⬡" },
-  { label:"SQL",         level:0.85, cat:"data",     icon:"⬡" },
+  { label:"Kotlin",      level:0.94, cat:"language", icon:"⬡" },
+  { label:"RISC-V",      level:0.85, cat:"Low-Level", icon:"⬡" },
+  { label:"IntelliJ",    level:0.75, cat:"devops",   icon:"⬡" },
+  { label:"Chisel",      level:0.85, cat:"Low-Level", icon:"⬡" },
+  { label:"SQL",         level:0.90, cat:"data",     icon:"⬡" },
+  { label:"Git",         level:0.95, cat:"devops",   icon:"⬡" },
 ];
 
 const RINGS = [0.25, 0.5, 0.75, 1.0];
-const RING_LABELS = ["beginner","intermediate","proficient","expert"];
+const RING_LABELS = ["beginner","intermediate","advanced","expert"];
 
 function initRadarChart() {
   const canvas = document.getElementById('radar-canvas');
