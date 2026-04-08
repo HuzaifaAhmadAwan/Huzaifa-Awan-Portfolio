@@ -1,6 +1,0 @@
-digraph Foo {
-A -> B;
-B -> C;
-C -> E;
-B -> E;
-}
