@@ -2407,8 +2407,8 @@ function initCarousel() {
   const carouselTrack = document.getElementById('carouselTrack');
   if (!carouselTrack) return;
 
-  // Carousel items data (in order)
-  const carouselItems = [
+  // Default fallback items
+  const defaultItems = [
     { type: 'image', src: 'Pictures/carousel/1.jpeg' },
     { type: 'image', src: 'Pictures/carousel/2.jpeg' },
     { type: 'image', src: 'Pictures/carousel/3.jpeg' },
@@ -2416,87 +2416,113 @@ function initCarousel() {
     { type: 'image', src: 'Pictures/carousel/5.jpeg' }
   ];
 
-  // Create carousel items
-  carouselItems.forEach((item, index) => {
-    const itemEl = document.createElement('div');
-    itemEl.className = 'carousel-item';
-    itemEl.dataset.index = index;
+  function loadCarousel(carouselItems) {
+    // Create carousel items
+    carouselItems.forEach((item, index) => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'carousel-item';
+      itemEl.dataset.index = index;
 
-    if (item.type === 'image') {
-      const img = document.createElement('img');
-      img.src = item.src;
-      img.alt = `Carousel image ${index + 1}`;
-      itemEl.appendChild(img);
-    } else {
-      const video = document.createElement('video');
-      video.src = item.src;
-      video.muted = true;
-      video.loop = true;
-      video.autoplay = false;
-      itemEl.appendChild(video);
-    }
-
-    carouselTrack.appendChild(itemEl);
-  });
-
-  let currentIndex = 0;
-
-  function updateCarousel() {
-    const items = carouselTrack.querySelectorAll('.carousel-item');
-    const totalItems = items.length;
-
-    items.forEach((item, i) => {
-      item.classList.remove('prev', 'current', 'next');
-      item.style.display = ''; // Reset display
-
-      // Calculate relative position
-      let position = (i - currentIndex + totalItems) % totalItems;
-
-      if (position === 0) {
-        item.classList.add('current');
-        // Play video if it's a video
-        if (item.querySelector('video')) {
-          item.querySelector('video').play();
-        }
-      } else if (position === totalItems - 1) {
-        item.classList.add('prev');
-      } else if (position === 1) {
-        item.classList.add('next');
-      } else {
-        item.style.display = 'none';
+      if (item.type === 'image') {
+        const img = document.createElement('img');
+        img.src = item.src;
+        img.alt = `Carousel item ${index + 1}`;
+        itemEl.appendChild(img);
+      } else if (item.type === 'video') {
+        const video = document.createElement('video');
+        video.src = item.src;
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = false;
+        itemEl.appendChild(video);
       }
+
+      carouselTrack.appendChild(itemEl);
     });
-  }
 
-  function rotateCarousel() {
-    currentIndex = (currentIndex + 1) % carouselItems.length;
-    updateCarousel();
-  }
+    let currentIndex = 0;
 
-  // Initialize carousel
-  updateCarousel();
+    function updateCarousel() {
+      const items = carouselTrack.querySelectorAll('.carousel-item');
+      const totalItems = items.length;
 
-  // Carousel pause control
-  let carouselPaused = false;
+      items.forEach((item, i) => {
+        item.classList.remove('prev', 'current', 'next');
+        item.style.display = ''; // Reset display
 
-  // Rotate carousel every 3 seconds (only if not paused)
-  setInterval(() => {
-    if (!carouselPaused) {
-      rotateCarousel();
+        // Calculate relative position
+        let position = (i - currentIndex + totalItems) % totalItems;
+
+        if (position === 0) {
+          item.classList.add('current');
+          // Play video if it's a video
+          if (item.querySelector('video')) {
+            item.querySelector('video').play();
+          }
+        } else if (position === totalItems - 1) {
+          item.classList.add('prev');
+        } else if (position === 1) {
+          item.classList.add('next');
+        } else {
+          item.style.display = 'none';
+        }
+      });
     }
-  }, 3000);
 
-  // Pause/Resume on hover
-  const carouselContainer = document.querySelector('.carousel-container');
-  if (carouselContainer) {
-    carouselContainer.addEventListener('mouseenter', () => {
-      carouselPaused = true;
-    });
+    function rotateCarousel() {
+      currentIndex = (currentIndex + 1) % carouselItems.length;
+      updateCarousel();
+    }
 
-    carouselContainer.addEventListener('mouseleave', () => {
-      carouselPaused = false;
-    });
+    // Initialize carousel
+    updateCarousel();
+
+    // Carousel pause control
+    let carouselPaused = false;
+
+    // Rotate carousel every 3 seconds (only if not paused)
+    setInterval(() => {
+      if (!carouselPaused) {
+        rotateCarousel();
+      }
+    }, 3000);
+
+    // Pause/Resume on hover
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (carouselContainer) {
+      carouselContainer.addEventListener('mouseenter', () => {
+        carouselPaused = true;
+      });
+
+      carouselContainer.addEventListener('mouseleave', () => {
+        carouselPaused = false;
+      });
+    }
   }
+
+  // Try to load from manifest.json, fall back to default items
+  fetch('Pictures/carousel/manifest.json?t=' + new Date().getTime())
+    .then(response => {
+      if (!response.ok) {
+        console.warn('Manifest not found, using default carousel items');
+        loadCarousel(defaultItems);
+        return null;
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data && data.items && data.items.length > 0) {
+        console.log('Loaded carousel with ' + data.items.length + ' items');
+        loadCarousel(data.items);
+      } else {
+        console.warn('No items in manifest, using default carousel items');
+        loadCarousel(defaultItems);
+      }
+    })
+    .catch(error => {
+      console.warn('Failed to load carousel manifest, using default items:', error);
+      loadCarousel(defaultItems);
+    });
 }
 
 // Initialize when DOM is ready

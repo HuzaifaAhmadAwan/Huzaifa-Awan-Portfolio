@@ -1,0 +1,30 @@
+{
+  "items": [
+    {
+      "type": "image",
+      "src": "Pictures/carousel/1.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/3.jpeg"
+    },
+    {
+      "type": "video",
+      "src": "Pictures/carousel/4.mp4"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/6.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/7.jpeg"
+    },
+    {
+      "type": "image",
+      "src": "Pictures/carousel/8.jpeg"
+    }
+  ],
+  "generated": "2026-04-08T06:41:52.795Z",
+  "totalItems": 6
+}
