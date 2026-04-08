@@ -3553,24 +3553,36 @@ function initRadarChart() {
     const axisColor  = dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.35)';
     const textColor  = dark ? '#888780' : '#888780';
 
+    // Draw concentric polygon rings (spider web)
     RINGS.forEach((pct, ri) => {
       ctx.beginPath();
-      ctx.arc(CX, CY, R * pct, 0, Math.PI * 2);
+      for (let i = 0; i < N; i++) {
+        const a = angle(i);
+        const r = R * pct;
+        const x = CX + Math.cos(a) * r;
+        const y = CY + Math.sin(a) * r;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
       ctx.strokeStyle = gridColor;
       ctx.lineWidth = ri === 3 ? 0.8 : 0.5;
       ctx.stroke();
     });
 
+    // Draw radial axes to each skill
     for (let i = 0; i < N; i++) {
       const a = angle(i);
       ctx.beginPath();
       ctx.moveTo(CX, CY);
-      ctx.lineTo(CX + Math.cos(a) * R, CY + Math.sin(a) * R);
+      const maxDist = R * 1.1;
+      ctx.lineTo(CX + Math.cos(a) * maxDist, CY + Math.sin(a) * maxDist);
       ctx.strokeStyle = axisColor;
       ctx.lineWidth = 0.5;
       ctx.stroke();
     }
 
+    // Draw skill web polygon
     ctx.beginPath();
     for (let i = 0; i < N; i++) {
       const p = skillPos(i);
@@ -3584,6 +3596,7 @@ function initRadarChart() {
     ctx.lineWidth = 1;
     ctx.stroke();
 
+    // Draw skills
     for (let i = 0; i < N; i++) {
       const p = skillPos(i);
       const s = SKILLS_RADAR[i];
