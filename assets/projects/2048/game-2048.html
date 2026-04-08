@@ -516,21 +516,39 @@
             }
         });
 
-        // Touch support for mobile
+        // Enhanced touch support for mobile - fixed direction and scroll prevention
         let touchStartX = 0;
         let touchStartY = 0;
+        let isTouchingBoard = false;
         const minSwipeDistance = 30;
+        const gameBoard = document.querySelector('.game-board');
 
-        document.addEventListener('touchstart', (e) => {
+        gameBoard.addEventListener('touchstart', (e) => {
+            isTouchingBoard = true;
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
-        });
+        }, { passive: true });
 
-        document.addEventListener('touchend', (e) => {
+        gameBoard.addEventListener('touchmove', (e) => {
+            // Prevent page scroll only when touching the game board
+            if (isTouchingBoard) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        gameBoard.addEventListener('touchend', (e) => {
+            if (!isTouchingBoard) return;
+            
+            isTouchingBoard = false;
+            
+            if (e.changedTouches.length === 0) return;
+
             const touchEndX = e.changedTouches[0].clientX;
             const touchEndY = e.changedTouches[0].clientY;
-            const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
+            
+            // Fixed: Calculate difference correctly (end - start, not start - end)
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
             const absDiffX = Math.abs(diffX);
             const absDiffY = Math.abs(diffY);
 
@@ -539,12 +557,15 @@
             let direction = null;
 
             if (absDiffX > absDiffY) {
+                // Horizontal swipe
                 direction = diffX > 0 ? 'right' : 'left';
             } else {
+                // Vertical swipe
                 direction = diffY > 0 ? 'down' : 'up';
             }
 
             if (direction) {
+                e.preventDefault();
                 game.move(direction);
 
                 if (game.checkGameOver()) {
@@ -555,7 +576,7 @@
                     }, 300);
                 }
             }
-        });
+        }, { passive: false });
     </script>
 </body>
 </html>
