@@ -1098,17 +1098,14 @@
     top: 50%;
     transform-origin: center center;
     transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateZ(0px);
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    cursor: grab;
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
     user-select: none;
   }
   
   .project-card.active {
-    cursor: grabbing;
   }
   
   .project-card:active {
-    cursor: grabbing;
   }
   
   .project-card-inner {
@@ -1194,7 +1191,6 @@
     background: transparent;
     color: var(--muted);
     border-radius: 5px;
-    cursor: pointer;
     font-family: var(--mono);
     font-size: 11px;
     font-weight: 500;
@@ -1203,6 +1199,18 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    pointer-events: auto;
+    font-size: 11px;
+  }
+  
+  button.project-card-btn {
+    font-size: 11px;
+    cursor: none;
+  }
+  
+  a.project-card-btn {
+    font-size: 11px;
+    cursor: none;
   }
   
   .project-card-btn:hover {
@@ -1222,10 +1230,22 @@
     color: #000;
   }
   
+  .project-card-logo {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 150px;
+    height: 150px;
+    opacity: 1;
+    pointer-events: none;
+  }
+  
   .stack-indicators {
     display: flex;
     gap: 12px;
     justify-content: center;
+    position: relative;
+    z-index: 200;
   }
   
   .indicator {
@@ -1236,6 +1256,7 @@
     background: transparent;
     cursor: pointer;
     transition: all 0.3s;
+    pointer-events: auto;
   }
   
   .indicator.active {
@@ -2341,7 +2362,7 @@
   <div class="card-stack-container">
     <div class="card-stack" id="cardStack"></div>
     <div class="stack-indicators" id="stackIndicators"></div>
-    <p class="stack-hint">Drag • Scroll • Click</p>
+    <p class="stack-hint">Drag • Scroll • Click Cards</p>
   </div>
 </section>
 
@@ -2907,57 +2928,57 @@ themeToggle.addEventListener('click', () => {
 
 // C Compiler launcher
 function openCCompiler() {
-  window.open('assets/projects/C-Compiler/compiler-demo.html', 'CCompiler', 'width=1600,height=1400,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/C-Compiler/compiler-demo.html';
 }
 
 // AI Planning launcher
 function openAIPlanning() {
-  window.open('assets/projects/Pattern-Database-Heuristics/pdb-demo.html', 'AIPlanning', 'width=1400,height=1200,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Pattern-Database-Heuristics/pdb-demo.html';
 }
 
 // Rock Paper Scissors Game launcher
 function openRPSGame() {
-  window.open('assets/projects/Rock-Paper-Scissors/rps-game.html', 'RPSGame', 'width=700,height=900,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Rock-Paper-Scissors/rps-game.html';
 }
 
 // Edge Detection Tool launcher
 function openEdgeDetector() {
-  window.open('assets/projects/Edge-Detection/edge-detector.html', 'EdgeDetector', 'width=1200,height=1400,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Edge-Detection/edge-detector.html';
 }
 
 // PageRank Visualizer launcher
 function openPageRank() {
-  window.open('assets/projects/Page-Rank/pagerank-visualizer.html', 'PageRank', 'width=1000,height=1200,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Page-Rank/pagerank-visualizer.html';
 }
 
 // 2048 Game launcher
 function open2048() {
-  window.open('assets/projects/2048/game-2048.html', '2048Game', 'width=600,height=750,resizable=yes,scrollbars=no');
+  window.location.href = 'assets/projects/2048/game-2048.html';
 }
 
 // Route Planner launcher
 function openRoutePlanner() {
-  window.open('assets/projects/Route-Planner/route-planner.html', 'RoutePlanner', 'width=1200,height=1000,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Route-Planner/route-planner.html';
 }
 
 // RISC-V Simulator launcher
 function openRiscVSimulator() {
-  window.open('assets/projects/RICV-Processor/riscv-simulator.html', 'RiscVSimulator', 'width=1400,height=1200,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/RICV-Processor/riscv-simulator.html';
 }
 
 // Mini-OS Simulator launcher
 function openMiniOS() {
-  window.open('assets/projects/Mini-OS/mini-os-simulator.html', 'MiniOS', 'width=1400,height=1200,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Mini-OS/mini-os-simulator.html';
 }
 
 // Social Network Simulator launcher
 function openSocialNetwork() {
-  window.open('assets/projects/Social-Network/social-network-project.html', 'SocialNetwork', 'width=1200,height=1400,resizable=yes,scrollbars=yes');
+  window.location.href = 'assets/projects/Social-Network/social-network-project.html';
 }
 
 // Aquarium Simulation launcher
 function openAquarium() {
-  window.open('aquarium.html', 'Aquarium', 'width=1400,height=900,resizable=yes,scrollbars=yes');
+  window.location.href = 'aquarium.html';
 }
 
 // =========================================
@@ -2966,32 +2987,43 @@ function openAquarium() {
 
 const projectsData = [
   {
-    name: "Aquarium",
-    techs: ["HTML5", "JavaScript", "Physics"],
-    desc: "Interactive web-based aquarium simulation featuring fish with realistic behavior including flocking, obstacle avoidance and predator-prey dynamics.",
-    link: "aquarium.html",
-    github: "https://github.com/HuzAwan21",
-  },
-  {
-    name: "2048 Game",
-    techs: ["JavaScript", "Game Dev", "Algorithms"],
-    desc: "Web-based implementation of the popular sliding tile game 2048. Features responsive touch controls, smooth animations, and an extensive automated test suite.",
-    link: "assets/projects/2048/game-2048.html",
-    github: "https://github.com/HuzAwan21",
-  },
-  {
-    name: "Rock Paper Scissors",
-    techs: ["MIPS", "Assembly", "Algorithms"],
-    desc: "MIPS assembly implementation featuring computer vs computer gameplay with pseudorandom number generation and algorithmic winner determination.",
-    link: "rps-game.html",
-    github: "https://github.com/HuzAwan21",
-  },
-  {
     name: "C Compiler Implementation",
     techs: ["C++", "Compilers", "LLVM"],
     desc: "Comprehensive compiler for a subset of C featuring complete pipeline from lexing and parsing through semantic analysis to code generation with LLVM backend.",
     link: "javascript:void(0)",
     onclick: "openCCompiler()",
+    github: "https://github.com/HuzAwan21",
+  },
+  {
+    name: "Mini-OS",
+    techs: ["RISC-V Assembly", "OS Design", "Systems"],
+    desc: "Mini Operating System implementation in RISC-V assembly for system architecture and design. Features process scheduling with round-robin and time-slice preemption, comprehensive exception handling with mcause-based dispatch, system call support (print_char, print_string, exit) and efficient context switching with register save/restore. Implemented process state management and memory layout for multi-process execution. Enhanced skills in low-level OS design, assembly programming, interrupt handling and process management on RISC-V architecture.",
+    link: "javascript:void(0)",
+    onclick: "openMiniOS()",
+    github: "https://github.com/HuzAwan21",
+  },
+  {
+    name: "RISC-V Processor",
+    techs: ["Scala", "Chisel", "RISC-V"],
+    desc: "Bit-manipulation circuits and RISC-V processor extension project implemented in Scala using the Chisel hardware description language. Involved designing and testing custom hardware modules with a focus on expanding the processor's instruction set and extending core functionality. Developed reusable hardware components for specific operations while maintaining compatibility with the RV32I instruction set. This project strengthened skills in hardware description, digital logic design, processor architecture, RISC-V simulation and practical Chisel/Scala for hardware development.",
+    link: "javascript:void(0)",
+    onclick: "openRiscVSimulator()",
+    github: "https://github.com/HuzAwan21",
+  },
+  {
+    name: "Route Planner",
+    techs: ["Java", "Graph Theory", "Algorithms"],
+    desc: "Route planning application implemented in Java that reads map data and computes shortest paths between coordinates. Key components include graph construction and simplification algorithms, coordinate-to-node mapping using acceleration structures for efficient lookup and Dijkstra's pathfinding for optimal route computation. Enhanced proficiency in graph theory, algorithm optimization and geospatial computation with real-world navigation applications.",
+    link: "javascript:void(0)",
+    onclick: "openRoutePlanner()",
+    github: "https://github.com/HuzAwan21",
+  },
+  {
+    name: "PageRank Algorithm",
+    techs: ["C", "Graph Theory", "Algorithms"],
+    desc: "Implementation of the PageRank algorithm to evaluate the importance of vertices in directed graphs, representing websites and hyperlinks. The program simulates a random surfer model and uses Markov chain computations to assign scores, reflecting the likelihood of a user visiting each website. Strengthened skills in graph theory, probabilistic modeling and numerical algorithms in C.",
+    link: "javascript:void(0)",
+    onclick: "openPageRank()",
     github: "https://github.com/HuzAwan21",
   },
   {
@@ -3005,57 +3037,43 @@ const projectsData = [
   {
     name: "Edge Detection Tool",
     techs: ["C", "Image Processing", "Algorithms"],
-    desc: "Implementation of edge detection algorithms in C including Gaussian blurring, Sobel kernel derivatives, and gradient magnitude computation for image boundary identification.",
+    desc: "Implementation of edge detection algorithm in C to identify boundaries in images. The program reads an image, applies Gaussian blurring, calculates discrete derivatives with Sobel kernels, computes gradient magnitudes and outputs edges as a black-and-white image. Strengthened skills in image processing, convolution operations and algorithmic implementation.",
     link: "javascript:void(0)",
     onclick: "openEdgeDetector()",
     github: "https://github.com/HuzAwan21",
   },
   {
-    name: "PageRank Algorithm",
-    techs: ["C", "Graph Theory", "Algorithms"],
-    desc: "Implementation of the PageRank algorithm to evaluate vertex importance in directed graphs using random surfer model and Markov chain computations.",
-    link: "javascript:void(0)",
-    onclick: "openPageRank()",
+    name: "Rock Paper Scissors",
+    techs: ["MIPS", "Assembly", "Algorithms"],
+    desc: "MIPS assembly implementation featuring computer vs computer gameplay with pseudorandom number generation, uniform move sampling and programmatic winner determination. Enhanced understanding of low-level programming and algorithmic problem-solving.",
+    link: "rps-game.html",
     github: "https://github.com/HuzAwan21",
+    logo: "assets/images/2048/rps_logo.png",
   },
   {
-    name: "Route Planner",
-    techs: ["Java", "Graph Theory", "Algorithms"],
-    desc: "Route planning application with shortest path computation, graph construction with optimization algorithms, and Dijkstra's pathfinding for optimal routing.",
-    link: "javascript:void(0)",
-    onclick: "openRoutePlanner()",
+    name: "2048 Game",
+    techs: ["Java", "Game Dev", "Algorithms"],
+    desc: "Implementation of the popular sliding tile game 2048 in Java. The simulator handles tile movement, merging logic and random tile spawning on a configurable grid. Developed comprehensive automated tests to ensure correctness. Enhanced proficiency in object- oriented programming, algorithmic logic and testing strategies through this project.",
+    link: "assets/projects/2048/game-2048.html",
     github: "https://github.com/HuzAwan21",
+    logo: "assets/images/2048/logo.png",
   },
   {
-    name: "RISC-V Processor",
-    techs: ["Scala", "Chisel", "RISC-V"],
-    desc: "Bit-manipulation circuits and processor extension implemented in Scala using Chisel HDL, featuring custom instruction set expansion and RV32I compatibility.",
-    link: "javascript:void(0)",
-    onclick: "openRiscVSimulator()",
+    name: "VISIT MY AQUARIUM!",
+    techs: ["HTML", "JavaScript", "Interactive"],
+    desc: "Interactive web-based aquarium simulation featuring fish with realistic behavior including flocking, obstacle avoidance and predator-prey dynamics. Implements phyysics-based movement and user interaction for feeding and environment manipulation.",
+    link: "aquarium.html",
     github: "https://github.com/HuzAwan21",
-  },
-  {
-    name: "Mini-OS",
-    techs: ["RISC-V Assembly", "OS Design", "Systems"],
-    desc: "Mini Operating System implementation in RISC-V assembly featuring process scheduling, exception handling, system calls, and efficient context switching.",
-    link: "javascript:void(0)",
-    onclick: "openMiniOS()",
-    github: "https://github.com/HuzAwan21",
-  },
-  {
-    name: "Pattern Database Heuristics",
-    techs: ["C++", "Planning", "AI"],
-    desc: "Advanced heuristic methods using pattern databases for optimal state space search and classical planning domain optimization.",
-    link: "javascript:void(0)",
-    onclick: "openAIPlanning()",
-    github: "https://github.com/HuzAwan21",
+    logo: "assets/images/aquarium/fishIcon.png",
   },
 ];
 
 let currentIndex = 0;
 let isDragging = false;
-let dragStart = 0;
-let dragOffset = 0;
+let dragStartX = 0;
+let dragStartY = 0;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
 
 function initCardStack() {
   const stack = document.getElementById('cardStack');
@@ -3077,17 +3095,14 @@ function initCardStack() {
     indicators.appendChild(indicator);
   });
   
-  // Event listeners
-  stack.addEventListener('mousedown', startDrag);
-  stack.addEventListener('mousemove', moveDrag);
-  stack.addEventListener('mouseup', endDrag);
-  stack.addEventListener('mouseleave', endDrag);
+  // Event listeners for scrolling and global drag tracking
   stack.addEventListener('wheel', handleScroll, { passive: false });
   
-  // Touch events
-  stack.addEventListener('touchstart', startDrag);
-  stack.addEventListener('touchmove', moveDrag);
-  stack.addEventListener('touchend', endDrag);
+  // Global document listeners for smooth dragging anywhere
+  document.addEventListener('mousemove', moveDrag);
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchmove', moveDrag, { passive: true });
+  document.addEventListener('touchend', endDrag);
   
   updateStackDisplay();
 }
@@ -3098,9 +3113,7 @@ function createProjectCard(project, index) {
   card.dataset.index = index;
   
   const techsHtml = project.techs.map(tech => `<span class="project-tech-tag">${tech}</span>`).join('');
-  
-  const linkhref = project.link === 'javascript:void(0)' ? '#' : project.link;
-  const linkOnclick = project.onclick ? `onclick="${project.onclick}"` : '';
+  const logoHtml = project.logo ? `<img src="${project.logo}" class="project-card-logo" alt="${project.name} logo">` : '';
   
   card.innerHTML = `
     <div class="project-card-inner">
@@ -3112,51 +3125,150 @@ function createProjectCard(project, index) {
       </div>
       <p class="project-card-desc">${project.desc}</p>
       <div class="project-card-footer">
-        <a href="${linkhref}" ${linkOnclick} class="project-card-btn primary">
-          Explore →
-        </a>
+        <button class="project-card-btn primary" data-action="explore" data-index="${index}">
+          See Demo →
+        </button>
         <a href="${project.github}" target="_blank" class="project-card-btn">
           ⌥ GitHub
         </a>
       </div>
+      ${logoHtml}
     </div>
   `;
+  
+  // Attach click handler for explore button
+  const exploreBtn = card.querySelector('[data-action="explore"]');
+  exploreBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // If not front card, bring it to front
+    if (index !== currentIndex) {
+      goToCard(index);
+    } else {
+      // If front card, execute the action
+      if (project.onclick) {
+        eval(project.onclick);
+      } else if (project.link && project.link !== 'javascript:void(0)') {
+        window.location.href = project.link;
+      }
+    }
+  });
+  
+  // Attach click handler for GitHub button
+  const githubBtn = card.querySelector('a.project-card-btn');
+  githubBtn.addEventListener('click', (e) => {
+    // If not front card, bring it to front instead of opening link
+    if (index !== currentIndex) {
+      e.preventDefault();
+      e.stopPropagation();
+      goToCard(index);
+    }
+    // If front card, let the link work normally (default behavior)
+  });
+  
+  // Attach click handler for the card itself to bring it to front
+  const cardInner = card.querySelector('.project-card-inner');
+  cardInner.addEventListener('click', (e) => {
+    // Only trigger if clicking on card content, not on buttons or links
+    const isButton = e.target.closest('.project-card-btn') || e.target.closest('a');
+    if (!isButton) {
+      e.stopPropagation();
+      // If clicking the front card, go to next card. Otherwise, bring this card to front.
+      if (index === currentIndex) {
+        nextCard();
+      } else {
+        goToCard(index);
+      }
+    }
+  });
+  
+  // Allow dragging from anywhere on the card, including buttons
+  card.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragOffsetX = 0;
+    dragOffsetY = 0;
+  });
+  
+  card.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    dragOffsetX = 0;
+    dragOffsetY = 0;
+  });
   
   return card;
 }
 
 function startDrag(e) {
   isDragging = true;
-  dragStart = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-  dragOffset = 0;
+  dragStartX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+  dragStartY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+  dragOffsetX = 0;
+  dragOffsetY = 0;
 }
 
 function moveDrag(e) {
   if (!isDragging) return;
   
-  const current = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-  dragOffset = current - dragStart;
+  let currentX, currentY;
+  if (e.type.includes('touch')) {
+    if (!e.touches || !e.touches[0]) return;
+    currentX = e.touches[0].clientX;
+    currentY = e.touches[0].clientY;
+  } else {
+    currentX = e.clientX;
+    currentY = e.clientY;
+  }
+  
+  dragOffsetX = currentX - dragStartX;
+  dragOffsetY = currentY - dragStartY;
 }
 
 function endDrag(e) {
   isDragging = false;
   
-  const threshold = 30;
-  if (dragOffset > threshold) {
-    prevCard();
-  } else if (dragOffset < -threshold) {
-    nextCard();
+  const threshold = 15;
+  const absX = Math.abs(dragOffsetX);
+  const absY = Math.abs(dragOffsetY);
+  
+  // Determine which direction has more movement
+  if (absX > absY && absX > threshold) {
+    // Horizontal drag
+    if (dragOffsetX > threshold) {
+      prevCard();
+    } else if (dragOffsetX < -threshold) {
+      nextCard();
+    }
+  } else if (absY > absX && absY > threshold) {
+    // Vertical drag
+    if (dragOffsetY > threshold) {
+      prevCard();
+    } else if (dragOffsetY < -threshold) {
+      nextCard();
+    }
   }
-  dragOffset = 0;
+  
+  dragOffsetX = 0;
+  dragOffsetY = 0;
 }
+
+let scrollAccumulator = 0;
 
 function handleScroll(e) {
   e.preventDefault();
   
-  if (e.deltaY > 0) {
+  scrollAccumulator += e.deltaY;
+  
+  const scrollThreshold = 100;
+  if (scrollAccumulator > scrollThreshold) {
     nextCard();
-  } else {
+    scrollAccumulator = 0;
+  } else if (scrollAccumulator < -scrollThreshold) {
     prevCard();
+    scrollAccumulator = 0;
   }
 }
 
@@ -3185,14 +3297,12 @@ function updateStackDisplay() {
     let transform = '';
     let zIndex = 0;
     let opacity = 0;
-    let pointerEvents = 'none';
     
     if (index === currentIndex) {
       // Front card
       transform = 'translate(-50%, -50%) rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateZ(0px) scale(1)';
       zIndex = 100;
       opacity = 1;
-      pointerEvents = 'auto';
       card.classList.add('active');
     } else if (offset > 0) {
       // Cards behind (coming forward)
@@ -3215,7 +3325,7 @@ function updateStackDisplay() {
     card.style.transform = transform;
     card.style.zIndex = zIndex;
     card.style.opacity = Math.max(0, opacity);
-    card.style.pointerEvents = pointerEvents;
+    card.style.pointerEvents = 'auto';
   });
   
   indicators.forEach((indicator, index) => {
