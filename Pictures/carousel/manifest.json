@@ -10,23 +10,7 @@
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/15.jpeg"
-    },
-    {
-      "type": "image",
       "src": "Pictures/carousel/16.jpeg"
-    },
-    {
-      "type": "image",
-      "src": "Pictures/carousel/17.jpeg"
-    },
-    {
-      "type": "image",
-      "src": "Pictures/carousel/18.jpeg"
-    },
-    {
-      "type": "image",
-      "src": "Pictures/carousel/19.jpeg"
     },
     {
       "type": "image",
@@ -42,13 +26,9 @@
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/Pic4.jpeg"
-    },
-    {
-      "type": "image",
       "src": "Pictures/carousel/Pic13.jpeg"
     }
   ],
-  "generated": "2026-04-08T22:19:23.628Z",
-  "totalItems": 12
+  "generated": "2026-04-10T23:48:47.749Z",
+  "totalItems": 7
 }
