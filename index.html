@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,700&family=UnifrakturCook:wght@400&display=swap" rel="stylesheet">
 <style>
 
-  /* --- MOBILE IMPROVEMENTS (applied by Copilot) --- */
+  /* --- MOBILE IMPROVEMENTS --- */
   @media (max-width: 768px) {
     html, body {
       max-width: 100vw;
@@ -1102,7 +1102,7 @@
         <h2><span>Huzaifa</span><span>Ahmad Awan</span></h2>
       </div>
       <div class="profile-image">
-        <img src="Pictures/profile_bg.jpeg" alt="Huzaifa Ahmad Awan">
+        <img src="Pictures/profile_bg.jpeg" alt="Huzaifa Ahmad Awan" class="profile-img-main">
       </div>
       <div class="carousel-container">
         <div class="carousel-track" id="carouselTrack"></div>
@@ -1907,4 +1907,13 @@ function initRadarChart() {
 document.addEventListener('DOMContentLoaded',()=>{ initCardStack(); initRadarChart(); });
 </script>
 </body>
+<script>
+// Swap profile image to portrait on mobile
+document.addEventListener('DOMContentLoaded', function() {
+  var img = document.querySelector('.profile-img-main');
+  if (img && window.matchMedia('(max-width: 768px)').matches) {
+    img.src = 'Pictures/profile_portrait.jpeg';
+  }
+});
+</script>
 </html>
