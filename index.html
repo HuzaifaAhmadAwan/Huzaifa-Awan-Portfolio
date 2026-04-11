@@ -745,26 +745,24 @@
   .exp-entry.active .exp-tag:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px rgba(232,255,71,0.4), inset 0 0 8px rgba(232,255,71,0.1); }
 
   /* ── RADAR CHART ────────────────────────────────── */
-  @keyframes sweep { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-  @keyframes trail-fade { 0%{opacity:0.18} 100%{opacity:0} }
-  #radar-wrap { position: relative; width: 100%; max-width: 540px; margin: 1.2rem auto 0; aspect-ratio: 1; }
-  #radar-canvas { display: block; width: 100%; height: 100%; }
-  #sweep-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-  #sweep-arm { position: absolute; width: 50%; height: 50%; top: 0; left: 50%; transform-origin: 0% 100%; animation: sweep 5s linear infinite; }
-  #sweep-arm::after { content:''; position: absolute; left: 0; bottom: 0; width: 2px; height: 100%; background: linear-gradient(to top, #1D9E75, transparent); transform-origin: bottom center; border-radius: 1px; }
-  .trail { position: absolute; width: 50%; height: 50%; top: 0; left: 50%; transform-origin: 0% 100%; pointer-events: none; }
-  .trail::after { content:''; position: absolute; left: 0; bottom: 0; width: 2px; height: 100%; background: linear-gradient(to top, #1D9E75aa, transparent); transform-origin: bottom center; border-radius: 1px; animation: trail-fade 0.6s linear forwards; }
-  #skill-pill {
+  #rw { position: relative; width: 100%; max-width: 480px; margin: 0 auto; aspect-ratio: 1; touch-action: none; }
+  #rc { display: block; width: 100%; height: 100%; }
+  #sp { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+  #sa { position: absolute; width: 50%; height: 50%; top: 0; left: 50%; transform-origin: 0% 100%; animation: sw 5s linear infinite; }
+  #sa::after { content:''; position: absolute; left: 0; bottom: 0; width: 2px; height: 100%; background: linear-gradient(to top, #1D9E75, transparent); transform-origin: bottom center; border-radius: 1px; }
+  @keyframes sw { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  #pill {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-    background: var(--surface2); border: 0.5px solid rgba(255,255,255,0.1); border-radius: 100px;
-    padding: 6px 16px; font-family: var(--display); font-size: 13px; font-weight: 500; color: var(--text);
-    white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 20;
+    background: var(--color-background-secondary,#f5f5f5); border: 0.5px solid var(--color-border-tertiary,#ddd);
+    border-radius: 100px; padding: 5px 14px; font-size: 13px; font-weight: 500;
+    color: var(--color-text-primary,#111); white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.2s; z-index: 20;
   }
-  #skill-pill.visible { opacity: 1; }
-  #legend-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 16px; margin-top: 1rem; font-family: var(--display); font-size: 12px; color: var(--muted); }
-  .leg-item { display: flex; align-items: center; gap: 5px; }
-  .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .radar-section { padding: 100px 40px; background: transparent; }
+  #pill.vis { opacity: 1; }
+  #leg { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; margin-top: 1rem; font-size: 12px; color: var(--color-text-secondary,#666); max-width: 480px; margin-left: auto; margin-right: auto; }
+  .li { display: flex; align-items: center; gap: 5px; }
+  .ld { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .hint { text-align: center; font-size: 12px; color: var(--color-text-secondary,#888); margin-top: 8px; }
 
   /* ═══════════════════════════════════════════════════
      MOBILE STYLES — all fixes below
@@ -1359,12 +1357,13 @@
 <section class="radar-section" id="skills">
   <div class="section-label reveal">Expertise</div>
   <div class="section-title reveal reveal-delay-1">Technical Skills.</div>
-  <div id="radar-wrap">
-    <canvas id="radar-canvas"></canvas>
-    <div id="sweep-layer"><div id="sweep-arm"></div></div>
-    <div id="skill-pill"></div>
+  <div id="rw">
+    <canvas id="rc"></canvas>
+    <div id="sp"><div id="sa"></div></div>
+    <div id="pill"></div>
   </div>
-  <div id="legend-wrap"></div>
+  <div id="leg"></div>
+  <p class="hint">Tap or hover a skill node to inspect it</p>
 </section>
 
 <!-- CONTACT -->
@@ -1781,130 +1780,238 @@ function updateStackDisplay() {
 }
 
 // ── Radar Chart ──────────────────────────────────────────
-const CATS = { frontend:"#FFD700", backend:"#00BB00", language:"#FF3333", data:"#001F3F", devops:"#FFA500", "Low-Level":"#FF1493" };
-const SKILLS_RADAR = [
-  { label:"C",       level:0.90, cat:"language", img:"https://upload.wikimedia.org/wikipedia/commons/1/19/C_Logo.png" },
-  { label:"MIPS",    level:0.80, cat:"Low-Level", img:"https://www.svgrepo.com/show/373445/assembly.svg" },
-  { label:"C++",     level:0.87, cat:"language", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" },
-  { label:"Html",    level:0.75, cat:"frontend", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" },
-  { label:"Java",    level:0.94, cat:"language", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" },
-  { label:"Docker",  level:0.75, cat:"devops",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" },
-  { label:"Python",  level:0.85, cat:"language", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" },
-  { label:"VS Code", level:0.95, cat:"devops",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" },
-  { label:"Scala",   level:0.70, cat:"language", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scala/scala-original.svg" },
-  { label:"Node.js", level:0.50, cat:"backend",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" },
-  { label:"OCaml",   level:0.80, cat:"language", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ocaml/ocaml-original.svg" },
-  { label:"Django",  level:0.65, cat:"backend",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" },
-  { label:"LLVM",    level:0.75, cat:"devops",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/llvm/llvm-original.svg" },
-  { label:"Kotlin",  level:0.94, cat:"language", img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" },
-  { label:"RISC-V",  level:0.85, cat:"Low-Level", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/RISC-V-logo-square.svg/1280px-RISC-V-logo-square.svg.png" },
-  { label:"IntelliJ",level:0.75, cat:"devops",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/intellij/intellij-original.svg" },
-  { label:"Chisel",  level:0.85, cat:"Low-Level", img:"https://chipyard.readthedocs.io/en/stable/_static/chipyard-logo.png" },
-  { label:"SQL",     level:0.90, cat:"data",     img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" },
-  { label:"Git",     level:0.95, cat:"devops",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" },
-];
-const RINGS=[0.25,0.5,0.75,1.0];
+document.addEventListener('DOMContentLoaded',()=>{ initCardStack(); initRadarChart(); });
+const CATS = {
+  language:  "#FF3333",
+  frontend:  "#FFD700",
+  backend:   "#00BB00",
+  data:      "#3377FF",
+  devops:    "#FFA500",
+  "Low-Level":"#FF1493"
+};
 
-function initRadarChart() {
-  const canvas=document.getElementById('radar-canvas');
-  if (!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const wrap=document.getElementById('radar-wrap');
-  const sweepArm=document.getElementById('sweep-arm');
-  const pill=document.getElementById('skill-pill');
-  let W,CX,CY,R;
-  let glows={};
-  function resize(){
-    const size=wrap.clientWidth;
-    canvas.width=size*devicePixelRatio; canvas.height=size*devicePixelRatio;
-    ctx.setTransform(1,0,0,1,0,0); ctx.scale(devicePixelRatio,devicePixelRatio);
-    W=size; CX=size/2; CY=size/2; R=size*0.38; draw();
-  }
-  const N=SKILLS_RADAR.length;
-  function angle(i){return(Math.PI*2*i/N)-Math.PI/2;}
-  function skillPos(i){const a=angle(i),r=SKILLS_RADAR[i].level*R;return{x:CX+Math.cos(a)*r,y:CY+Math.sin(a)*r};}
-  const skillImages={};
-  SKILLS_RADAR.forEach((s,i)=>{const img=new Image();img.src=s.img;img.onload=()=>{skillImages[i]=img;};});
-  function draw(){
-    const size=W; ctx.clearRect(0,0,size,size);
-    const dark=!document.documentElement.classList.contains('light-mode');
-    const gc=dark?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.25)';
-    const ac=dark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.35)';
-    RINGS.forEach((pct,ri)=>{
-      ctx.beginPath();
-      for(let i=0;i<N;i++){const a=angle(i),r=R*pct,x=CX+Math.cos(a)*r,y=CY+Math.sin(a)*r;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
-      ctx.closePath(); ctx.strokeStyle=gc; ctx.lineWidth=ri===3?0.8:0.5; ctx.stroke();
-    });
-    for(let i=0;i<N;i++){const a=angle(i);ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(CX+Math.cos(a)*R*1.1,CY+Math.sin(a)*R*1.1);ctx.strokeStyle=ac;ctx.lineWidth=0.5;ctx.stroke();}
-    ctx.beginPath();
-    for(let i=0;i<N;i++){const p=skillPos(i);i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}
-    ctx.closePath();
-    ctx.fillStyle=dark?'rgba(55,138,221,0.08)':'rgba(29,158,117,0.09)'; ctx.fill();
-    ctx.strokeStyle=dark?'rgba(55,138,221,0.55)':'rgba(29,158,117,0.28)'; ctx.lineWidth=1; ctx.stroke();
-    for(let i=0;i<N;i++){
-      const p=skillPos(i),s=SKILLS_RADAR[i],color=CATS[s.cat],g=glows[i]||0;
-      if(g>0){ctx.beginPath();ctx.arc(p.x,p.y,14*g+5,0,Math.PI*2);ctx.fillStyle=color+Math.round(g*40).toString(16).padStart(2,'0');ctx.fill();}
-      ctx.beginPath();ctx.arc(p.x,p.y,5+g*3,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
-      ctx.beginPath();ctx.arc(p.x,p.y,5+g*3,0,Math.PI*2);ctx.strokeStyle=dark?'#1e1e1c':'#ffffff';ctx.lineWidth=2;ctx.stroke();
-      const a=angle(i),lr=R+24+g*4,lx=CX+Math.cos(a)*lr,ly=CY+Math.sin(a)*lr;
-      if(skillImages[i]){const sz=18+g*10;ctx.globalAlpha=1;ctx.drawImage(skillImages[i],lx-sz/2,ly-sz/2,sz,sz);ctx.globalAlpha=1;}
-      if(g>0.3){ctx.font=`${g>0.5?500:400} ${g>0.5?12:11}px var(--display,sans-serif)`;ctx.fillStyle=g>0.5?(dark?'#e8e6df':'#1a1a18'):'#888780';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(s.label,lx,ly+20);}
-    }
-  }
-  const glowTargets={};
-  function animateGlows(){
-    let dirty=false;
-    for(let i=0;i<N;i++){const t=glowTargets[i]||0,c=glows[i]||0,next=c+(t-c)*0.12;if(Math.abs(next-c)>0.001){glows[i]=next;dirty=true;}else{glows[i]=t;}}
-    if(dirty) draw();
-    requestAnimationFrame(animateGlows);
-  }
-  animateGlows();
-  let pillTimeout, hoveredIdx=-1;
-  function triggerSkill(i,isHover=false){
-    for(let j=0;j<N;j++) glowTargets[j]=0;
-    glowTargets[i]=1;
-    const s=SKILLS_RADAR[i];
-    pill.textContent=`${s.label}  ${Math.round(s.level*100)}%`; pill.className='visible';
-    clearTimeout(pillTimeout);
-    if(!isHover) pillTimeout=setTimeout(()=>{pill.className='';},1200);
-  }
-  function getSweepAngle(){const m=new DOMMatrix(getComputedStyle(sweepArm).transform);return((Math.atan2(m.b,m.a)*180/Math.PI)%360+360)%360;}
-  let lastHitIdx=-1;
-  function checkSweepHit(){
-    if(hoveredIdx!==-1){requestAnimationFrame(checkSweepHit);return;}
-    const sdeg=getSweepAngle(), srad=(sdeg-90+360)%360;
-    let ci=-1,cd=Infinity;
-    for(let i=0;i<N;i++){const skillDeg=((angle(i)*180/Math.PI)+90+360)%360;let d=Math.abs(srad-skillDeg);if(d>180)d=360-d;if(d<cd){cd=d;ci=i;}}
-    if(ci!==-1&&cd<7&&ci!==lastHitIdx){lastHitIdx=ci;triggerSkill(ci);}
-    if(cd>15) lastHitIdx=-1;
-    requestAnimationFrame(checkSweepHit);
-  }
-  checkSweepHit();
-  canvas.addEventListener('mousemove',e=>{
-    const rect=canvas.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;
-    let ci=-1,cd=Infinity;
-    for(let i=0;i<N;i++){
-      const p=skillPos(i),d=Math.sqrt((mx-p.x)**2+(my-p.y)**2);
-      if(d<10&&d<cd){cd=d;ci=i;}
-      const a=angle(i),lr=R+24,lx=CX+Math.cos(a)*lr,ly=CY+Math.sin(a)*lr,dl=Math.sqrt((mx-lx)**2+(my-ly)**2);
-      if(dl<25&&dl<cd){cd=dl;ci=i;}
-    }
-    if(ci!==-1&&ci!==hoveredIdx){hoveredIdx=ci;triggerSkill(ci,true);}
-    else if(ci===-1&&hoveredIdx!==-1){hoveredIdx=-1;for(let j=0;j<N;j++)glowTargets[j]=0;pill.className='';}
-  });
-  canvas.addEventListener('mouseleave',()=>{hoveredIdx=-1;for(let j=0;j<N;j++)glowTargets[j]=0;pill.className='';});
-  const legWrap=document.getElementById('legend-wrap');
-  Object.entries(CATS).forEach(([k,color])=>{
-    const el=document.createElement('div');el.className='leg-item';
-    el.innerHTML=`<span class="leg-dot" style="background:${color}"></span><span>${k}</span>`;
-    legWrap.appendChild(el);
-  });
-  window.addEventListener('resize',()=>{ctx.setTransform(1,0,0,1,0,0);resize();});
-  matchMedia('(prefers-color-scheme:dark)').addEventListener('change',draw);
-  resize();
+const SKILLS = [
+  { label:"C",        level:.90, cat:"language",  img:"https://upload.wikimedia.org/wikipedia/commons/1/19/C_Logo.png" },
+  { label:"MIPS",     level:.80, cat:"Low-Level", img:"https://www.svgrepo.com/show/373445/assembly.svg" },
+  { label:"C++",      level:.87, cat:"language",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" },
+  { label:"HTML",     level:.75, cat:"frontend",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" },
+  { label:"Java",     level:.94, cat:"language",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg" },
+  { label:"Docker",   level:.75, cat:"devops",    img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" },
+  { label:"Python",   level:.85, cat:"language",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" },
+  { label:"VS Code",  level:.95, cat:"devops",    img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg" },
+  { label:"Scala",    level:.70, cat:"language",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scala/scala-original.svg" },
+  { label:"Node.js",  level:.50, cat:"backend",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" },
+  { label:"OCaml",    level:.80, cat:"language",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ocaml/ocaml-original.svg" },
+  { label:"Django",   level:.65, cat:"backend",   img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" },
+  { label:"LLVM",     level:.75, cat:"devops",    img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/llvm/llvm-original.svg" },
+  { label:"Kotlin",   level:.94, cat:"language",  img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg" },
+  { label:"RISC-V",   level:.85, cat:"Low-Level", img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/RISC-V-logo-square.svg/1280px-RISC-V-logo-square.svg.png" },
+  { label:"IntelliJ", level:.75, cat:"devops",    img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/intellij/intellij-original.svg" },
+  { label:"Chisel",   level:.85, cat:"Low-Level", img:"https://chipyard.readthedocs.io/en/stable/_static/chipyard-logo.png" },
+  { label:"SQL",      level:.90, cat:"data",      img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg" },
+  { label:"Git",      level:.95, cat:"devops",    img:"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg" },
+];
+
+const wrap = document.getElementById('rw');
+const canvas = document.getElementById('rc');
+const ctx = canvas.getContext('2d');
+const sa = document.getElementById('sa');
+const pill = document.getElementById('pill');
+const N = SKILLS.length;
+const RINGS = [.25,.5,.75,1];
+
+let W, CX, CY, R;
+let isMobile = false;
+let glows = {}, glowTargets = {};
+let hoveredIdx = -1, pillTimer;
+let lastHitIdx = -1;
+
+const imgs = {};
+SKILLS.forEach((s,i) => {
+  const im = new Image(); im.crossOrigin = 'anonymous'; im.src = s.img;
+  im.onload = () => { imgs[i] = im; draw(); };
+});
+
+function resize() {
+  isMobile = window.innerWidth <= 600;
+  const size = wrap.clientWidth;
+  canvas.width  = size * devicePixelRatio;
+  canvas.height = size * devicePixelRatio;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  W = size; CX = size/2; CY = size/2;
+  R = size * (isMobile ? 0.30 : 0.36);
+  draw();
 }
 
-document.addEventListener('DOMContentLoaded',()=>{ initCardStack(); initRadarChart(); });
+function angle(i) { return (Math.PI*2*i/N) - Math.PI/2; }
+function skillPos(i) {
+  const a = angle(i), r = SKILLS[i].level * R;
+  return { x: CX + Math.cos(a)*r, y: CY + Math.sin(a)*r };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, W);
+  const dark = !document.documentElement.classList.contains('light-mode');
+  // Even brighter, more visible radar net and axes in dark mode
+  const gc = dark ? 'rgba(120,200,255,0.45)' : 'rgba(0,0,0,0.1)'; // grid/circles
+  const ac = dark ? 'rgba(120,200,255,0.28)' : 'rgba(0,0,0,0.07)'; // axes
+  const textColor = dark ? '#e0e0e0' : '#333';
+  // No custom canvas background; let it be transparent to match site background
+
+  RINGS.forEach((pct) => {
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const a=angle(i), r=R*pct, x=CX+Math.cos(a)*r, y=CY+Math.sin(a)*r;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = gc; ctx.lineWidth = 0.8; ctx.stroke();
+  });
+
+  for(let i=0;i<N;i++){
+    const a=angle(i);
+    ctx.beginPath(); ctx.moveTo(CX,CY);
+    ctx.lineTo(CX+Math.cos(a)*R*1.1, CY+Math.sin(a)*R*1.1);
+    ctx.strokeStyle=ac; ctx.lineWidth=0.5; ctx.stroke();
+  }
+
+  ctx.beginPath();
+  for(let i=0;i<N;i++){const p=skillPos(i); i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}
+  ctx.closePath();
+  ctx.fillStyle = dark?'rgba(55,138,221,0.07)':'rgba(29,158,117,0.08)'; ctx.fill();
+  ctx.strokeStyle = dark?'rgba(55,138,221,0.45)':'rgba(29,158,117,0.35)'; ctx.lineWidth=1; ctx.stroke();
+
+  const iconSz = isMobile ? 14 : 18;
+  const labelR  = R + (isMobile ? 18 : 26);
+
+  for(let i=0;i<N;i++){
+    const p = skillPos(i);
+    const s = SKILLS[i];
+    const color = CATS[s.cat];
+    const g = glows[i] || 0;
+
+    if(g > 0){
+      ctx.beginPath(); ctx.arc(p.x,p.y,14*g+4,0,Math.PI*2);
+      ctx.fillStyle = color + Math.round(g*40).toString(16).padStart(2,'0'); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(p.x,p.y,4+g*2,0,Math.PI*2);
+    ctx.fillStyle = color; ctx.fill();
+    ctx.beginPath(); ctx.arc(p.x,p.y,4+g*2,0,Math.PI*2);
+    ctx.strokeStyle = dark?'#1e1e1c':'#fff'; ctx.lineWidth=1.5; ctx.stroke();
+
+    const a = angle(i);
+    const lx = CX + Math.cos(a)*labelR;
+    const ly = CY + Math.sin(a)*labelR;
+
+    if(imgs[i]){
+      const sz = iconSz + g*6;
+      ctx.globalAlpha = 1;
+      ctx.drawImage(imgs[i], lx-sz/2, ly-sz/2, sz, sz);
+    }
+
+    if(g > 0.2){
+      ctx.font = `${isMobile?10:11}px sans-serif`;
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(s.label, lx, ly + iconSz/2 + 2);
+    }
+  }
+}
+
+function animateGlows(){
+  let dirty = false;
+  for(let i=0;i<N;i++){
+    const t = glowTargets[i]||0, c = glows[i]||0;
+    const next = c + (t-c)*0.12;
+    if(Math.abs(next-c)>0.001){ glows[i]=next; dirty=true; } else { glows[i]=t; }
+  }
+  if(dirty) draw();
+  requestAnimationFrame(animateGlows);
+}
+animateGlows();
+
+function showPill(i, hold=false){
+  for(let j=0;j<N;j++) glowTargets[j]=0;
+  glowTargets[i] = 1;
+  pill.textContent = `${SKILLS[i].label}  ${Math.round(SKILLS[i].level*100)}%`;
+  pill.classList.add('vis');
+  clearTimeout(pillTimer);
+  if(hold) return;
+  pillTimer = setTimeout(() => { pill.classList.remove('vis'); for(let j=0;j<N;j++) glowTargets[j]=0; }, 1400);
+}
+function hidePill(){
+  clearTimeout(pillTimer);
+  pill.classList.remove('vis');
+  for(let j=0;j<N;j++) glowTargets[j]=0;
+}
+
+function nearestSkill(mx, my, threshold){
+  let ci=-1, cd=Infinity;
+  const iconSz = isMobile ? 14 : 18;
+  const labelR  = R + (isMobile ? 18 : 26);
+  for(let i=0;i<N;i++){
+    const p = skillPos(i);
+    const d = Math.hypot(mx-p.x, my-p.y);
+    if(d < threshold && d < cd){ cd=d; ci=i; }
+    const a=angle(i), lx=CX+Math.cos(a)*labelR, ly=CY+Math.sin(a)*labelR;
+    const dl = Math.hypot(mx-lx, my-ly);
+    const hitR = (isMobile?24:22);
+    if(dl<hitR && dl<cd){ cd=dl; ci=i; }
+  }
+  return ci;
+}
+
+canvas.addEventListener('mousemove', e => {
+  const r=canvas.getBoundingClientRect();
+  const mx=(e.clientX-r.left)*(W/r.width);
+  const my=(e.clientY-r.top)*(W/r.height);
+  const ci = nearestSkill(mx, my, isMobile?30:18);
+  if(ci !== -1 && ci !== hoveredIdx){ hoveredIdx=ci; showPill(ci, true); }
+  else if(ci===-1 && hoveredIdx!==-1){ hoveredIdx=-1; hidePill(); }
+});
+canvas.addEventListener('mouseleave', () => { hoveredIdx=-1; hidePill(); });
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  const t=e.touches[0], r=canvas.getBoundingClientRect();
+  const mx=(t.clientX-r.left)*(W/r.width);
+  const my=(t.clientY-r.top)*(W/r.height);
+  const ci = nearestSkill(mx, my, isMobile?42:24);
+  if(ci!==-1) showPill(ci, false);
+}, { passive:false });
+
+function getSweepAngle(){
+  const m=new DOMMatrix(getComputedStyle(sa).transform);
+  return ((Math.atan2(m.b,m.a)*180/Math.PI)%360+360)%360;
+}
+
+function checkSweep(){
+  if(hoveredIdx!==-1){ requestAnimationFrame(checkSweep); return; }
+  const sdeg=getSweepAngle(), srad=((sdeg-90)+360)%360;
+  let ci=-1, cd=Infinity;
+  for(let i=0;i<N;i++){
+    const skillDeg=((angle(i)*180/Math.PI)+90+360)%360;
+    let d=Math.abs(srad-skillDeg); if(d>180) d=360-d;
+    if(d<cd){ cd=d; ci=i; }
+  }
+  if(ci!==-1 && cd<7 && ci!==lastHitIdx){ lastHitIdx=ci; showPill(ci); }
+  if(cd>15) lastHitIdx=-1;
+  requestAnimationFrame(checkSweep);
+}
+checkSweep();
+
+const legEl = document.getElementById('leg');
+Object.entries(CATS).forEach(([k,c]) => {
+  const d=document.createElement('div'); d.className='li';
+  d.innerHTML=`<span class="ld" style="background:${c}"></span><span>${k}</span>`;
+  legEl.appendChild(d);
+});
+
+const ro = new ResizeObserver(resize);
+ro.observe(wrap);
+resize();
 </script>
 </body>
 <script>
