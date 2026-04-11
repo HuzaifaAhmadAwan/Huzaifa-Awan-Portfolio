@@ -10,10 +10,6 @@
     },
     {
       "type": "image",
-      "src": "Pictures/carousel/16.jpeg"
-    },
-    {
-      "type": "image",
       "src": "Pictures/carousel/20.jpeg"
     },
     {
@@ -29,6 +25,6 @@
       "src": "Pictures/carousel/Pic13.jpeg"
     }
   ],
-  "generated": "2026-04-10T23:48:47.749Z",
-  "totalItems": 7
+  "generated": "2026-04-11T01:34:23.440Z",
+  "totalItems": 6
 }
