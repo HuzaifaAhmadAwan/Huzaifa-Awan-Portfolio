@@ -1353,6 +1353,130 @@
   </div>
 </section>
 
+<!-- RESEARCH SECTION -->
+
+<!-- RESEARCH SECTION (Modern Grid) -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#0c0c0e;--surface:#111115;--surface2:#18181f;
+    --border-col:rgba(255,255,255,0.07);--accent:#e8ff47;--accent2:#47c8ff;
+    --text:#f0f0f5;--muted:#7070a0;
+    --display:'Bebas Neue',sans-serif;--mono:'DM Mono',monospace;--body:'DM Sans',sans-serif;
+  }
+  .rs{background:var(--bg);padding:64px 48px;font-family:var(--body);color:var(--text);position:relative;}
+  .rs::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(232,255,71,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(232,255,71,0.012) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+  .rs-eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;position:relative;z-index:1;}
+  .rs-eyebrow::before{content:'';width:30px;height:1px;background:var(--accent);}
+  .rs-title{font-family:var(--display);font-size:72px;line-height:0.95;letter-spacing:0.02em;margin-bottom:48px;position:relative;z-index:1;}
+  .rs-title .stroke{-webkit-text-stroke:1.5px rgba(255,255,255,0.2);color:transparent;display:block;}
+  .rs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:1px;background:var(--border-col);border:1px solid var(--border-col);position:relative;z-index:1;}
+  .rs-card{background:var(--surface);padding:36px 32px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden;transition:background 0.25s;}
+  .rs-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
+  .rs-card:hover{background:var(--surface2);}
+  .rs-card:hover::after{transform:scaleX(1);}
+  .rs-card-title{font-family:var(--display);font-size:26px;letter-spacing:0.02em;line-height:1.1;transition:color 0.2s;}
+  .rs-card:hover .rs-card-title{color:var(--accent);}
+  .rs-theorem{background:rgba(232,255,71,0.04);border-left:2px solid var(--accent);padding:14px 16px;font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.8;}
+  .rs-theorem strong{color:var(--text);}
+  .rs-theorem .kw{color:var(--accent);}
+  .rs-theorem sup{font-size:9px;vertical-align:super;}
+  .rs-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .rs-tag{font-family:var(--mono);font-size:10px;padding:3px 9px;border:1px solid var(--border-col);color:var(--muted);letter-spacing:0.07em;text-transform:uppercase;border-radius:2px;cursor:default;transition:border-color 0.2s, color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;}
+  .rs-tag:hover{border-color:var(--accent);color:var(--accent);background:rgba(232,255,71,0.07);transform:translateY(-2px);box-shadow:0 4px 12px rgba(232,255,71,0.15);}
+  .rs-btn{padding:10px 16px;font-size:12px;min-width:90px;margin-bottom:4px;border:1px solid var(--border-col);background:transparent;color:var(--muted);border-radius:5px;font-family:var(--mono);font-weight:500;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;}
+  .rs-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(232,255,71,0.05);}
+  .rs-btn.primary{border-color:var(--accent);color:var(--accent);background:rgba(232,255,71,0.1);}
+  .rs-btn.primary:hover{background:var(--accent);color:#000;}
+  .rs-footer{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border-col);border-top:none;padding:14px 20px;background:rgba(255,255,255,0.015);}
+  .rs-footer-text{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:0.08em;}
+  .rs-dot{width:6px;height:6px;background:#10b981;border-radius:50%;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+</style>
+
+<div class="rs">
+  <div class="rs-eyebrow">Academic Work</div>
+  <h2 class="rs-title">Research<span class="stroke">&amp; Publications.</span></h2>
+
+  <div class="rs-grid">
+    <!-- QPTAS Example Card (kept) -->
+    <div class="rs-card">
+      <div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;">01 &nbsp; &nbsp;</span>
+      </div>
+      <div class="rs-card-title">Metric Clustering to Minimize the Sum of Radii</div>
+      <div class="rs-theorem">
+        <strong>Theorem 1.</strong><br>
+        There exists a <span class="kw">randomized algorithm</span> that, given a set <span class="kw">P</span> of <span class="kw">n</span> points in a metric space
+        and an integer <span class="kw">k</span>, runs in <span class="kw">n<sup>O(log n · log Δ)</sup></span> time and returns,
+        with probability ≥ <span class="kw">1/2</span>, an <span class="kw">optimal k-cover</span> for P.
+      </div>
+      <div class="rs-tags">
+        <span class="rs-tag">QPTAS</span>
+        <span class="rs-tag">Approximation Algorithms</span>
+        <span class="rs-tag">NP-Hard</span>
+        <span class="rs-tag">Complexity Theory</span>
+        <span class="rs-tag">k-Cover</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border-col);padding-top:16px;margin-top:auto;">
+        <a class="rs-btn primary" href="assets/documents/Just Beyond P/Metric Clustering to Minimize the Sum of Radii.pptx" target="_blank">View Presentation ↗</a>
+        <a class="rs-btn" href="assets/documents/Just Beyond P/partition_visualizer.py" target="_blank">Visualizer ↓</a>
+      </div>
+      <div class="rs-footer-text" style="margin-top:18px;opacity:0.7;">Just Beyond P · Max-Plack-Institut · 2025/26</div>
+    </div>
+    <!-- Approximation Algorithms for NP-Hard Graph Problems Card -->
+    <div class="rs-card">
+      <div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;">02 &nbsp;</span>
+      </div>
+      <div class="rs-card-title">Approximation Algorithms for NP-Hard Graph Problems</div>
+      <div class="rs-theorem">
+        <strong>Presentation:</strong><br>
+        This presentation explores the role of <b>approximation algorithms</b> in solving NP-hard problems where exact solutions are computationally infeasible.<br><br>
+      </div>
+      <div class="rs-tags">
+        <span class="rs-tag">Approximation</span>
+        <span class="rs-tag">NP-Hard</span>
+        <span class="rs-tag">Graphs</span>
+        <span class="rs-tag">Algorithm and Complexity</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border-col);padding-top:16px;margin-top:auto;">
+        <a class="rs-btn primary" href="assets/documents/Algorithm and Complexity/Approximation Algorithms for NP-Hard Graph Problems.pptx" target="_blank">View Presentation ↗</a>
+      </div>
+      <div class="rs-footer-text" style="margin-top:18px;opacity:0.7;">Algorithm and Complexity · CISPA · 2025</div>
+    </div>
+    <!-- Graphs Introduction Card -->
+    <div class="rs-card">
+      <div>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--accent);letter-spacing:0.14em;text-transform:uppercase;">03 &nbsp;</span>
+      </div>
+      <div class="rs-card-title">Graphs Introduction</div>
+      <div class="rs-theorem">
+        <strong>Presentation:</strong><br>
+        This presentation introduces different types of <b>graphs</b> and their computer representations, such as adjacency matrices and lists. Highlights real-world applications of graphs and demonstrates <b>Dijkstra’s algorithm</b> for finding shortest paths efficiently in weighted graphs.<br><br>
+        </ul>
+      </div>
+      <div class="rs-tags">
+        <span class="rs-tag">Graphs</span>
+        <span class="rs-tag">Algorithm and Complexity</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border-col);padding-top:16px;margin-top:auto;">
+        <a class="rs-btn primary" href="assets/documents/Algorithm and Complexity/Graphs Introduction.pptx" target="_blank">View Presentation ↗</a>
+      </div>
+      <div class="rs-footer-text" style="margin-top:18px;opacity:0.7;">Algorithm and Complexity · CISPA · 2025</div>
+    </div>
+
+  </div>
+
+  <div class="rs-footer">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="rs-dot"></div>
+      <span class="rs-footer-text">3 publications</span>
+    </div>
+</div>
+
+
 <!-- SKILLS RADAR -->
 <section class="radar-section" id="skills">
   <div class="section-label reveal">Expertise</div>
