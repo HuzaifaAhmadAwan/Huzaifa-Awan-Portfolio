@@ -711,7 +711,17 @@
     .nav-secondary { display: none !important; }
     .nav-links { display: none !important; }
     .nav-github { display: none !important; }
-    .nav-search { display: none !important; }
+    .nav-search {
+      display: flex !important;
+      flex: 1 1 100%;
+      margin: 0 8px 0 0;
+      max-width: 100%;
+    }
+    .search-input {
+      width: 100%;
+      min-width: 0;
+      font-size: 13px;
+    }
     nav > div:last-child {
       display: flex;
       gap: 8px;
