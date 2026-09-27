@@ -175,24 +175,34 @@
 
         @media (max-width: 768px), (pointer: coarse) {
             .exit-button {
-                top: calc(6px + env(safe-area-inset-top));
-                left: calc(6px + env(safe-area-inset-left));
                 right: auto;
                 position: fixed;
                 z-index: 100;
                 touch-action: manipulation;
             }
 
-            .exit-button img {
-                height: 64px;
-                width: auto;
-            }
         }
 
         .exit-button img {
             height: 150px;
             width: auto;
             display: block;
+        }
+
+        @media (max-width: 768px), (pointer: coarse) {
+            .exit-button {
+                top: calc(4px + env(safe-area-inset-top));
+                left: calc(8px + env(safe-area-inset-left));
+            }
+
+            /* exitButton.png is square with lots of transparent padding: crop it */
+            .exit-button img {
+                height: 42px;
+                width: auto;
+                aspect-ratio: 891 / 477;
+                object-fit: cover;
+                filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.35));
+            }
         }
 
         .exit-button:hover {
@@ -263,28 +273,58 @@
 
         @media (max-width: 768px), (pointer: coarse) {
             .feed-button {
-                display: block;
+                display: flex;
+                align-items: center;
+                gap: 10px;
                 position: fixed;
                 bottom: calc(14px + env(safe-area-inset-bottom));
-                right: calc(14px + env(safe-area-inset-right));
+                right: calc(16px + env(safe-area-inset-right));
                 left: auto;
-                padding: 14px 22px;
-                font-size: 15px;
-                border-radius: 999px;
                 transform: none;
                 z-index: 100;
+                padding: 8px 20px 8px 8px;
+                border-radius: 999px;
+                font-size: 15px;
+                font-weight: 700;
+                letter-spacing: 0.4px;
+                color: #fff;
+                text-shadow: 0 1px 2px rgba(0, 60, 90, 0.5);
+                background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 50%),
+                            linear-gradient(135deg, #ffb347 0%, #ff7a45 55%, #ff5e62 100%);
+                border: 2px solid rgba(255, 255, 255, 0.7);
+                box-shadow: 0 6px 18px rgba(255, 94, 98, 0.45),
+                            inset 0 -3px 0 rgba(0, 0, 0, 0.12);
+                transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            }
+
+            .feed-button .feed-icon {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                display: grid;
+                place-items: center;
+                font-size: 19px;
+                background: rgba(255, 255, 255, 0.9);
+                box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.08);
             }
 
             .feed-button:active {
-                transform: scale(0.95);
+                transform: scale(0.94);
             }
-        }
 
-        @media (pointer: coarse) and (max-height: 500px) {
-            /* Landscape mode on mobile */
-            .feed-button {
-                padding: 11px 18px;
-                font-size: 14px;
+            .feed-button.holding {
+                background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 50%),
+                            linear-gradient(135deg, #7cf29a 0%, #1fd18a 55%, #0fb5a0 100%);
+                box-shadow: 0 0 0 6px rgba(31, 209, 138, 0.25), 0 6px 20px rgba(31, 209, 138, 0.55);
+            }
+
+            .feed-button.holding .feed-icon {
+                animation: shake 0.25s ease-in-out infinite alternate;
+            }
+
+            @keyframes shake {
+                from { transform: rotate(-12deg); }
+                to { transform: rotate(12deg); }
             }
         }
 
@@ -418,6 +458,80 @@
             to { transform: rotate(360deg); }
         }
 
+        .loading-bar {
+            width: min(260px, 60vw);
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(0, 212, 255, 0.15);
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .loading-bar-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            transition: width 0.2s ease;
+        }
+
+        .rotate-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a2a4b 100%);
+            color: #fff;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            text-align: center;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            padding: 24px;
+        }
+
+        .rotate-overlay small {
+            display: block;
+            margin-top: 8px;
+            font-size: 15px;
+            font-weight: 400;
+            color: #7fdcff;
+        }
+
+        .rotate-phone {
+            width: 60px;
+            height: 100px;
+            border: 4px solid #00d4ff;
+            border-radius: 12px;
+            position: relative;
+            animation: rotatePhone 2s ease-in-out infinite;
+        }
+
+        .rotate-phone::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            margin-left: -5px;
+            border-radius: 50%;
+            background: #00d4ff;
+        }
+
+        @keyframes rotatePhone {
+            0%, 20% { transform: rotate(0deg); }
+            60%, 100% { transform: rotate(-90deg); }
+        }
+
+        /* Phones: landscape only */
+        @media (pointer: coarse) and (orientation: portrait) {
+            .rotate-overlay { display: flex; }
+        }
+
         .loading-text {
             color: #00d4ff;
             font-size: 18px;
@@ -432,6 +546,12 @@
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
         <div class="loading-text">Loading Aquarium...</div>
+        <div class="loading-bar"><div class="loading-bar-fill" id="loadingBarFill"></div></div>
+    </div>
+
+    <div class="rotate-overlay" id="rotateOverlay">
+        <div class="rotate-phone"></div>
+        <div>Please rotate your phone<small>The aquarium only works in landscape mode</small></div>
     </div>
     
     <div class="info-icon" id="infoIcon">ℹ️</div>
@@ -446,7 +566,7 @@
     <div class="popup-message" id="popupMessage" style="display: none;">
         <img src="assets/images/aquarium/pressSpaceToFeed.png" alt="Press Space to Feed">
     </div>
-    <button class="feed-button" id="feedButton">Feed Fish</button>
+    <button class="feed-button" id="feedButton"><span class="feed-icon">🍤</span><span>Feed Fish</span></button>
     <div class="thank-you-message" id="thankYouMessage" style="display: none;">
         <img src="assets/images/aquarium/thanksForSwimmingBy.png" alt="Thanks for Swimming By">
     </div>
@@ -552,32 +672,6 @@
         window.addEventListener('resize', onViewportChange);
         window.addEventListener('orientationchange', onViewportChange);
         if (window.visualViewport) window.visualViewport.addEventListener('resize', onViewportChange);
-        // Preload all images for faster loading
-        const imagesToPreload = [
-            'assets/images/aquarium/indexFinger.png',
-            'assets/images/aquarium/exitButton.png',
-            'assets/images/aquarium/pressSpaceToFeed.png',
-            'assets/images/aquarium/thanksForSwimmingBy.png',
-            'assets/images/aquarium/jellyfish1.png',
-            'assets/images/aquarium/jellyfish2.png',
-            'assets/images/aquarium/clownfish.png',
-            'assets/images/aquarium/bettafish.png',
-            'assets/images/aquarium/angelfish.png',
-            'assets/images/aquarium/angelfish2.png',
-            'assets/images/aquarium/corydoras.png',
-            'assets/images/aquarium/discus.png',
-            'assets/images/aquarium/fancyGoldfish.png',
-            'assets/images/aquarium/goldfish.png',
-            'assets/images/aquarium/guppyfish.png',
-            'assets/images/aquarium/koifish.png',
-            'assets/images/aquarium/neontetra.png',
-            'assets/images/aquarium/zebradanio.png',
-            'assets/images/aquarium/pufferfish.png'
-        ];
-        imagesToPreload.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
 
         // Load background video
         const backgroundVideo = document.createElement('video');
@@ -613,10 +707,6 @@
             });
         }, { once: true });
         
-        // Start loading background asynchronously
-        setTimeout(() => {
-            backgroundVideo.load();
-        }, 500);
 
         // ============================================================================
         // FISH TYPES & PROPERTIES
@@ -2784,75 +2874,67 @@
             }
         }
 
-        // Preload aquarium assets before showing the game
-        function preloadAquariumAssets() {
-            return new Promise((resolve) => {
-                const assets = [
-                    'assets/images/aquarium/indexFinger.png',
-                    'assets/images/aquarium/exitButton.png',
-                    'assets/images/aquarium/pressSpaceToFeed.png',
-                    'assets/images/aquarium/thanksForSwimmingBy.png'
-                ];
+        // Load EVERY asset (all fish, background image + video) before the game starts
+        const ASSET_DIR = 'assets/images/aquarium/';
+        const ALL_IMAGES = [
+            'aquariumBackground.jpeg', 'exitButton.png', 'thanksForSwimmingBy.png', 'indexFinger.png',
+            'jellyfish1.png', 'jellyfish2.png', 'crab.png', 'clownfish.png', 'bettafish.png',
+            'bettafish2.png', 'angelfish.png', 'angelfish2.png', 'corydoras.png', 'discus.png',
+            'fancyGoldfish.png', 'goldfish.png', 'guppyfish.png', 'koifish.png', 'neontetra.png',
+            'zebradanio.png', 'shrimp.png', 'pufferfish.png'
+        ];
 
-                let loadedCount = 0;
-                const totalAssets = assets.length;
-
-                assets.forEach(src => {
-                    const img = new Image();
-                    img.onload = () => {
-                        loadedCount++;
-                        if (loadedCount === totalAssets) {
-                            resolve();
-                        }
-                    };
-                    img.onerror = () => {
-                        loadedCount++;
-                        if (loadedCount === totalAssets) {
-                            resolve();
-                        }
-                    };
-                    img.src = src;
-                });
-
-                // Fallback: if no assets, resolve after 500ms
-                setTimeout(() => {
-                    if (loadedCount < totalAssets) {
-                        resolve();
-                    }
-                }, 500);
+        function loadImage(src) {
+            return new Promise(resolve => {
+                const img = new Image();
+                img.onload = img.onerror = () => resolve();
+                img.src = ASSET_DIR + src;
             });
         }
 
-        // Start the game when window loads or orientation is landscape
-        window.addEventListener('load', async () => {
-            // Preload assets first
-            await preloadAquariumAssets();
-            
-            // Hide loading screen
-            const loadingScreen = document.getElementById('loadingScreen');
-            if (loadingScreen) {
-                loadingScreen.classList.add('hidden');
-            }
-            
-            // Then start the game
-            startGame();
-        });
+        function loadVideo() {
+            return new Promise(resolve => {
+                if (backgroundVideo.readyState >= 3) return resolve();
+                backgroundVideo.addEventListener('canplaythrough', resolve, { once: true });
+                backgroundVideo.addEventListener('error', resolve, { once: true });
+                // ponytail: some mobile browsers never buffer a video before a user gesture;
+                // don't block forever, the static background covers until it plays
+                setTimeout(resolve, 10000);
+                backgroundVideo.load();
+            });
+        }
 
-        // Fallback if load event doesn't fire
-        setTimeout(async () => {
-            if (!gameInitialized) {
-                // Preload assets
-                await preloadAquariumAssets();
-                
-                // Hide loading screen
-                const loadingScreen = document.getElementById('loadingScreen');
-                if (loadingScreen) {
-                    loadingScreen.classList.add('hidden');
-                }
-                
-                startGame();
-            }
-        }, 100);
+        function preloadAquariumAssets() {
+            const tasks = ALL_IMAGES.map(loadImage).concat(loadVideo());
+            const fill = document.getElementById('loadingBarFill');
+            let done = 0;
+            tasks.forEach(t => t.then(() => {
+                done++;
+                fill.style.width = Math.round(done / tasks.length * 100) + '%';
+            }));
+            return Promise.all(tasks);
+        }
+
+        let assetsReady = false;
+
+        function isPortraitPhone() {
+            return isTouchDevice && window.innerHeight > window.innerWidth;
+        }
+
+        // Start only when everything is loaded AND (on phones) we are in landscape
+        function tryStartGame() {
+            if (!assetsReady || gameLoopRunning || isPortraitPhone()) return;
+            document.getElementById('loadingScreen').classList.add('hidden');
+            startGame();
+        }
+
+        window.addEventListener('resize', () => setTimeout(tryStartGame, 150));
+        window.addEventListener('orientationchange', () => setTimeout(tryStartGame, 150));
+
+        preloadAquariumAssets().then(() => {
+            assetsReady = true;
+            tryStartGame();
+        });
     </script>
 </body>
 </html>
