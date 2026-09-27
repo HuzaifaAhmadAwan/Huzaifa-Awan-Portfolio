@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Interactive Aquarium</title>
     <style>
         * {
@@ -32,7 +34,7 @@
             overflow: hidden;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
             html, body {
                 width: 100vw;
                 height: 100vh;
@@ -66,12 +68,20 @@
             flex-shrink: 0;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
+            html, body {
+                height: 100dvh;
+                overscroll-behavior: none;
+                touch-action: none;
+                background: #0a0e27;
+            }
+
             .aquarium-container {
                 width: 100vw;
                 height: 100vh;
+                height: 100dvh;
                 max-width: 100vw;
-                max-height: 100vh;
+                max-height: 100dvh;
                 border-radius: 0;
                 border: none;
                 box-shadow: none;
@@ -103,13 +113,13 @@
             max-height: 100%;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
             canvas {
-                width: 100vw !important;
-                height: 100vh !important;
+                width: 100% !important;
+                height: 100% !important;
                 display: block;
                 max-width: 100vw;
-                max-height: 100vh;
+                max-height: 100dvh;
                 margin: 0;
                 padding: 0;
             }
@@ -163,17 +173,18 @@
             transition: all 0.3s ease;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
             .exit-button {
-                top: 8px;
-                right: 8px;
-                left: auto;
+                top: calc(6px + env(safe-area-inset-top));
+                left: calc(6px + env(safe-area-inset-left));
+                right: auto;
                 position: fixed;
                 z-index: 100;
+                touch-action: manipulation;
             }
 
             .exit-button img {
-                height: 50px;
+                height: 64px;
                 width: auto;
             }
         }
@@ -250,15 +261,16 @@
             box-shadow: 0 4px 20px rgba(0, 255, 136, 0.6);
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
             .feed-button {
                 display: block;
                 position: fixed;
-                bottom: 10px;
-                right: 10px;
+                bottom: calc(14px + env(safe-area-inset-bottom));
+                right: calc(14px + env(safe-area-inset-right));
                 left: auto;
-                padding: 10px 18px;
-                font-size: 12px;
+                padding: 14px 22px;
+                font-size: 15px;
+                border-radius: 999px;
                 transform: none;
                 z-index: 100;
             }
@@ -268,13 +280,11 @@
             }
         }
 
-        @media (max-width: 768px) and (max-height: 500px) {
+        @media (pointer: coarse) and (max-height: 500px) {
             /* Landscape mode on mobile */
             .feed-button {
-                bottom: 10px;
-                right: 10px;
-                padding: 10px 16px;
-                font-size: 12px;
+                padding: 11px 18px;
+                font-size: 14px;
             }
         }
 
@@ -352,18 +362,18 @@
             }
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (pointer: coarse) {
             .info-icon {
-                width: 35px;
-                height: 35px;
+                width: 38px;
+                height: 38px;
                 font-size: 20px;
-                top: 15px;
-                right: 15px;
+                top: calc(14px + env(safe-area-inset-top));
+                right: calc(14px + env(safe-area-inset-right));
             }
 
             .info-tooltip {
-                top: 60px;
-                right: 15px;
+                top: calc(60px + env(safe-area-inset-top));
+                right: calc(14px + env(safe-area-inset-right));
                 font-size: 12px;
                 padding: 12px 16px;
                 white-space: normal;
@@ -443,78 +453,16 @@
 
     <script>
         // ============================================================================
-        // LANDSCAPE ORIENTATION LOCK FOR MOBILE
+        // MOBILE / TOUCH SETUP
         // ============================================================================
-        
+
         let gameInitialized = false;
         let gameLoopRunning = false;
 
-        // Force landscape orientation on mobile devices
-        if (screen.orientation && typeof screen.orientation.lock === 'function') {
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile) {
-                screen.orientation.lock('landscape').catch(err => {
-                    // Silently fail if orientation lock is not supported
-                    console.log('Orientation lock not supported on this device');
-                });
-            }
-        }
-
-        // Show warning for portrait mode on mobile
-        function checkOrientation() {
-            const isMobile = window.innerWidth < 768;
-            const existingWarning = document.getElementById('orientationWarning');
-            
-            if (isMobile && window.innerHeight > window.innerWidth) {
-                // Device is in portrait - only create warning if it doesn't exist
-                if (!existingWarning) {
-                    const warningMsg = document.createElement('div');
-                    warningMsg.id = 'orientationWarning';
-                    warningMsg.style.cssText = `
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0, 0, 0, 0.95);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        z-index: 1000;
-                        color: white;
-                        text-align: center;
-                        font-size: 28px;
-                        font-weight: bold;
-                        font-family: Arial, sans-serif;
-                    `;
-                    warningMsg.textContent = '📱\n\nPlease rotate your device to landscape';
-                    document.body.appendChild(warningMsg);
-                }
-            } else {
-                // In landscape - remove warning and ensure game is initialized
-                if (existingWarning) {
-                    existingWarning.remove();
-                }
-                // Initialize game if not already started - with small delay for dimensions to update
-                if (!gameInitialized && !gameLoopRunning) {
-                    setTimeout(() => {
-                        resizeCanvas();
-                        startGame();
-                    }, 50);
-                }
-            }
-        }
-
-        // Check orientation on load and on orientation change
-        checkOrientation();
-        window.addEventListener('orientationchange', () => {
-            // Delay check to allow screen dimensions to update
-            setTimeout(checkOrientation, 100);
-        });
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            checkOrientation();
-        });
+        // Phones in landscape are often wider than 768px, so detect touch instead of width
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches ||
+            'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        if (isTouchDevice) document.documentElement.classList.add('touch');
 
         // ============================================================================
         // AQUARIUM CANVAS SETUP
@@ -522,6 +470,18 @@
 
         const canvas = document.getElementById('aquariumCanvas');
         const ctx = canvas.getContext('2d');
+
+        // Logical (CSS pixel) size of the canvas; the backing store is scaled by devicePixelRatio
+        let viewW = 0;
+        let viewH = 0;
+        let spriteScale = 1;
+
+        // Static background image used until the video is ready (and as fallback on iOS)
+        const backgroundImage = new Image();
+        backgroundImage.src = 'assets/images/aquarium/aquariumBackground.jpeg';
+
+        // Where the background is drawn: 'stretch' (wide screens) or 'cover' (portrait phones)
+        let bgRect = { x: 0, y: 0, w: 0, h: 0, cover: false };
 
         // Aquarium boundaries (constrain to tank area within the background image)
         let aquariumBounds = {
@@ -531,35 +491,67 @@
             bottom: 0
         };
 
+        // Tank water area as fractions of the background image
+        const TANK = { left: 0.06, right: 0.945, top: 0.22, bottom: 0.82 };
+        const BG_ASPECT = 1408 / 730;
+
         function updateAquariumBounds() {
+            const aspect = viewW / viewH;
+            if (aspect >= 1.3) {
+                // Wide screen: stretch background over the whole canvas (original behaviour)
+                bgRect = { x: 0, y: 0, w: viewW, h: viewH, cover: false };
+            } else {
+                // Portrait / narrow: crop the background ("cover") so the tank fills the screen
+                const h = viewH;
+                const w = h * BG_ASPECT;
+                bgRect = { x: (viewW - w) / 2, y: 0, w, h, cover: true };
+            }
+            const margin = 8;
             aquariumBounds = {
-                left: canvas.width * 0.06,
-                right: canvas.width * 0.945,
-                top: canvas.height * 0.22,
-                bottom: canvas.height * 0.82
+                left: Math.max(margin, bgRect.x + bgRect.w * TANK.left),
+                right: Math.min(viewW - margin, bgRect.x + bgRect.w * TANK.right),
+                top: bgRect.y + bgRect.h * TANK.top,
+                bottom: bgRect.y + bgRect.h * TANK.bottom
             };
         }
 
         // Set canvas size
         function resizeCanvas() {
             const container = canvas.parentElement;
-            const isMobile = window.innerWidth < 768;
-            
-            if (isMobile) {
-                // Mobile landscape mode - fill entire viewport
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                // Don't set container styles - let CSS handle it
+
+            if (isTouchDevice || window.innerWidth < 768) {
+                // Mobile: fill the whole (visual) viewport, portrait or landscape
+                const vv = window.visualViewport;
+                viewW = Math.round(vv ? vv.width : window.innerWidth);
+                viewH = Math.round(vv ? vv.height : window.innerHeight);
+                // Smaller sprites on small screens
+                spriteScale = Math.max(0.55, Math.min(1, Math.min(viewW, viewH) / 600));
             } else {
                 // Desktop - maintain aspect ratio
-                canvas.width = container.clientWidth || window.innerWidth;
-                canvas.height = Math.max(500, window.innerHeight * 0.7);
+                viewW = container.clientWidth || window.innerWidth;
+                viewH = Math.max(500, window.innerHeight * 0.7);
+                spriteScale = 1;
             }
+
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(viewW * dpr);
+            canvas.height = Math.round(viewH * dpr);
+            canvas.style.height = viewH + 'px';
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.imageSmoothingQuality = 'high';
             updateAquariumBounds();
         }
         resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
 
+        let resizeTimer;
+        function onViewportChange() {
+            clearTimeout(resizeTimer);
+            // Give mobile browsers a moment to settle their dimensions after rotation
+            resizeTimer = setTimeout(resizeCanvas, 120);
+        }
+        window.addEventListener('resize', onViewportChange);
+        window.addEventListener('orientationchange', onViewportChange);
+        if (window.visualViewport) window.visualViewport.addEventListener('resize', onViewportChange);
         // Preload all images for faster loading
         const imagesToPreload = [
             'assets/images/aquarium/indexFinger.png',
@@ -593,7 +585,25 @@
         backgroundVideo.loop = true;
         backgroundVideo.muted = true;
         backgroundVideo.preload = 'auto';
+        // Required for inline autoplay on iOS Safari / mobile Chrome
+        backgroundVideo.playsInline = true;
+        backgroundVideo.setAttribute('playsinline', '');
+        backgroundVideo.setAttribute('webkit-playsinline', '');
+        backgroundVideo.setAttribute('muted', '');
+        backgroundVideo.autoplay = true;
         let backgroundLoaded = false;
+
+        // Some mobile browsers only start the video after a user gesture
+        function ensureVideoPlaying() {
+            if (backgroundVideo.paused) {
+                backgroundVideo.play().catch(() => {});
+            }
+        }
+        document.addEventListener('touchstart', ensureVideoPlaying, { passive: true });
+        document.addEventListener('pointerdown', ensureVideoPlaying);
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) ensureVideoPlaying();
+        });
         
         // Load video in background without blocking game start
         backgroundVideo.addEventListener('canplay', () => {
@@ -808,6 +818,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     
                     // Add bobbing motion
                     const bob = Math.sin(this.waveOffset) * 5;
@@ -877,6 +888,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     
                     // Add bobbing motion
                     const bob = Math.sin(this.waveOffset) * 5;
@@ -906,6 +918,7 @@
 
             update(mouseX, mouseY) {
                 // Keep crab on the ground
+                this.groundY = aquariumBounds.bottom - 25 * spriteScale;
                 this.y = this.groundY;
 
                 // Check distance to mouse
@@ -951,6 +964,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     
                     // Flip crab based on direction
                     if (this.direction === -1) {
@@ -1071,6 +1085,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     
                     // Flip based on direction
                     if (this.direction === -1) {
@@ -1194,6 +1209,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     
                     // Flip based on direction
                     if (this.direction === -1) {
@@ -1317,6 +1333,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     
                     // Flip based on direction
                     if (this.direction === -1) {
@@ -1394,6 +1411,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1464,6 +1482,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1534,6 +1553,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1604,6 +1624,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1674,6 +1695,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1744,6 +1766,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1814,6 +1837,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1884,6 +1908,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -1954,6 +1979,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -2024,6 +2050,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -2075,6 +2102,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -2126,6 +2154,7 @@
                 if (this.imageLoaded) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
+                    ctx.scale(spriteScale, spriteScale);
                     if (this.direction === -1) ctx.scale(-1, 1);
                     ctx.rotate(this.verticalTilt);
                     ctx.drawImage(this.image, -this.size / 2, -this.size / 2, this.size, this.size);
@@ -2159,8 +2188,8 @@
         let zebradanio = [];
         let shrimp = [];
         let pufferfish = [];
-        let mouseX = canvas.width / 2;
-        let mouseY = canvas.height / 2;
+        let mouseX = -1000;
+        let mouseY = -1000;
         let foodSpawned = 0;
 
         // Initialize scene
@@ -2336,14 +2365,21 @@
 
         document.addEventListener('touchend', (e) => {
             // Move cursor away from canvas when touch ends
-            mouseX = -1000;
-            mouseY = -1000;
+            if (e.touches.length === 0) {
+                mouseX = -1000;
+                mouseY = -1000;
+            }
         });
 
         // Double-tap to feed fish (touch screen support)
         let lastTapTime = 0;
         let tapCount = 0;
         canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // no double-tap zoom / ghost clicks
+            const t = e.touches[0];
+            const r = canvas.getBoundingClientRect();
+            mouseX = t.clientX - r.left;
+            mouseY = t.clientY - r.top;
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTapTime;
             
@@ -2364,7 +2400,7 @@
                 tapCount = 1;
             }
             lastTapTime = currentTime;
-        });
+        }, { passive: false });
 
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
@@ -2394,6 +2430,7 @@
         }
 
         feedButton.addEventListener('mousedown', () => {
+            if (isPressed) return;
             isPressed = true;
             feedButton.classList.add('holding');
             spawnFood();
@@ -2402,6 +2439,9 @@
 
         feedButton.addEventListener('touchstart', (e) => {
             e.preventDefault();
+            e.stopPropagation();
+            if (isFeedingInterval) clearInterval(isFeedingInterval);
+            ensureVideoPlaying();
             isPressed = true;
             feedButton.classList.add('holding');
             spawnFood();
@@ -2469,7 +2509,11 @@
         infoIcon.addEventListener('touchstart', (e) => {
             e.preventDefault();
             infoTooltip.classList.toggle('show');
-        });
+        }, { passive: false });
+
+        if (isTouchDevice) {
+            infoTooltip.textContent = 'Tap "Feed Fish" (hold for more) or double-tap the water. Touch the water to scare the fish!';
+        }
 
         // Auto-show tooltip once on page load for first-time guidance
         setTimeout(() => {
@@ -2596,16 +2640,19 @@
         }
 
         function draw() {
-            // Draw background video
-            if (backgroundLoaded) {
-                ctx.drawImage(backgroundVideo, 0, 0, canvas.width, canvas.height);
+            // Draw background video (or the static image until the video is playing)
+            ctx.clearRect(0, 0, viewW, viewH);
+            if (backgroundLoaded && backgroundVideo.readyState >= 2) {
+                ctx.drawImage(backgroundVideo, bgRect.x, bgRect.y, bgRect.w, bgRect.h);
+            } else if (backgroundImage.complete && backgroundImage.naturalWidth > 0) {
+                ctx.drawImage(backgroundImage, bgRect.x, bgRect.y, bgRect.w, bgRect.h);
             } else {
-                // Fallback gradient if video not loaded
-                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                // Fallback gradient if nothing is loaded yet
+                const gradient = ctx.createLinearGradient(0, 0, 0, viewH);
                 gradient.addColorStop(0, 'rgba(26, 77, 109, 0.6)');
                 gradient.addColorStop(1, 'rgba(13, 42, 58, 0.8)');
                 ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(0, 0, viewW, viewH);
             }
 
             // Draw food
@@ -2704,8 +2751,22 @@
             }
         }
 
-        function gameLoop() {
-            update();
+        const STEP = 1000 / 60;
+        let lastFrameTime = 0;
+        let accumulator = 0;
+        function gameLoop(now) {
+            now = now || performance.now();
+            if (!lastFrameTime) lastFrameTime = now;
+            // Clamp large gaps (e.g. tab in background) to avoid a burst of updates
+            accumulator += Math.min(now - lastFrameTime, 250);
+            lastFrameTime = now;
+            let steps = 0;
+            while (accumulator >= STEP && steps < 5) {
+                update();
+                accumulator -= STEP;
+                steps++;
+            }
+            if (steps === 5) accumulator = 0;
             draw();
             requestAnimationFrame(gameLoop);
         }
